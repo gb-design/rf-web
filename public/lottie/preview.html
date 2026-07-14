@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottie Animationen — Dr. Fortelny</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: oklch(0.17 0.025 265);
+      min-height: 100vh;
+      padding: 64px 48px;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+    }
+
+    header {
+      margin-bottom: 48px;
+    }
+
+    header .eyebrow {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: oklch(0.50 0.010 240);
+      margin-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: 1.125rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      color: oklch(0.95 0.010 220);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lottie-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 280px;
+    }
+
+    .card-label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: oklch(0.50 0.010 240);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Dr. René H. Fortelny — Website 2.0</div>
+    <h1>Lottie Animationen</h1>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <div class="lottie-wrap" id="anim-darm"></div>
+      <span class="card-label">Darm</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-galle"></div>
+      <span class="card-label">Galle</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-haemo"></div>
+      <span class="card-label">Hämo</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-lab"></div>
+      <span class="card-label">Lab</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-leistenbruch"></div>
+      <span class="card-label">Leistenbruch</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-reflux"></div>
+      <span class="card-label">Reflux</span>
+    </div>
+    <div class="card">
+      <div class="lottie-wrap" id="anim-schilddruese"></div>
+      <span class="card-label">Schilddrüse</span>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+  <script>
+    const animations = [
+      { id: 'anim-darm',         path: 'darm.json' },
+      { id: 'anim-galle',        path: 'galle.json' },
+      { id: 'anim-haemo',        path: 'haemo.json' },
+      { id: 'anim-lab',          path: 'lab.json' },
+      { id: 'anim-leistenbruch', path: 'leistenbruch.json' },
+      { id: 'anim-reflux',       path: 'reflux.json' },
+      { id: 'anim-schilddruese', path: 'schilddruese.json' },
+    ];
+
+    animations.forEach(({ id, path }) => {
+      lottie.loadAnimation({
+        container: document.getElementById(id),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path,
+      });
+    });
+  </script>
+
+</body>
+</html>

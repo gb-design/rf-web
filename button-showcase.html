@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Variationen — Dr. Fortelny</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        oklch(0.17 0.025 265);   /* brand-dark */
+      --surface:   oklch(0.21 0.022 265);
+      --text:      oklch(0.95 0.010 220);
+      --muted:     oklch(0.50 0.010 240);
+      --border:    oklch(0.30 0.020 260);
+      --blue:      oklch(0.72 0.09 220);    /* brand-blue #77B1E1 */
+      --blue-dark: oklch(0.17 0.025 265);
+      --font: "IBM Plex Sans", system-ui, sans-serif;
+
+      /* Brand-Light angepasste Blau-Token (auf hellem Hg ausgewaschen) */
+      --blue-on-light:      oklch(0.50 0.15 221);
+      --blue-on-light-fill: oklch(0.58 0.13 221);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 48px 56px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header .eyebrow {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    header h1 {
+      font-size: 1.125rem;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+    }
+
+    .panel {
+      padding: 40px 56px 56px;
+    }
+
+    .panel-dark {
+      background: oklch(0.21 0.022 265);
+    }
+
+    .panel-light {
+      background: oklch(0.93 0.025 220); /* brand-light #E2ECF3 */
+    }
+
+    .panel-label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-light .panel-label {
+      color: oklch(0.50 0.015 240);
+      border-bottom-color: oklch(0.83 0.022 220);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* ─── BASE ─────────────────────────────────────────────────── */
+    .btn {
+      all: unset;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font);
+      font-weight: 500;
+      font-size: 0.8125rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    /* ─── GHOST PILL (Dark) ────────────────────────────────────── */
+    .ghost {
+      padding: 11px 28px;
+      border-radius: 50px;
+      box-shadow: inset 0 0 0 1px var(--blue);
+      color: var(--text);
+      gap: 8px;
+      transition: color 0.32s ease;
+    }
+
+    .ghost::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      background: var(--blue);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ghost:hover { color: var(--blue-dark); }
+    .ghost:hover::before { transform: scaleX(1); }
+
+    .ghost span,
+    .ghost svg {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .ghost svg {
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ghost:hover svg.arrow-right { transform: translateX(3px); }
+
+    /* ─── FILLED / SOLID (Dark) ────────────────────────────────── */
+    .filled {
+      padding: 12px 28px;
+      border-radius: 50px;
+      background: var(--blue);
+      color: var(--blue-dark);
+      gap: 8px;
+      transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.15s ease;
+    }
+
+    .filled:hover {
+      background: oklch(0.76 0.09 220);
+      box-shadow: 0 0 0 4px oklch(0.72 0.09 220 / 0.22);
+    }
+
+    .filled:active { transform: scale(0.97); }
+
+    .filled svg { flex-shrink: 0; }
+
+    /* ─── TEXT-ONLY (Dark) ─────────────────────────────────────── */
+    .text-btn {
+      padding: 3px 0;
+      overflow: visible;
+      color: var(--blue);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .text-btn .tl { position: relative; }
+
+    .text-btn .tl::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .text-btn:hover .tl::after { transform: scaleX(1); }
+
+    .text-btn-muted {
+      color: var(--muted);
+      transition: color 0.25s ease;
+    }
+
+    .text-btn-muted:hover { color: var(--text); }
+
+    /* ─── GHOST PILL (Light) ───────────────────────────────────── */
+    .ghost-light {
+      padding: 11px 28px;
+      border-radius: 50px;
+      box-shadow: inset 0 0 0 1px var(--blue-on-light);
+      color: oklch(0.17 0.025 265);
+      gap: 8px;
+      transition: color 0.32s ease;
+    }
+
+    .ghost-light::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      background: var(--blue-on-light-fill);
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ghost-light:hover::before { transform: scaleX(1); }
+    .ghost-light:hover { color: white; }
+
+    .ghost-light span,
+    .ghost-light svg {
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .ghost-light svg {
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .ghost-light:hover svg.arrow-right { transform: translateX(3px); }
+
+    /* ─── FILLED / SOLID (Light) ───────────────────────────────── */
+    .filled-light {
+      padding: 12px 28px;
+      border-radius: 50px;
+      background: var(--blue-on-light-fill);
+      color: white;
+      gap: 8px;
+      transition:
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.15s ease;
+    }
+
+    .filled-light:hover {
+      background: var(--blue-on-light);
+      box-shadow: 0 4px 20px oklch(0.50 0.15 221 / 0.25);
+    }
+
+    .filled-light:active { transform: scale(0.97); }
+
+    .filled-light svg { flex-shrink: 0; }
+
+    /* ─── TEXT-ONLY (Light) ────────────────────────────────────── */
+    .text-light {
+      padding: 3px 0;
+      overflow: visible;
+      color: var(--blue-on-light);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .text-light .tl { position: relative; }
+
+    .text-light .tl::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .text-light:hover .tl::after { transform: scaleX(1); }
+
+    .text-muted-light {
+      color: oklch(0.50 0.015 240);
+      transition: color 0.25s ease;
+    }
+
+    .text-muted-light:hover { color: oklch(0.17 0.025 265); }
+
+    svg { display: block; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="eyebrow">Dr. René H. Fortelny — Website 2.0</div>
+    <h1>Button Variationen</h1>
+  </header>
+
+
+  <!-- DARK MODE -->
+  <div class="panel panel-dark">
+    <div class="panel-label">Auf dunklem Hintergrund (Dark Mode)</div>
+    <div class="btn-row">
+
+      <button class="btn ghost">
+        <span>Über Mich</span>
+      </button>
+
+      <button class="btn ghost">
+        <svg class="arrow-right" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+        <span>Leistungen</span>
+      </button>
+
+      <button class="btn ghost">
+        <span>Kontakt</span>
+        <svg class="arrow-right" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+
+      <button class="btn filled">
+        <span>Termin anfragen</span>
+      </button>
+
+      <button class="btn filled">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="12" height="12" rx="1"/>
+          <path d="M5 1v4M11 1v4M2 7h12"/>
+        </svg>
+        <span>Jetzt buchen</span>
+      </button>
+
+      <button class="btn text-btn">
+        <span class="tl">Mehr erfahren</span>
+      </button>
+
+      <button class="btn text-btn text-btn-muted">
+        <span class="tl">Zurück</span>
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- LIGHT MODE (Brand Light #E2ECF3) -->
+  <div class="panel panel-light">
+    <div class="panel-label">Auf hellem Hintergrund (Brand Light)</div>
+    <div class="btn-row">
+
+      <button class="btn ghost-light">
+        <span>Über Mich</span>
+      </button>
+
+      <button class="btn ghost-light">
+        <svg class="arrow-right" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+        <span>Leistungen</span>
+      </button>
+
+      <button class="btn ghost-light">
+        <span>Kontakt</span>
+        <svg class="arrow-right" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+
+      <button class="btn filled-light">
+        <span>Termin anfragen</span>
+      </button>
+
+      <button class="btn filled-light">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="12" height="12" rx="1"/>
+          <path d="M5 1v4M11 1v4M2 7h12"/>
+        </svg>
+        <span>Jetzt buchen</span>
+      </button>
+
+      <button class="btn text-light">
+        <span class="tl">Mehr erfahren</span>
+      </button>
+
+      <button class="btn text-light text-muted-light">
+        <span class="tl">Zurück</span>
+      </button>
+
+    </div>
+  </div>
+
+
+</body>
+</html>

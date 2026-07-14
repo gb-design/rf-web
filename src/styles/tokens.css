@@ -1,0 +1,62 @@
+:root {
+  --color-bg:           oklch(0.97 0.005 220);
+  --color-surface:      oklch(0.99 0.003 220);
+  --color-surface-tint: oklch(0.93 0.025 220);
+
+  --color-text:         oklch(0.17 0.025 265);
+  --color-text-muted:   oklch(0.5 0.015 240);
+  --color-text-subtle:  oklch(0.68 0.01 230);
+
+  --color-border:       oklch(0.88 0.015 220);
+  --color-border-light: oklch(0.93 0.008 220);
+
+  --color-primary:      oklch(0.72 0.09 220);
+  --color-primary-deep: oklch(0.62 0.1 222);
+  --color-primary-bg:   oklch(0.93 0.025 220);
+
+  --color-accent:       oklch(0.54 0.19 352);
+  --color-accent-deep:  oklch(0.45 0.18 350);
+  --color-accent-bg:    oklch(0.94 0.04 352);
+
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+
+  --text-h1:    clamp(2.75rem, 5.5vw, 5rem);
+  --text-h2:    clamp(1.75rem, 3.5vw, 2.75rem);
+  --text-h3:    clamp(1rem, 1.8vw, 1.2rem);
+  --text-body:  1rem;
+  --text-label: 0.8125rem;
+  --text-caption: 0.875rem;
+
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
+}
+
+[data-section-theme="dark"] {
+  --color-bg:           oklch(0.17 0.025 265);
+  --color-surface:      oklch(0.21 0.022 265);
+  --color-surface-tint: oklch(0.26 0.025 255);
+
+  --color-text:         oklch(0.95 0.01 220);
+  --color-text-muted:   oklch(0.68 0.015 230);
+  --color-text-subtle:  oklch(0.5 0.01 240);
+
+  --color-border:       oklch(0.3 0.02 260);
+  --color-border-light: oklch(0.25 0.018 265);
+
+  --color-primary:      oklch(0.76 0.09 220);
+  --color-primary-deep: oklch(0.65 0.1 222);
+  --color-primary-bg:   oklch(0.25 0.035 240);
+
+  --color-accent:       oklch(0.65 0.18 352);
+  --color-accent-deep:  oklch(0.55 0.19 350);
+  --color-accent-bg:    oklch(0.25 0.05 355);
+}
