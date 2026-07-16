@@ -1,0 +1,510 @@
+---
+interface Treatment {
+  nummer: string;
+  titel: string;
+  text: string;
+  lottie: string;
+}
+
+interface Props {
+  items: Treatment[];
+}
+
+const { items } = Astro.props as Props;
+---
+
+<div class="treatment-tabs" data-treatment-tabs>
+  <ul class="treatment-tabs__list" role="tablist" aria-label="Behandlungsschwerpunkte">
+    {items.map((item, index) => (
+      <li class="treatment-tabs__item" data-tab-item data-active={index === 0 ? "true" : "false"}>
+        <button
+          class="treatment-tabs__trigger"
+          id={`treatment-tab-${index}`}
+          type="button"
+          role="tab"
+          aria-selected={index === 0 ? "true" : "false"}
+          aria-expanded={index === 0 ? "true" : "false"}
+          aria-controls={`treatment-panel-${index}`}
+          tabindex={index === 0 ? 0 : -1}
+          data-tab-trigger
+          data-index={index}
+          data-lottie={item.lottie}
+        >
+          <span class="treatment-tabs__number">{item.nummer}</span>
+          <span class="treatment-tabs__title">{item.titel}</span>
+          <span class="treatment-tabs__marker" aria-hidden="true"></span>
+        </button>
+        <div
+          class="treatment-tabs__description"
+          id={`treatment-panel-${index}`}
+          role="tabpanel"
+          aria-labelledby={`treatment-tab-${index}`}
+          aria-hidden={index === 0 ? "false" : "true"}
+          data-tab-description
+        >
+          <div><p>{item.text}</p></div>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <div class="treatment-tabs__stage" data-lottie-stage data-lottie-state="loading" aria-hidden="true">
+    <div class="treatment-tabs__stage-surface" data-stage-surface>
+      <div class="treatment-tabs__placeholder" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="treatment-tabs__visual-depth" data-lottie-depth>
+        <div class="treatment-tabs__visual" data-lottie-host></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import type { AnimationItem } from "lottie-web";
+
+  const roots = document.querySelectorAll<HTMLElement>("[data-treatment-tabs]");
+
+  roots.forEach((root) => {
+    const list = root.querySelector<HTMLElement>(".treatment-tabs__list");
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-tab-item]"));
+    const triggers = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-tab-trigger]"));
+    const descriptions = Array.from(root.querySelectorAll<HTMLElement>("[data-tab-description]"));
+    const stage = root.querySelector<HTMLElement>("[data-lottie-stage]");
+    const surface = root.querySelector<HTMLElement>("[data-stage-surface]");
+    const depth = root.querySelector<HTMLElement>("[data-lottie-depth]");
+    const host = root.querySelector<HTMLElement>("[data-lottie-host]");
+    const interactionArea = root.closest<HTMLElement>(".services") ?? root;
+
+    if (!list || !stage || !surface || !depth || !host || triggers.length === 0) return;
+
+    const mobileQuery = window.matchMedia("(max-width: 48rem)");
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    let activeIndex = 0;
+    let animation: AnimationItem | null = null;
+    let lottieApi: typeof import("lottie-web/build/player/lottie_light").default | null = null;
+    let isVisible = false;
+    let frameRequest = 0;
+    let loadVersion = 0;
+
+    const renderAnimation = async () => {
+      if (!isVisible && !reducedMotionQuery.matches) return;
+      const version = ++loadVersion;
+      stage.dataset.lottieState = "loading";
+
+      try {
+        if (!lottieApi) {
+          const module = await import("lottie-web/build/player/lottie_light");
+          lottieApi = module.default;
+        }
+        if (version !== loadVersion) return;
+
+        const path = triggers[activeIndex].dataset.lottie;
+        if (!path) throw new Error("Lottie-Pfad fehlt");
+
+        animation?.destroy();
+        host.replaceChildren();
+        const nextAnimation = lottieApi.loadAnimation({
+          container: host,
+          renderer: "svg",
+          loop: !reducedMotionQuery.matches,
+          autoplay: isVisible && !reducedMotionQuery.matches,
+          path,
+          rendererSettings: {
+            progressiveLoad: true,
+            preserveAspectRatio: "xMidYMid meet",
+          },
+        });
+        animation = nextAnimation;
+
+        nextAnimation.addEventListener("DOMLoaded", () => {
+          if (version !== loadVersion) return;
+          if (reducedMotionQuery.matches) {
+            nextAnimation.goToAndStop(Math.round((nextAnimation.totalFrames || 1) * 0.35), true);
+            stage.dataset.lottieState = "ready";
+            return;
+          }
+
+          const revealFrame = Math.max(1, Math.round((nextAnimation.totalFrames || 1) * 0.08));
+          const reveal = () => {
+            if (nextAnimation.currentFrame < revealFrame || version !== loadVersion) return;
+            stage.dataset.lottieState = "ready";
+            nextAnimation.removeEventListener("enterFrame", reveal);
+          };
+          nextAnimation.addEventListener("enterFrame", reveal);
+        });
+
+        nextAnimation.addEventListener("data_failed", () => {
+          if (version === loadVersion) stage.dataset.lottieState = "error";
+        });
+      } catch {
+        if (version === loadVersion) stage.dataset.lottieState = "error";
+      }
+    };
+
+    const syncMode = () => {
+      const isMobile = mobileQuery.matches;
+      if (isMobile) {
+        list.removeAttribute("role");
+        triggers.forEach((trigger) => {
+          trigger.removeAttribute("role");
+          trigger.removeAttribute("aria-selected");
+          trigger.tabIndex = 0;
+        });
+        items[activeIndex].append(stage);
+      } else {
+        list.setAttribute("role", "tablist");
+        triggers.forEach((trigger, index) => {
+          trigger.setAttribute("role", "tab");
+          trigger.setAttribute("aria-selected", index === activeIndex ? "true" : "false");
+          trigger.tabIndex = index === activeIndex ? 0 : -1;
+        });
+        root.append(stage);
+      }
+      surface.style.removeProperty("--tilt-x");
+      surface.style.removeProperty("--tilt-y");
+      depth.style.removeProperty("--move-x");
+      depth.style.removeProperty("--move-y");
+    };
+
+    const activate = (index: number, moveFocus = false) => {
+      activeIndex = index;
+      items.forEach((item, itemIndex) => {
+        const isActive = itemIndex === index;
+        item.dataset.active = isActive ? "true" : "false";
+        triggers[itemIndex].setAttribute("aria-expanded", isActive ? "true" : "false");
+        descriptions[itemIndex].setAttribute("aria-hidden", isActive ? "false" : "true");
+        if (!mobileQuery.matches) {
+          triggers[itemIndex].setAttribute("aria-selected", isActive ? "true" : "false");
+          triggers[itemIndex].tabIndex = isActive ? 0 : -1;
+        }
+      });
+
+      if (mobileQuery.matches) items[index].append(stage);
+      if (moveFocus) triggers[index].focus();
+      void renderAnimation();
+    };
+
+    triggers.forEach((trigger, index) => {
+      trigger.addEventListener("click", () => activate(index));
+      trigger.addEventListener("keydown", (event) => {
+        if (mobileQuery.matches) return;
+        const keyTargets: Record<string, number> = {
+          ArrowDown: (index + 1) % triggers.length,
+          ArrowRight: (index + 1) % triggers.length,
+          ArrowUp: (index - 1 + triggers.length) % triggers.length,
+          ArrowLeft: (index - 1 + triggers.length) % triggers.length,
+          Home: 0,
+          End: triggers.length - 1,
+        };
+        if (event.key in keyTargets) {
+          event.preventDefault();
+          activate(keyTargets[event.key], true);
+        }
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      isVisible = entries[0].isIntersecting;
+      if (!animation && isVisible) {
+        void renderAnimation();
+      } else if (animation) {
+        isVisible && !reducedMotionQuery.matches ? animation.play() : animation.pause();
+      }
+    }, { rootMargin: "300px 0px" });
+
+    observer.observe(root);
+
+    const resetPerspective = () => {
+      surface.style.setProperty("--tilt-x", "0deg");
+      surface.style.setProperty("--tilt-y", "0deg");
+      depth.style.setProperty("--move-x", "0px");
+      depth.style.setProperty("--move-y", "0px");
+    };
+
+    interactionArea.addEventListener("pointermove", (event) => {
+      if (!finePointerQuery.matches || reducedMotionQuery.matches || mobileQuery.matches) return;
+      cancelAnimationFrame(frameRequest);
+      frameRequest = requestAnimationFrame(() => {
+        const bounds = interactionArea.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        surface.style.setProperty("--tilt-x", `${(-y * 5).toFixed(2)}deg`);
+        surface.style.setProperty("--tilt-y", `${(x * 6).toFixed(2)}deg`);
+        depth.style.setProperty("--move-x", `${(x * 20).toFixed(2)}px`);
+        depth.style.setProperty("--move-y", `${(y * 16).toFixed(2)}px`);
+      });
+    });
+
+    interactionArea.addEventListener("pointerleave", resetPerspective);
+    mobileQuery.addEventListener("change", syncMode);
+    reducedMotionQuery.addEventListener("change", () => {
+      resetPerspective();
+      void renderAnimation();
+    });
+
+    syncMode();
+  });
+</script>
+
+<style>
+  .treatment-tabs {
+    display: grid;
+    grid-template-columns: repeat(var(--site-column-count), minmax(0, 1fr));
+    column-gap: var(--site-gutter);
+    align-items: stretch;
+  }
+
+  .treatment-tabs__list {
+    grid-column: 1 / span 5;
+    align-self: center;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .treatment-tabs__item {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .treatment-tabs__trigger {
+    width: 100%;
+    min-height: 4.75rem;
+    padding: var(--space-4) 0;
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 0.75rem;
+    gap: var(--space-3);
+    align-items: center;
+    color: var(--color-text);
+    background: transparent;
+    border: 0;
+    font-family: var(--font-display);
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .treatment-tabs__number {
+    color: var(--color-text-subtle);
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    transition: color var(--transition-fast);
+  }
+
+  .treatment-tabs__title {
+    font-size: clamp(1.0625rem, 0.98rem + 0.3vw, 1.25rem);
+    font-weight: 600;
+    line-height: 1.3;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .treatment-tabs__marker {
+    width: 0.55rem;
+    aspect-ratio: 1;
+    justify-self: end;
+    background: var(--color-primary-strong);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity var(--transition-fast), transform var(--transition-medium);
+  }
+
+  .treatment-tabs__trigger:hover .treatment-tabs__title {
+    color: var(--color-primary-strong);
+    transform: translateX(var(--space-1));
+  }
+
+  .treatment-tabs__item[data-active="true"] .treatment-tabs__number,
+  .treatment-tabs__item[data-active="true"] .treatment-tabs__title {
+    color: var(--color-primary-strong);
+  }
+
+  .treatment-tabs__item[data-active="true"] .treatment-tabs__marker {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .treatment-tabs__description {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows var(--transition-medium), opacity var(--transition-fast);
+  }
+
+  .treatment-tabs__description > div {
+    overflow: hidden;
+  }
+
+  .treatment-tabs__description p {
+    max-width: 45ch;
+    padding: 0 var(--space-6) var(--space-6) calc(2.5rem + var(--space-3));
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .treatment-tabs__item[data-active="true"] .treatment-tabs__description {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .treatment-tabs__stage {
+    width: 100%;
+    min-height: clamp(30rem, 40vw, 38rem);
+    grid-column: 7 / -1;
+    position: relative;
+    perspective: 75rem;
+    background: oklch(0.17 0.025 265);
+    overflow: hidden;
+    contain: layout paint;
+  }
+
+  .treatment-tabs__stage-surface {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    position: relative;
+    display: grid;
+    place-items: center;
+    transform: perspective(75rem) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+    transform-style: preserve-3d;
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .treatment-tabs__stage-surface::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle, oklch(0.76 0.09 220 / 0.42) 1.25px, transparent 1.6px),
+      radial-gradient(circle, oklch(0.76 0.09 220 / 0.2) 1px, transparent 1.35px);
+    background-size: 1.25rem 1.25rem, 5rem 5rem;
+    background-position: center, 0.625rem 0.625rem;
+    opacity: 0.72;
+    mask-image: radial-gradient(ellipse 82% 78% at center, black 18%, transparent 86%);
+    pointer-events: none;
+  }
+
+  :global(.services:hover) .treatment-tabs__stage-surface {
+    transition-duration: 80ms;
+  }
+
+  .treatment-tabs__visual-depth {
+    --move-x: 0px;
+    --move-y: 0px;
+    width: min(78%, 34rem);
+    aspect-ratio: 1;
+    position: relative;
+    z-index: 1;
+    transform: translate3d(var(--move-x), var(--move-y), 3rem) scale(1.02);
+    transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .treatment-tabs__visual {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0) scale(0.985);
+    transition:
+      opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .treatment-tabs__placeholder {
+    width: min(46%, 15rem);
+    height: min(54%, 20rem);
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    opacity: 0.65;
+    transform: translate(-50%, -50%) translateZ(3.25rem);
+    transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  }
+
+  .treatment-tabs__placeholder span {
+    width: clamp(0.3rem, 0.55vw, 0.5rem);
+    height: 78%;
+    background: color-mix(in oklch, var(--color-primary) 55%, transparent);
+  }
+
+  .treatment-tabs__placeholder span:nth-child(2) {
+    height: 92%;
+    background: color-mix(in oklch, var(--color-accent) 58%, transparent);
+  }
+
+  .treatment-tabs__placeholder span:nth-child(3) {
+    height: 68%;
+  }
+
+  .treatment-tabs__placeholder span:nth-child(4) {
+    height: 84%;
+    background: color-mix(in oklch, var(--color-surface-tint) 72%, transparent);
+  }
+
+  .treatment-tabs__stage[data-lottie-state="ready"] .treatment-tabs__visual {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  .treatment-tabs__stage[data-lottie-state="ready"] .treatment-tabs__placeholder {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  :global(.services:hover) .treatment-tabs__visual-depth {
+    transition-duration: 80ms;
+  }
+
+  @media (max-width: 64rem) {
+    .treatment-tabs__list {
+      grid-column: 1 / span 6;
+    }
+
+    .treatment-tabs__stage {
+      grid-column: 7 / -1;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .treatment-tabs {
+      display: block;
+    }
+
+    .treatment-tabs__stage {
+      width: 100%;
+      min-height: clamp(20rem, 95vw, 30rem);
+      margin-block-end: var(--space-6);
+      grid-column: auto;
+    }
+
+    .treatment-tabs__description p {
+      padding-inline-end: 0;
+    }
+
+    .treatment-tabs__item[data-active="true"] .treatment-tabs__description {
+      margin-block-end: var(--space-6);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .treatment-tabs__stage-surface,
+    .treatment-tabs__visual-depth,
+    .treatment-tabs__visual,
+    .treatment-tabs__title,
+    .treatment-tabs__marker,
+    .treatment-tabs__description {
+      transition: none;
+    }
+  }
+</style>

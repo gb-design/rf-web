@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageIntro from "../components/PageIntro.astro";
 ---
-<BaseLayout title="Profil — Dr. René H. Fortelny">
-  <main>
-    <h1>Profil</h1>
-  </main>
+<BaseLayout
+  title="Univ.-Prof. Dr. René H. Fortelny | Profil & Werdegang"
+  description="Erfahren Sie mehr über den Werdegang, die Spezialisierung und die wissenschaftliche Tätigkeit von Univ.-Prof. Dr. René H. Fortelny in Wien."
+>
+  <PageIntro
+    eyebrow="Profil"
+    title="Medizinische Kompetenz braucht persönliche Verantwortung."
+    description="Eine sorgfältige Untersuchung und ein offenes Gespräch schaffen die Grundlage für Vertrauen und nachvollziehbare medizinische Entscheidungen."
+  />
 </BaseLayout>

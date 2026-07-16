@@ -1,0 +1,156 @@
+.rf-button {
+  min-height: 3rem;
+  padding: 0.875rem 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  position: relative;
+  overflow: hidden;
+  appearance: none;
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+  transition:
+    color 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 250ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 250ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rf-button--compact {
+  min-height: 2.75rem;
+  padding: 0.75rem 1.35rem;
+}
+
+.rf-button__label,
+.rf-button__icon {
+  position: relative;
+  z-index: 1;
+}
+
+.rf-button__icon {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rf-button--filled {
+  color: var(--color-button-text);
+  background: var(--color-primary-strong);
+}
+
+.rf-button--filled:hover {
+  background: var(--color-primary-strong-hover);
+  box-shadow: 0 0 0 4px color-mix(in oklch, var(--color-primary-strong) 22%, transparent);
+}
+
+.rf-button--ghost {
+  color: var(--color-text);
+  box-shadow: inset 0 0 0 1px var(--color-primary-strong);
+}
+
+.rf-button--ghost::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-primary-strong);
+  border-radius: inherit;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rf-button--ghost:hover {
+  color: var(--color-button-text);
+}
+
+.rf-button--ghost:hover::before {
+  transform: scaleX(1);
+}
+
+.rf-button--text,
+.rf-button--text-muted {
+  min-height: 2.75rem;
+  padding-inline: 0;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.rf-button--text {
+  color: var(--color-primary-strong);
+}
+
+.rf-button--text-muted {
+  color: var(--color-text-muted);
+}
+
+.rf-button--text:hover {
+  color: var(--color-primary-strong-hover);
+}
+
+.rf-button--text-muted:hover {
+  color: var(--color-text);
+}
+
+.rf-button--text .rf-button__label,
+.rf-button--text-muted .rf-button__label {
+  position: relative;
+}
+
+.rf-button--text .rf-button__label::after,
+.rf-button--text-muted .rf-button__label::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -0.3rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.rf-button--text:hover .rf-button__label::after,
+.rf-button--text-muted:hover .rf-button__label::after {
+  transform: scaleX(1);
+}
+
+.rf-button:hover .rf-button__icon--arrow {
+  transform: translateX(0.2rem);
+}
+
+.rf-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.rf-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rf-button,
+  .rf-button::before,
+  .rf-button__icon,
+  .rf-button__label::after {
+    transition: none;
+  }
+}

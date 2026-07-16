@@ -32,9 +32,13 @@ Kein direkter Push auf `main`. Ausschließlich via Pull Request von `dev`.
 
 GitHub-Workflow und Repo-Details: `docs/github-workflow.md`
 
+## Projektstatus
+
+`STATUS.md` ist die verbindliche Quelle für erledigte Aufgaben, offene Punkte, Blocker und das nächste Arbeitspaket. Nach jedem abgeschlossenen Arbeitspaket aktualisieren.
+
 ---
 
-## Seiten (geplant, ~6)
+## Seiten (geplant, ~8)
 
 | Seite      | Slug          | CMS               |
 | ---------- | ------------- | ----------------- |
@@ -44,6 +48,8 @@ GitHub-Workflow und Repo-Details: `docs/github-workflow.md`
 | Events     | `/events`     | Sanity            |
 | Galerie    | `/galerie`    | Sanity (optional) |
 | Kontakt    | `/kontakt`    | —                 |
+| Impressum  | `/impressum`  | —                 |
+| Datenschutz | `/datenschutz` | —               |
 
 **Features:** CV-Download (PDF), Veranstaltungskalender, Social Media Links, Bildergalerie
 
@@ -59,6 +65,7 @@ GitHub-Workflow und Repo-Details: `docs/github-workflow.md`
 │   └── lib/             # Sanity-Client, Utilities
 ├── studio/              # Sanity Studio (embedded)
 ├── public/              # Statische Assets: Logo, Favicon, CV.pdf
+├── STATUS.md            # Verbindlicher Projektstatus und nächstes Arbeitspaket
 └── CLAUDE.md
 ```
 
@@ -76,7 +83,7 @@ GitHub-Workflow und Repo-Details: `docs/github-workflow.md`
 Details in `.impeccable.md`. Kurzfassung:
 
 - Theme: **Light-first** mit dunklen Kontrastsektionen; keine manuelle Umschaltung, keine gespeicherte User-Präferenz
-- Fonts: **IBM Plex Sans** (H1–H6, UI) + **IBM Plex Mono Regular** (Body/Text)
+- Fonts: **IBM Plex Sans** (H1–H6, UI und Fließtext); **IBM Plex Mono** nur optional für technische Metadaten
 - `#77B1E1` brand-blue · `#DA4378` brand-red · `#E2ECF3` brand-light · `#212137` brand-dark
 - Alle Design Tokens als CSS Custom Properties in `src/styles/tokens.css`
 
@@ -119,6 +126,7 @@ Details in `.impeccable.md`. Kurzfassung:
 
 ## Offene Punkte
 
+- Vollständiger und aktueller Stand: `STATUS.md`
 - Seitenstruktur und Sektionen noch nicht vollständig definiert
 - Member-Bereich (Login/Freebies): noch in Klärung mit Kunde
 - Kontaktformular: **Resend** via Astro API Endpoint (Cloudflare Workers Adapter) — DSGVO-Checkbox Pflicht

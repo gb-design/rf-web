@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageIntro from "../components/PageIntro.astro";
 ---
-<BaseLayout title="Leistungen — Dr. René H. Fortelny">
-  <main>
-    <h1>Leistungen</h1>
-  </main>
+<BaseLayout
+  title="Leistungen | Hernien- & Viszeralchirurgie Wien"
+  description="Behandlungsschwerpunkte von Dr. René H. Fortelny: Hernien, Gallensteine, Reflux, Schilddrüse sowie Hämorrhoiden- und Enddarmerkrankungen."
+>
+  <PageIntro
+    eyebrow="Behandlungsschwerpunkte"
+    title="Chirurgische Beratung, die bei Ihrer Diagnose beginnt."
+    description="Am Anfang stehen das persönliche Gespräch, eine klinische Untersuchung und die sorgfältige Bewertung Ihrer Befunde."
+  />
 </BaseLayout>

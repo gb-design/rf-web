@@ -112,7 +112,7 @@ Alle CSS Custom Properties aus `.impeccable.md`, strukturiert in vier Gruppen:
 ```css
 :root {
   --font-display: "IBM Plex Sans", system-ui, sans-serif;
-  --font-body:    "IBM Plex Serif", Georgia, serif;
+  --font-body:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 
   --text-h1:    clamp(2.75rem, 5.5vw, 5rem);
   --text-h2:    clamp(1.75rem, 3.5vw, 2.75rem);
@@ -146,7 +146,7 @@ Alle CSS Custom Properties aus `.impeccable.md`, strukturiert in vier Gruppen:
 
 ```css
 @import "./tokens.css";
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,500;1,400&display=swap");
+/* IBM Plex Sans und IBM Plex Mono werden lokal aus public/fonts geladen. */
 
 *, *::before, *::after { box-sizing: border-box; }
 * { margin: 0; }

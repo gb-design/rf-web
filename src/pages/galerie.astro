@@ -1,8 +1,14 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageIntro from "../components/PageIntro.astro";
 ---
-<BaseLayout title="Galerie — Dr. René H. Fortelny">
-  <main>
-    <h1>Galerie</h1>
-  </main>
+<BaseLayout
+  title="Galerie | Dr. René H. Fortelny"
+  description="Einblicke in Ordination, medizinische Lehre, Kongresse und die fachliche Tätigkeit von Univ.-Prof. Dr. René H. Fortelny."
+>
+  <PageIntro
+    eyebrow="Einblicke"
+    title="Medizin in Praxis, Lehre und Austausch"
+    description="Ausgewählte Einblicke in die Ordination, chirurgische Fortbildung, wissenschaftliche Veranstaltungen und den internationalen fachlichen Austausch."
+  />
 </BaseLayout>

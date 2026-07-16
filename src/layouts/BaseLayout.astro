@@ -2,20 +2,38 @@
 interface Props {
   title: string;
   description?: string;
+  robots?: string;
 }
-const { title, description = "Dr. René H. Fortelny — Hernien- und Viszeral-Chirurg, Wien" } = Astro.props;
+const {
+  title,
+  description = "Dr. René H. Fortelny — Hernien- und Viszeral-Chirurg, Wien",
+  robots = "index, follow",
+} = Astro.props;
+
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 ---
 <!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    <meta name="robots" content={robots} />
+    <meta name="theme-color" content="#212137" />
+    <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/rf_logo.svg" />
   </head>
   <body>
-    <slot />
+    <div class="page-wrap">
+      <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
+      <SiteHeader />
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
   </body>
 </html>
 

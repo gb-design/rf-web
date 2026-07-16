@@ -1,32 +1,44 @@
 :root {
+  --site-viewport-min: 20rem;
+  --site-viewport-max: 90rem;
+  --site-column-count: 12;
+  --site-max-width: 80rem;
+  --site-margin: clamp(1.25rem, 0.35rem + 3vw, 4rem);
+  --site-gutter: clamp(1rem, 0.72rem + 0.9vw, 2rem);
+
   --color-bg:           oklch(0.97 0.005 220);
   --color-surface:      oklch(0.99 0.003 220);
   --color-surface-tint: oklch(0.93 0.025 220);
 
   --color-text:         oklch(0.17 0.025 265);
-  --color-text-muted:   oklch(0.5 0.015 240);
-  --color-text-subtle:  oklch(0.68 0.01 230);
+  --color-text-muted:   oklch(0.4 0.015 240);
+  --color-text-subtle:  oklch(0.52 0.01 230);
 
   --color-border:       oklch(0.88 0.015 220);
   --color-border-light: oklch(0.93 0.008 220);
+  --color-border-strong: oklch(0.72 0.025 225);
 
   --color-primary:      oklch(0.72 0.09 220);
   --color-primary-deep: oklch(0.62 0.1 222);
   --color-primary-bg:   oklch(0.93 0.025 220);
+  --color-primary-strong: oklch(0.5 0.14 221);
+  --color-primary-strong-hover: oklch(0.44 0.14 221);
+  --color-button-text: oklch(0.98 0.005 220);
 
   --color-accent:       oklch(0.54 0.19 352);
   --color-accent-deep:  oklch(0.45 0.18 350);
   --color-accent-bg:    oklch(0.94 0.04 352);
 
   --font-display: "IBM Plex Sans", system-ui, sans-serif;
-  --font-body:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  --font-body:    "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 
-  --text-h1:    clamp(2.75rem, 5.5vw, 5rem);
-  --text-h2:    clamp(1.75rem, 3.5vw, 2.75rem);
-  --text-h3:    clamp(1rem, 1.8vw, 1.2rem);
-  --text-body:  1rem;
-  --text-label: 0.8125rem;
-  --text-caption: 0.875rem;
+  --text-h1:    clamp(3rem, 1.8rem + 4vw, 5.5rem);
+  --text-h2:    clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  --text-h3:    clamp(1.125rem, 1rem + 0.65vw, 1.375rem);
+  --text-body:  clamp(1rem, 0.98rem + 0.08vw, 1.0625rem);
+  --text-label: 0.875rem;
+  --text-caption: 1rem;
 
   --space-1:  4px;
   --space-2:  8px;
@@ -38,6 +50,19 @@
   --space-16: 64px;
   --space-24: 96px;
   --space-32: 128px;
+
+  --container-max: var(--site-max-width);
+  --page-gutter: var(--site-margin);
+  --header-height: 5.5rem;
+
+  --section-space: clamp(6rem, 4.6rem + 4.5vw, 8rem);
+  --content-space: clamp(3rem, 2.2rem + 2.5vw, 4.5rem);
+
+  --radius-sm: 0.25rem;
+  --radius-pill: 999px;
+
+  --transition-fast: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-medium: 320ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 [data-section-theme="dark"] {
@@ -51,12 +76,22 @@
 
   --color-border:       oklch(0.3 0.02 260);
   --color-border-light: oklch(0.25 0.018 265);
+  --color-border-strong: oklch(0.42 0.025 255);
 
   --color-primary:      oklch(0.76 0.09 220);
   --color-primary-deep: oklch(0.65 0.1 222);
   --color-primary-bg:   oklch(0.25 0.035 240);
+  --color-primary-strong: oklch(0.76 0.09 220);
+  --color-primary-strong-hover: oklch(0.82 0.08 220);
+  --color-button-text: oklch(0.17 0.025 265);
 
   --color-accent:       oklch(0.65 0.18 352);
   --color-accent-deep:  oklch(0.55 0.19 350);
   --color-accent-bg:    oklch(0.25 0.05 355);
+}
+
+@media (max-width: 56rem) {
+  :root {
+    --header-height: 4.75rem;
+  }
 }

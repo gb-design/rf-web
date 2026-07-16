@@ -5,6 +5,7 @@ status: active
 scope: all-agents
 reads:
   - docs/project-operating-model.md
+  - STATUS.md
 outputs:
   - selected-agent
   - standard-workflow
@@ -63,6 +64,7 @@ Diese Agentenstruktur ist die operative Rollenverteilung fuer das Projekt. Jeder
 Wenn ein Agent eine dauerhafte Entscheidung trifft, muss sie in einer passenden Datei dokumentiert werden:
 
 - Projektsteuerung: `docs/project-operating-model.md`
+- Operativer Fortschritt, Blocker und naechstes Arbeitspaket: `STATUS.md`
 - Agentenrolle: `docs/agents/*.md`
 - Content: `docs/content/*.md`
 - Security/Privacy: spaeter `docs/security/*.md`

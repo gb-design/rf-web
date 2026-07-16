@@ -4,10 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Button Variationen — Dr. Fortelny</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: "IBM Plex Sans";
+      src: url("../public/fonts/IBMPlexSans-Regular.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "IBM Plex Sans";
+      src: url("../public/fonts/IBMPlexSans-SemiBold.woff2") format("woff2");
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -39,7 +52,7 @@
 
     header .eyebrow {
       font-size: 0.6875rem;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.18em;
       text-transform: uppercase;
       color: var(--muted);
@@ -48,7 +61,7 @@
 
     header h1 {
       font-size: 1.125rem;
-      font-weight: 300;
+      font-weight: 400;
       letter-spacing: 0.04em;
     }
 
@@ -66,7 +79,7 @@
 
     .panel-label {
       font-size: 0.6875rem;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       color: var(--muted);
@@ -95,7 +108,7 @@
       align-items: center;
       justify-content: center;
       font-family: var(--font);
-      font-weight: 500;
+      font-weight: 600;
       font-size: 0.8125rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;

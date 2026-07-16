@@ -1,8 +1,937 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ButtonLink from "../components/ButtonLink.astro";
+import Container from "../components/Container.astro";
+import Grid from "../components/Grid.astro";
+import TreatmentTabs from "../components/TreatmentTabs.astro";
+
+const schwerpunkte = [
+  {
+    nummer: "01",
+    titel: "Leisten-, Nabel- und Narbenhernien",
+    text: "Abklärung und operative Behandlung von Brüchen der Bauchwand",
+    lottie: "/lottie/leistenbruch.json",
+  },
+  {
+    nummer: "02",
+    titel: "Gallensteinleiden",
+    text: "Beratung bei symptomatischen Gallensteinen und wiederkehrenden Beschwerden",
+    lottie: "/lottie/galle.json",
+  },
+  {
+    nummer: "03",
+    titel: "Reflux- und Zwerchfellhernien",
+    text: "Abklärung bei Sodbrennen, Rückfluss und Zwerchfellbrüchen",
+    lottie: "/lottie/reflux.json",
+  },
+  {
+    nummer: "04",
+    titel: "Schilddrüsenerkrankungen",
+    text: "Chirurgische Beratung bei operationsbedürftigen Befunden",
+    lottie: "/lottie/schilddruese.json",
+  },
+  {
+    nummer: "05",
+    titel: "Hämorrhoiden und Enddarmerkrankungen",
+    text: "Diskrete Abklärung und individuell abgestimmte Therapie",
+    lottie: "/lottie/haemo.json",
+  },
+];
+
+const prinzipien = [
+  {
+    nummer: "1",
+    titel: "Sorgfältig untersuchen",
+    text: "Beschwerden und Vorbefunde werden im Zusammenhang betrachtet.",
+  },
+  {
+    nummer: "2",
+    titel: "Verständlich entscheiden",
+    text: "Sie erhalten eine klare Empfehlung und Raum für Ihre Fragen.",
+  },
+  {
+    nummer: "3",
+    titel: "Individuell behandeln",
+    text: "Das Verfahren richtet sich nach Diagnose, Befund und persönlicher Situation.",
+  },
+];
 ---
-<BaseLayout title="Home — Dr. René H. Fortelny">
-  <main>
-    <h1>Home</h1>
-  </main>
+
+<BaseLayout
+  title="Hernien- & Viszeralchirurgie in Wien | Dr. René H. Fortelny"
+  description="Beratung und individuell geplante Behandlung bei Hernien und viszeralchirurgischen Erkrankungen in Wien. Univ.-Prof. Dr. René H. Fortelny."
+>
+  <section class="hero" data-section-theme="dark">
+    <Container class="hero__container">
+      <Grid class="hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Hernien- und Viszeralchirurgie in Wien</p>
+        <h1>Chirurgische Erfahrung. <span>Persönlich für Sie da.</span></h1>
+        <p class="hero__intro">Univ.-Prof. Dr. René H. Fortelny berät und behandelt Patientinnen und Patienten mit Hernien und ausgewählten Erkrankungen des Bauchraums. Im Mittelpunkt stehen eine sorgfältige Diagnose, ein verständliches Gespräch und ein Verfahren, das zu Ihrer persönlichen Situation passt.</p>
+        <div class="button-group">
+          <ButtonLink href="/kontakt" arrow>Termin anfragen</ButtonLink>
+          <ButtonLink href="#schwerpunkte" variant="ghost">Behandlungsschwerpunkte</ButtonLink>
+        </div>
+        <dl class="hero__facts" aria-label="Praxis auf einen Blick">
+          <div>
+            <dt>Schwerpunkt</dt>
+            <dd>Hernien- und Viszeralchirurgie</dd>
+          </div>
+          <div>
+            <dt>Ordination</dt>
+            <dd>Wien</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="hero__portrait">
+        <div class="hero__portrait-field" aria-hidden="true">
+          <svg class="hero__portrait-mark" viewBox="0 0 100 100" fill="none">
+            <path
+              d="M50 1 99 25v50L50 99 1 75V25L50 1Z"
+              stroke="currentColor"
+              stroke-width="1.5"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
+        </div>
+        <figure class="hero__portrait-figure">
+          <img
+            src="/images/temp/drfortelny_profile.png"
+            alt="Univ.-Prof. Dr. René H. Fortelny"
+            width="492"
+            height="700"
+            fetchpriority="high"
+          />
+          <figcaption>
+            <span>Univ.-Prof. Dr.</span>
+            <strong>René H. Fortelny</strong>
+          </figcaption>
+        </figure>
+      </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section services" id="schwerpunkte">
+    <Container>
+      <Grid class="section-heading">
+        <div class="section-heading__title">
+          <p class="eyebrow">Behandlungsschwerpunkte</p>
+          <h2>Womit kann ich Sie unterstützen?</h2>
+        </div>
+        <p class="section-heading__intro">Beschwerden im Bauchraum können sehr unterschiedliche Ursachen haben. Eine fundierte Empfehlung entsteht deshalb erst nach einem persönlichen Gespräch, einer klinischen Untersuchung und – falls erforderlich – ergänzender Diagnostik.</p>
+      </Grid>
+
+      <TreatmentTabs items={schwerpunkte} />
+
+      <div class="section-action">
+        <ButtonLink href="/leistungen" variant="text" arrow>Alle Leistungen im Überblick</ButtonLink>
+      </div>
+    </Container>
+  </section>
+
+  <section class="section consultation" data-section-theme="dark">
+    <Container>
+      <Grid class="consultation__intro">
+        <p class="eyebrow consultation__eyebrow">Beratung und Ablauf</p>
+        <h2 class="consultation__title">Eine gute Behandlung beginnt mit einem guten Gespräch.</h2>
+        <p class="consultation__copy">Für eine medizinische Entscheidung braucht es Zeit, Klarheit und gegenseitiges Vertrauen. Ich bespreche mit Ihnen Ihre Beschwerden, vorhandene Befunde und die möglichen nächsten Schritte. Wenn ein Eingriff sinnvoll ist, werden Nutzen, Risiken und Alternativen nachvollziehbar erklärt.</p>
+      </Grid>
+
+      <ol class="principles">
+        {prinzipien.map((prinzip) => (
+          <li>
+            <span>{prinzip.nummer}</span>
+            <div>
+              <h3>{prinzip.titel}</h3>
+              <p>{prinzip.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <ButtonLink href="/leistungen" variant="ghost" arrow>Mehr über das Erstgespräch</ButtonLink>
+    </Container>
+  </section>
+
+  <section class="section procedure">
+    <Container>
+      <Grid class="procedure__grid">
+      <div class="procedure__image">
+        <img
+          src="/images/temp/ordination-03.jpg"
+          alt="Besprechungsraum in der Ordination"
+          width="1296"
+          height="864"
+          loading="lazy"
+        />
+      </div>
+      <div class="procedure__copy">
+        <p class="eyebrow">Operative Verfahren</p>
+        <h2>So schonend wie möglich, so umfassend wie nötig.</h2>
+        <p>Viele viszeralchirurgische Eingriffe können heute minimalinvasiv, also über kleine Zugänge, durchgeführt werden. Ob dieses Vorgehen in Ihrem Fall geeignet ist, hängt von der Diagnose, möglichen Voroperationen und weiteren medizinischen Faktoren ab. Gemeinsam wird das Verfahren gewählt, das medizinisch sinnvoll und sicher ist.</p>
+        <ButtonLink href="/leistungen" variant="text" arrow>Behandlung und Ablauf ansehen</ButtonLink>
+      </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section profile">
+    <Container>
+      <Grid class="profile__grid">
+      <div class="profile__marker" aria-hidden="true">
+        {[0, 1, 2].map(() => (
+          <svg viewBox="0 0 100 100" fill="none">
+            <path
+              d="M50 1 99 25v50L50 99 1 75V25L50 1Z"
+              stroke="currentColor"
+              stroke-width="1.5"
+              vector-effect="non-scaling-stroke"
+            />
+          </svg>
+        ))}
+      </div>
+      <div class="profile__copy">
+        <p class="eyebrow">Erfahrung und Wissenschaft</p>
+        <h2>Spezialisiert auf Hernien- und Viszeralchirurgie</h2>
+        <p>Langjährige klinische Erfahrung, wissenschaftliche Arbeit und internationale Vernetzung prägen die Tätigkeit von Univ.-Prof. Dr. René H. Fortelny. Ein besonderer Schwerpunkt liegt auf der Behandlung komplexer Bauchwandhernien und der Weiterentwicklung chirurgischer Verfahren.</p>
+        <ButtonLink href="/profil" variant="text" arrow>Profil und Werdegang</ButtonLink>
+      </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section events">
+    <Container>
+      <Grid class="events__heading">
+        <div class="events__title">
+          <p class="eyebrow">Für medizinisches Fachpublikum</p>
+          <h2>Kongresse, Kurse und Fortbildungen</h2>
+        </div>
+        <p class="events__intro">Aktuelle Termine zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiven Verfahren – national und international.</p>
+      </Grid>
+
+      <Grid class="events__empty">
+        <p class="events__status"><span></span> Termine werden laufend ergänzt</p>
+        <p class="events__empty-copy">Der Veranstaltungskalender wird derzeit vorbereitet. Künftige Termine finden Sie gesammelt im Eventbereich.</p>
+        <ButtonLink href="/events" variant="text" arrow class="events__action">Zum Eventbereich</ButtonLink>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="contact-cta" data-section-theme="dark">
+    <Container>
+      <Grid class="contact-cta__grid">
+      <div class="contact-cta__inner">
+      <p class="eyebrow">Persönliche Beratung</p>
+      <h2>Sie möchten einen Termin vereinbaren?</h2>
+      <p>Für Terminabsprachen und organisatorische Fragen erreichen Sie die Ordination über das Kontaktformular. Medizinische Notfälle können über die Website nicht betreut werden.</p>
+      <div class="button-group">
+        <ButtonLink href="/kontakt" arrow>Termin anfragen</ButtonLink>
+        <ButtonLink href="/kontakt" variant="ghost">Ordination und Anreise</ButtonLink>
+      </div>
+      </div>
+      </Grid>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  .eyebrow {
+    color: var(--color-primary-strong);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  [data-section-theme="dark"] .eyebrow {
+    color: var(--color-primary);
+  }
+
+  h1,
+  h2 {
+    font-weight: 400;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  h2 {
+    max-width: 18ch;
+    font-size: var(--text-h2);
+    line-height: 1.08;
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    line-height: 1.25;
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    color: var(--color-text);
+    background:
+      linear-gradient(115deg, color-mix(in oklch, var(--color-primary-bg) 18%, transparent), transparent 38%),
+      var(--color-bg);
+    overflow: hidden;
+  }
+
+  :global(.hero__container) {
+    min-height: inherit;
+  }
+
+  :global(.hero__grid) {
+    min-height: inherit;
+    --grid-row-gap: 0;
+  }
+
+  .hero__copy {
+    min-width: 0;
+    grid-column: 1 / span 6;
+    padding-block: clamp(var(--space-16), 7vw, var(--space-24));
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .hero h1 {
+    max-width: 10.75ch;
+    margin-block: var(--space-6);
+    font-size: clamp(4rem, 6.2vw, 6.25rem);
+    line-height: 0.92;
+    letter-spacing: -0.056em;
+  }
+
+  .hero h1 span {
+    display: block;
+    margin-top: var(--space-2);
+    color: var(--color-primary);
+  }
+
+  .hero__intro {
+    max-width: 56ch;
+    color: var(--color-text-muted);
+    font-size: clamp(1rem, 0.95rem + 0.18vw, 1.125rem);
+    line-height: 1.75;
+  }
+
+  .hero .eyebrow {
+    font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
+  }
+
+  .hero .button-group {
+    margin-top: var(--space-8);
+  }
+
+  .hero__facts {
+    width: min(100%, 31rem);
+    margin-top: clamp(var(--space-8), 5vh, var(--space-12));
+    padding-top: var(--space-4);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .hero__facts div {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .hero__facts dt {
+    color: var(--color-text-subtle);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero__facts dd {
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 0.94rem + 0.2vw, 1.125rem);
+    line-height: 1.4;
+  }
+
+  .hero__portrait {
+    height: 100svh;
+    min-height: 0;
+    padding-block: clamp(var(--space-8), 5vh, var(--space-16));
+    position: relative;
+    align-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    isolation: isolate;
+    grid-column: 7 / -1;
+  }
+
+  .hero__portrait-field {
+    width: min(96%, 58.9svh, 32.9rem);
+    height: auto;
+    aspect-ratio: 0.8660254 / 1;
+    position: absolute;
+    inset-inline-start: 50%;
+    inset-block-start: calc(50% - var(--header-height));
+    background: var(--color-surface);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    transform: translate(-50%, -50%);
+  }
+
+  .hero__portrait-mark {
+    width: clamp(8rem, 12vw, 11rem);
+    aspect-ratio: 1;
+    position: absolute;
+    inset-block-start: clamp(3rem, 8vw, 7rem);
+    inset-inline-end: -8%;
+    color: color-mix(in oklch, var(--color-primary) 78%, transparent);
+    overflow: visible;
+  }
+
+  .hero__portrait-figure {
+    width: min(94%, 31rem);
+    position: relative;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    transform: translateY(calc(-1 * var(--header-height)));
+  }
+
+  .hero__portrait img {
+    width: min(100%, 29rem);
+    height: auto;
+    filter: saturate(0.84) contrast(1.035);
+  }
+
+  .hero__portrait figcaption {
+    width: min(100%, 22rem);
+    padding-top: var(--space-3);
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    display: grid;
+    gap: var(--space-1);
+    border-top: 1px solid color-mix(in oklch, var(--color-primary) 62%, transparent);
+    font-family: var(--font-display);
+    text-align: center;
+    transform: translateX(-50%);
+  }
+
+  .hero__portrait figcaption span {
+    color: var(--color-text-muted);
+    font-size: clamp(0.75rem, 0.7rem + 0.18vw, 0.875rem);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero__portrait figcaption strong {
+    color: var(--color-primary);
+    font-size: clamp(1.125rem, 1rem + 0.45vw, 1.375rem);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  :global(.section-heading) {
+    align-items: end;
+  }
+
+  .section-heading__title {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .section-heading__title h2 {
+    max-width: 16ch;
+    font-size: clamp(2.5rem, 4.5vw, 3.75rem);
+    line-height: 1.02;
+  }
+
+  .section-heading__intro,
+  .procedure__copy > p,
+  .profile__copy > p,
+  .events__intro,
+  .contact-cta__inner > p:not(.eyebrow) {
+    color: var(--color-text-muted);
+  }
+
+  .section-heading__intro {
+    grid-column: 7 / span 6;
+    max-width: 55ch;
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  :global(.services .treatment-tabs) {
+    margin-top: clamp(var(--space-16), 6vw, var(--space-24));
+  }
+
+  .section-action {
+    margin-top: var(--space-8);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .consultation {
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  :global(.consultation__intro) {
+    align-items: start;
+  }
+
+  .consultation__eyebrow {
+    grid-column: 1 / span 2;
+  }
+
+  .consultation__title {
+    grid-column: 3 / span 5;
+  }
+
+  .consultation__copy {
+    grid-column: 9 / -1;
+    color: var(--color-text-muted);
+  }
+
+  .principles {
+    margin-block: clamp(var(--space-16), 7vw, var(--space-24)) var(--space-8);
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    list-style: none;
+    border-block: 1px solid var(--color-border);
+  }
+
+  .principles li {
+    min-height: 13rem;
+    padding: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-8);
+  }
+
+  .principles li + li {
+    border-inline-start: 1px solid var(--color-border);
+  }
+
+  .principles li > span {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    color: var(--color-bg);
+    background: var(--color-primary);
+    border-radius: 50%;
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+  }
+
+  .principles li div {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .principles p {
+    color: var(--color-text-muted);
+    font-size: var(--text-caption);
+  }
+
+  :global(.procedure__grid) {
+    align-items: center;
+  }
+
+  .procedure__image {
+    width: 100%;
+    min-width: 0;
+    min-height: 34rem;
+    overflow: hidden;
+    grid-column: 1 / span 7;
+  }
+
+  .procedure__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 55%;
+  }
+
+  .procedure__copy {
+    grid-column: 9 / -1;
+    display: grid;
+    gap: var(--space-6);
+    align-items: start;
+  }
+
+  .procedure__copy :global(.rf-button) {
+    margin-top: var(--space-2);
+    justify-self: start;
+  }
+
+  .profile {
+    padding-block-start: 0;
+  }
+
+  :global(.profile__grid) {
+    min-height: 34rem;
+    padding: clamp(var(--space-8), 6vw, var(--space-16));
+    align-items: center;
+    background: var(--color-surface-tint);
+  }
+
+  .profile__marker {
+    height: 18rem;
+    position: relative;
+    grid-column: 1 / span 4;
+    color: var(--color-primary-strong);
+  }
+
+  .profile__marker svg {
+    width: 10rem;
+    aspect-ratio: 1;
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    overflow: visible;
+    transform: translate(-50%, -50%);
+  }
+
+  .profile__marker svg:nth-child(2) {
+    transform: translate(-82%, -50%);
+  }
+
+  .profile__marker svg:nth-child(3) {
+    transform: translate(-18%, -50%);
+  }
+
+  .profile__copy {
+    grid-column: 6 / -1;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .profile__copy :global(.rf-button) {
+    justify-self: start;
+  }
+
+  .events {
+    padding-block-start: 0;
+  }
+
+  :global(.events__heading) {
+    align-items: end;
+  }
+
+  .events__title {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .events__intro {
+    grid-column: 8 / -1;
+  }
+
+  :global(.events__empty) {
+    margin-top: var(--space-16);
+    padding-block: var(--space-8);
+    align-items: center;
+    border-block: 1px solid var(--color-border);
+  }
+
+  .events__status {
+    grid-column: 1 / span 3;
+  }
+
+  .events__empty-copy {
+    grid-column: 4 / span 5;
+    color: var(--color-text-muted);
+    font-size: var(--text-caption);
+  }
+
+  :global(.events__action) {
+    grid-column: 10 / -1;
+    justify-self: end;
+  }
+
+  .events__status {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .events__status span {
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--color-accent);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .contact-cta {
+    padding-block: clamp(var(--space-24), 11vw, var(--space-32));
+    color: var(--color-text);
+    background: var(--color-bg);
+  }
+
+  .contact-cta__inner {
+    min-width: 0;
+    grid-column: 3 / span 8;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .contact-cta h2 {
+    max-width: 17ch;
+    margin-block: var(--space-6);
+    font-size: clamp(2.25rem, 5vw, 4rem);
+  }
+
+  .contact-cta__inner > p:not(.eyebrow) {
+    max-width: 61ch;
+  }
+
+  .contact-cta .button-group {
+    margin-top: var(--space-8);
+    justify-content: center;
+  }
+
+  @media (max-width: 64rem) {
+    .hero__copy {
+      grid-column: 1 / span 7;
+    }
+
+    .hero__portrait {
+      grid-column: 8 / -1;
+    }
+
+    .hero h1 {
+      max-width: 100%;
+      font-size: clamp(3.75rem, 6.9vw, 5.25rem);
+    }
+
+    .hero .button-group {
+      gap: var(--space-2);
+    }
+
+    .consultation__eyebrow {
+      grid-column: 1 / -1;
+    }
+
+    .consultation__title {
+      grid-column: 1 / span 6;
+    }
+
+    .consultation__copy {
+      grid-column: 7 / -1;
+    }
+
+    .procedure__image {
+      grid-column: 1 / span 7;
+    }
+
+    .procedure__copy {
+      grid-column: 8 / -1;
+    }
+
+    .events__status {
+      grid-column: 1 / span 5;
+    }
+
+    .events__empty-copy {
+      grid-column: 6 / -1;
+    }
+
+    :global(.events__action) {
+      grid-column: 6 / -1;
+      justify-self: start;
+    }
+  }
+
+  @media (min-width: 48.0625rem) and (max-height: 50rem) {
+    .hero__copy {
+      padding-block: var(--space-8);
+    }
+
+    .hero h1 {
+      margin-block: var(--space-4);
+      font-size: clamp(3.25rem, 6vw, 4.5rem);
+    }
+
+    .hero__intro {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .hero .button-group {
+      margin-top: var(--space-6);
+    }
+
+    .hero__facts {
+      margin-top: var(--space-6);
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .hero__copy,
+    .hero__portrait {
+      grid-column: 1 / -1;
+    }
+
+    .hero h1 {
+      max-width: 100%;
+      font-size: clamp(3.75rem, 8vw, 5rem);
+      line-height: 0.94;
+    }
+
+    .hero__copy {
+      padding-block: var(--space-16) var(--space-8);
+    }
+
+    .hero__portrait {
+      height: auto;
+      min-height: 30rem;
+      padding-block: var(--space-8) calc(var(--space-8) + 5rem);
+    }
+
+    .hero__portrait-field {
+      inset-block-start: 50%;
+    }
+
+    .hero__portrait-figure {
+      transform: none;
+    }
+
+    .hero__portrait img {
+      width: min(88%, 25rem);
+    }
+
+    :global(.section-heading) {
+      align-items: start;
+    }
+
+    .section-heading__title,
+    .section-heading__intro,
+    .consultation__eyebrow,
+    .consultation__title,
+    .consultation__copy,
+    .procedure__image,
+    .procedure__copy,
+    .profile__marker,
+    .profile__copy,
+    .events__title,
+    .events__intro,
+    .events__status,
+    .events__empty-copy,
+    :global(.events__action),
+    .contact-cta__inner {
+      grid-column: 1 / -1;
+    }
+
+    .section-heading__title {
+      gap: var(--space-4);
+    }
+
+    .principles {
+      grid-template-columns: 1fr;
+    }
+
+    .principles li {
+      min-height: auto;
+      padding-inline: 0;
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+
+    .principles li + li {
+      border-inline-start: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .procedure__image {
+      min-height: 22rem;
+    }
+
+    :global(.profile__grid) {
+      gap: var(--space-6);
+    }
+
+    .profile__marker {
+      height: 13rem;
+    }
+
+    .profile__marker svg {
+      width: 7rem;
+    }
+
+  }
+
+  @media (max-width: 34rem) {
+    .hero h1 {
+      max-width: 10.5ch;
+      font-size: clamp(3rem, 14.2vw, 4.25rem);
+    }
+
+    .hero__intro {
+      font-size: 0.9375rem;
+    }
+
+    .hero__facts {
+      gap: var(--space-4);
+    }
+
+    .button-group {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .button-group :global(.rf-button) {
+      width: 100%;
+      max-width: 100%;
+      padding-inline: var(--space-4);
+      white-space: normal;
+      text-align: center;
+    }
+
+    .consultation :global(.rf-button),
+    .procedure__copy :global(.rf-button) {
+      max-width: 100%;
+      padding-inline: var(--space-4);
+      white-space: normal;
+      text-align: center;
+    }
+
+    .section-action {
+      justify-content: flex-start;
+    }
+  }
+</style>

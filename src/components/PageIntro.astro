@@ -1,0 +1,97 @@
+---
+import Container from "./Container.astro";
+import Grid from "./Grid.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+}
+
+const { eyebrow, title, description } = Astro.props;
+---
+
+<section class="page-intro">
+  <Container>
+    <Grid class="page-intro__grid">
+      <p class="page-intro__eyebrow">{eyebrow}</p>
+      <div class="page-intro__copy">
+        <h1>{title}</h1>
+        <p>{description}</p>
+      </div>
+    </Grid>
+  </Container>
+</section>
+
+<style>
+  .page-intro {
+    min-height: clamp(30rem, 68vh, 47rem);
+    padding-block: clamp(var(--space-16), 10vw, var(--space-32));
+    display: flex;
+    align-items: flex-end;
+    background: var(--color-bg);
+  }
+
+  :global(.page-intro__grid) {
+    align-items: start;
+  }
+
+  .page-intro__eyebrow {
+    grid-column: 1 / span 3;
+    padding-top: 0.55rem;
+    color: var(--color-primary-strong);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .page-intro__copy {
+    grid-column: 4 / -1;
+    display: grid;
+    gap: clamp(var(--space-6), 3vw, var(--space-8));
+  }
+
+  h1 {
+    width: 100%;
+    max-width: 14ch;
+    min-width: 0;
+    font-size: var(--text-h1);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .page-intro__copy p {
+    max-width: 62ch;
+    color: var(--color-text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+  }
+
+  @media (max-width: 42rem) {
+    .page-intro {
+      min-height: clamp(27rem, 68svh, 38rem);
+      background: var(--color-bg);
+    }
+
+    .page-intro__eyebrow,
+    .page-intro__copy {
+      grid-column: 1 / -1;
+    }
+
+    :global(.page-intro__grid) {
+      row-gap: var(--space-6);
+    }
+
+    .page-intro__eyebrow {
+      padding-top: 0;
+    }
+
+    h1 {
+      max-width: 100%;
+    }
+  }
+</style>

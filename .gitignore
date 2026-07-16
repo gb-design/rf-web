@@ -10,6 +10,7 @@ node_modules/
 # logs
 npm-debug.log*
 .playwright-cli/
+output/
 
 # environment variables
 .env

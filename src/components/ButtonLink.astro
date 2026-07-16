@@ -1,0 +1,44 @@
+---
+import ButtonIcon from "./ButtonIcon.astro";
+
+interface Props {
+  href: string;
+  variant?: "filled" | "ghost" | "text" | "text-muted";
+  size?: "default" | "compact";
+  arrow?: boolean;
+  icon?: "arrow" | "calendar";
+  iconPosition?: "start" | "end";
+  target?: string;
+  rel?: string;
+  download?: boolean | string;
+  class?: string;
+}
+
+const {
+  href,
+  variant = "filled",
+  size = "default",
+  arrow = false,
+  icon,
+  iconPosition = "end",
+  target,
+  rel,
+  download,
+  class: className,
+} = Astro.props;
+
+const resolvedIcon = icon ?? (arrow ? "arrow" : undefined);
+const resolvedRel = rel ?? (target === "_blank" ? "noopener noreferrer" : undefined);
+---
+
+<a
+  class:list={["rf-button", `rf-button--${variant}`, `rf-button--${size}`, className]}
+  href={href}
+  target={target}
+  rel={resolvedRel}
+  download={download}
+>
+  {resolvedIcon && iconPosition === "start" && <ButtonIcon name={resolvedIcon} />}
+  <span class="rf-button__label"><slot /></span>
+  {resolvedIcon && iconPosition === "end" && <ButtonIcon name={resolvedIcon} />}
+</a>

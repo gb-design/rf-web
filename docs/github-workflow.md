@@ -49,10 +49,11 @@ Erwartung:
 1. Neue Arbeit auf `dev` oder einem Feature-Branch starten.
 2. Aenderungen lokal pruefen.
 3. Mindestens `npm run build` ausfuehren, bevor gepusht wird.
-4. Feature-Branch in `dev` mergen oder per PR nach `dev` fuehren.
-5. Cloudflare Preview fuer `dev` pruefen.
-6. Release per Pull Request `dev` -> `main`.
-7. Nach Production-Deployment Smoke Test durchfuehren.
+4. `STATUS.md` mit Fortschritt, Blockern und naechstem Arbeitspaket aktualisieren.
+5. Feature-Branch in `dev` mergen oder per PR nach `dev` fuehren.
+6. Cloudflare Preview fuer `dev` pruefen.
+7. Release per Pull Request `dev` -> `main`.
+8. Nach Production-Deployment Smoke Test durchfuehren.
 
 ## Pull Requests
 
@@ -61,6 +62,7 @@ PRs sollen knapp, aber pruefbar sein:
 - Was wurde geaendert?
 - Welche Seiten oder Komponenten sind betroffen?
 - Wurde `npm run build` erfolgreich ausgefuehrt?
+- Wurde `STATUS.md` aktualisiert?
 - Gibt es Content-, Legal-, DSGVO- oder Asset-Fragen?
 - Ist ein Cloudflare Preview-Link vorhanden, sobald Cloudflare verbunden ist?
 

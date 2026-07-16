@@ -1,0 +1,297 @@
+---
+import ButtonLink from "./ButtonLink.astro";
+import Container from "./Container.astro";
+import Grid from "./Grid.astro";
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+const navigation = [
+  { href: "/profil", label: "Profil" },
+  { href: "/leistungen", label: "Leistungen" },
+  { href: "/events", label: "Events" },
+  { href: "/galerie", label: "Galerie" },
+];
+
+const isActive = (href: string) => currentPath === href;
+---
+
+<header class="site-header" data-section-theme="dark">
+  <Container class="site-header__inner">
+    <Grid class="site-header__grid">
+      <a class="brand" href="/" aria-label="Dr. René H. Fortelny – Startseite">
+        <img src="/rf_logo.svg" alt="Dr. René H. Fortelny" width="217" height="58" />
+      </a>
+
+      <nav class="desktop-nav" aria-label="Hauptnavigation">
+        <ul>
+          {navigation.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <ButtonLink href="/kontakt" size="compact">Termin anfragen</ButtonLink>
+      </nav>
+
+      <details class="mobile-nav">
+        <summary aria-label="Navigation ein- oder ausblenden">
+          <span class="mobile-nav__label">Menü</span>
+          <span class="mobile-nav__icon" aria-hidden="true"><span></span><span></span></span>
+        </summary>
+        <div class="mobile-nav__panel">
+          <nav aria-label="Mobile Hauptnavigation">
+            <ul>
+              {navigation.map((item) => (
+                <li>
+                  <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+              <li><a href="/kontakt" aria-current={isActive("/kontakt") ? "page" : undefined}>Kontakt</a></li>
+            </ul>
+          </nav>
+          <p>Terminvereinbarung und organisatorische Fragen</p>
+          <ButtonLink href="/kontakt" arrow>Termin anfragen</ButtonLink>
+        </div>
+      </details>
+    </Grid>
+  </Container>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 50;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  :global(.site-header__inner) {
+    min-height: var(--header-height);
+  }
+
+  :global(.site-header__grid) {
+    min-height: var(--header-height);
+    align-items: center;
+  }
+
+  :global(.brand) {
+    grid-column: 1 / span 4;
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+  }
+
+  :global(.brand img) {
+    width: clamp(10rem, 17vw, 13.5625rem);
+    height: auto;
+  }
+
+  .desktop-nav {
+    grid-column: 5 / -1;
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--space-6), 3vw, var(--space-12));
+  }
+
+  .desktop-nav ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(var(--space-4), 2vw, var(--space-8));
+    list-style: none;
+    padding: 0;
+  }
+
+  .desktop-nav ul a {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    color: var(--color-text-muted);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .desktop-nav ul a::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0.35rem;
+    height: 1px;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--transition-fast);
+  }
+
+  .desktop-nav ul a:hover,
+  .desktop-nav ul a[aria-current="page"] {
+    color: var(--color-text);
+  }
+
+  .desktop-nav ul a:hover::after,
+  .desktop-nav ul a[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+
+  @media (max-width: 56rem) {
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-nav {
+      grid-column: 10 / -1;
+      justify-self: end;
+      display: block;
+    }
+
+    .mobile-nav summary {
+      position: relative;
+      z-index: 2;
+      min-width: 4.75rem;
+      min-height: 2.75rem;
+      padding-inline: var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-size: var(--text-label);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .mobile-nav summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .mobile-nav__icon {
+      width: 1.25rem;
+      height: 0.875rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mobile-nav__icon span {
+      width: 100%;
+      height: 1px;
+      display: block;
+      background: currentColor;
+      transform-origin: center;
+      transition: transform var(--transition-fast);
+    }
+
+    .mobile-nav[open] .mobile-nav__icon span:first-child {
+      transform: translateY(0.40625rem) rotate(45deg);
+    }
+
+    .mobile-nav[open] .mobile-nav__icon span:last-child {
+      transform: translateY(-0.40625rem) rotate(-45deg);
+    }
+
+    .mobile-nav__panel {
+      position: absolute;
+      inset-inline: 0;
+      inset-block-start: 100%;
+      min-height: calc(100svh - var(--header-height));
+      padding: clamp(var(--space-8), 8vw, var(--space-16)) var(--page-gutter);
+      color: var(--color-text);
+      background: var(--color-bg);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .mobile-nav__panel ul {
+      display: grid;
+      list-style: none;
+      padding: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .mobile-nav__panel li {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .mobile-nav__panel nav a {
+      min-height: 3.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--color-text);
+      font-family: var(--font-display);
+      font-size: clamp(1.25rem, 6vw, 1.75rem);
+      font-weight: 400;
+      text-decoration: none;
+    }
+
+    .mobile-nav__panel nav a::after {
+      content: "→";
+      color: var(--color-primary);
+      font-size: 1rem;
+    }
+
+    .mobile-nav__panel nav a[aria-current="page"] {
+      color: var(--color-primary);
+    }
+
+    .mobile-nav__panel p {
+      max-width: 32ch;
+      margin-block: var(--space-8) var(--space-4);
+      color: var(--color-text-muted);
+      font-size: var(--text-caption);
+    }
+  }
+
+  @media (max-width: 56rem) {
+    :global(body:has(.mobile-nav[open])) {
+      overflow: hidden;
+    }
+  }
+
+  @media (max-width: 25rem) {
+    .mobile-nav__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .mobile-nav summary {
+      min-width: 2.75rem;
+      padding-inline: var(--space-2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .desktop-nav ul a,
+    .desktop-nav ul a::after,
+    .mobile-nav__icon span {
+      transition: none;
+    }
+  }
+</style>

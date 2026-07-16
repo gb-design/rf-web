@@ -1,0 +1,39 @@
+---
+import ButtonIcon from "./ButtonIcon.astro";
+
+interface Props {
+  type?: "button" | "submit" | "reset";
+  variant?: "filled" | "ghost" | "text" | "text-muted";
+  size?: "default" | "compact";
+  icon?: "arrow" | "calendar";
+  iconPosition?: "start" | "end";
+  disabled?: boolean;
+  name?: string;
+  value?: string;
+  class?: string;
+}
+
+const {
+  type = "button",
+  variant = "filled",
+  size = "default",
+  icon,
+  iconPosition = "end",
+  disabled = false,
+  name,
+  value,
+  class: className,
+} = Astro.props;
+---
+
+<button
+  class:list={["rf-button", `rf-button--${variant}`, `rf-button--${size}`, className]}
+  type={type}
+  disabled={disabled}
+  name={name}
+  value={value}
+>
+  {icon && iconPosition === "start" && <ButtonIcon name={icon} />}
+  <span class="rf-button__label"><slot /></span>
+  {icon && iconPosition === "end" && <ButtonIcon name={icon} />}
+</button>
