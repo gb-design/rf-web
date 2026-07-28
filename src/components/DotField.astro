@@ -1,0 +1,424 @@
+---
+interface Props {
+  dotRadius?: number;
+  dotSpacing?: number;
+  cursorRadius?: number;
+  bulgeStrength?: number;
+  glowRadius?: number;
+  sparkle?: boolean;
+  waveAmplitude?: number;
+}
+
+const {
+  dotRadius = 1.5,
+  dotSpacing = 14,
+  cursorRadius = 700,
+  bulgeStrength = 40,
+  glowRadius = 160,
+  sparkle = false,
+  waveAmplitude = 0,
+} = Astro.props as Props;
+
+const glowId = `dot-field-glow-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  class="dot-field"
+  data-dot-field
+  data-dot-radius={dotRadius}
+  data-dot-spacing={dotSpacing}
+  data-cursor-radius={cursorRadius}
+  data-bulge-strength={bulgeStrength}
+  data-sparkle={sparkle}
+  data-wave-amplitude={waveAmplitude}
+  aria-hidden="true"
+>
+  <canvas class="dot-field__canvas" data-dot-field-canvas></canvas>
+  <svg class="dot-field__glow">
+    <defs>
+      <radialGradient id={glowId}>
+        <stop class="dot-field__glow-center" offset="0%"></stop>
+        <stop class="dot-field__glow-edge" offset="100%"></stop>
+      </radialGradient>
+    </defs>
+    <circle
+      data-dot-field-glow
+      cx="-9999"
+      cy="-9999"
+      r={glowRadius}
+      fill={`url(#${glowId})`}
+    ></circle>
+  </svg>
+  <span class="dot-field__color dot-field__color--from" data-dot-field-color-from></span>
+  <span class="dot-field__color dot-field__color--to" data-dot-field-color-to></span>
+</div>
+
+<script>
+  interface Dot {
+    anchorX: number;
+    anchorY: number;
+    displayX: number;
+    displayY: number;
+  }
+
+  interface PointerState {
+    x: number;
+    y: number;
+    previousX: number;
+    previousY: number;
+    speed: number;
+    inside: boolean;
+  }
+
+  const TWO_PI = Math.PI * 2;
+  const roots = document.querySelectorAll<HTMLElement>("[data-dot-field]:not([data-dot-field-ready])");
+
+  roots.forEach((root) => {
+    root.dataset.dotFieldReady = "true";
+
+    const canvas = root.querySelector<HTMLCanvasElement>("[data-dot-field-canvas]");
+    const glow = root.querySelector<SVGCircleElement>("[data-dot-field-glow]");
+    const fromColor = root.querySelector<HTMLElement>("[data-dot-field-color-from]");
+    const toColor = root.querySelector<HTMLElement>("[data-dot-field-color-to]");
+    const interactionArea = root.closest<HTMLElement>(".hero") ?? root.parentElement;
+    const context = canvas?.getContext("2d", { alpha: true });
+
+    if (!canvas || !glow || !fromColor || !toColor || !interactionArea || !context) return;
+
+    const numberValue = (value: string | undefined, fallback: number) => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
+    const config = {
+      dotRadius: numberValue(root.dataset.dotRadius, 1.5),
+      dotSpacing: numberValue(root.dataset.dotSpacing, 14),
+      cursorRadius: numberValue(root.dataset.cursorRadius, 500),
+      bulgeStrength: numberValue(root.dataset.bulgeStrength, 67),
+      sparkle: root.dataset.sparkle === "true",
+      waveAmplitude: numberValue(root.dataset.waveAmplitude, 0),
+    };
+
+    const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const pointer: PointerState = {
+      x: -9999,
+      y: -9999,
+      previousX: -9999,
+      previousY: -9999,
+      speed: 0,
+      inside: false,
+    };
+
+    let dots: Dot[] = [];
+    let width = 0;
+    let height = 0;
+    let gradient: CanvasGradient | null = null;
+    let engagement = 0;
+    let glowOpacity = 0;
+    let frameCount = 0;
+    let animationFrame = 0;
+    let resizeFrame = 0;
+    let speedTimer = 0;
+    let isVisible = false;
+    let isRunning = false;
+
+    const isInteractive = () => finePointerQuery.matches && !reducedMotionQuery.matches;
+
+    const buildDots = () => {
+      const step = config.dotRadius + config.dotSpacing;
+      const columns = Math.floor(width / step);
+      const rows = Math.floor(height / step);
+      const paddingX = (width % step) / 2;
+      const paddingY = (height % step) / 2;
+      const nextDots = new Array<Dot>(rows * columns);
+      let index = 0;
+
+      for (let row = 0; row < rows; row++) {
+        for (let column = 0; column < columns; column++) {
+          const anchorX = paddingX + column * step + step / 2;
+          const anchorY = paddingY + row * step + step / 2;
+          nextDots[index] = {
+            anchorX,
+            anchorY,
+            displayX: anchorX,
+            displayY: anchorY,
+          };
+          index++;
+        }
+      }
+
+      dots = nextDots;
+    };
+
+    const buildGradient = () => {
+      const nextGradient = context.createLinearGradient(0, 0, width, height);
+      const startColor = getComputedStyle(fromColor).color;
+      const endColor = getComputedStyle(toColor).color;
+
+      try {
+        nextGradient.addColorStop(0, startColor);
+        nextGradient.addColorStop(1, endColor);
+      } catch {
+        nextGradient.addColorStop(0, "rgba(119, 177, 225, 0.35)");
+        nextGradient.addColorStop(1, "rgba(70, 133, 185, 0.25)");
+      }
+
+      gradient = nextGradient;
+    };
+
+    const draw = (animate: boolean) => {
+      context.clearRect(0, 0, width, height);
+      if (!gradient || dots.length === 0) return;
+
+      context.fillStyle = gradient;
+      context.beginPath();
+
+      const radius = config.dotRadius / 2;
+      const radiusSquared = config.cursorRadius * config.cursorRadius;
+      const time = frameCount * 0.02;
+
+      dots.forEach((dot, index) => {
+        if (animate) {
+          const deltaX = pointer.x - dot.anchorX;
+          const deltaY = pointer.y - dot.anchorY;
+          const distanceSquared = deltaX * deltaX + deltaY * deltaY;
+
+          if (distanceSquared < radiusSquared && engagement > 0.01) {
+            const distance = Math.sqrt(distanceSquared);
+            const falloff = 1 - distance / config.cursorRadius;
+            const push = falloff * falloff * config.bulgeStrength * engagement;
+            const angle = Math.atan2(deltaY, deltaX);
+            const targetX = dot.anchorX - Math.cos(angle) * push;
+            const targetY = dot.anchorY - Math.sin(angle) * push;
+            dot.displayX += (targetX - dot.displayX) * 0.15;
+            dot.displayY += (targetY - dot.displayY) * 0.15;
+          } else {
+            dot.displayX += (dot.anchorX - dot.displayX) * 0.1;
+            dot.displayY += (dot.anchorY - dot.displayY) * 0.1;
+          }
+        }
+
+        let drawX = dot.displayX;
+        let drawY = dot.displayY;
+
+        if (config.waveAmplitude > 0) {
+          drawY += Math.sin(dot.anchorX * 0.03 + time) * config.waveAmplitude;
+          drawX += Math.cos(dot.anchorY * 0.03 + time * 0.7) * config.waveAmplitude * 0.5;
+        }
+
+        const sparkleHash = ((index * 2654435761) ^ (frameCount >> 3)) >>> 0;
+        const drawRadius = config.sparkle && sparkleHash % 100 < 3 ? radius * 1.8 : radius;
+        context.moveTo(drawX + drawRadius, drawY);
+        context.arc(drawX, drawY, drawRadius, 0, TWO_PI);
+      });
+
+      context.fill();
+    };
+
+    const drawStatic = () => {
+      dots.forEach((dot) => {
+        dot.displayX = dot.anchorX;
+        dot.displayY = dot.anchorY;
+      });
+      frameCount = 0;
+      draw(false);
+    };
+
+    const updatePointerSpeed = () => {
+      const deltaX = pointer.previousX - pointer.x;
+      const deltaY = pointer.previousY - pointer.y;
+      const distance = pointer.inside ? Math.sqrt(deltaX * deltaX + deltaY * deltaY) : 0;
+      pointer.speed += (distance - pointer.speed) * 0.5;
+      if (pointer.speed < 0.001) pointer.speed = 0;
+      pointer.previousX = pointer.x;
+      pointer.previousY = pointer.y;
+    };
+
+    const tick = () => {
+      if (!isRunning) return;
+
+      frameCount++;
+      const targetEngagement = Math.min(pointer.speed / 5, 1);
+      engagement += (targetEngagement - engagement) * 0.06;
+      if (engagement < 0.001) engagement = 0;
+
+      glowOpacity += (engagement - glowOpacity) * 0.08;
+      glow.setAttribute("cx", String(pointer.x));
+      glow.setAttribute("cy", String(pointer.y));
+      glow.style.opacity = String(glowOpacity);
+
+      draw(true);
+      animationFrame = requestAnimationFrame(tick);
+    };
+
+    const stop = (reset: boolean) => {
+      isRunning = false;
+      cancelAnimationFrame(animationFrame);
+      window.clearInterval(speedTimer);
+      animationFrame = 0;
+      speedTimer = 0;
+      root.dataset.dotFieldState = reset ? "static" : "paused";
+
+      if (!reset) return;
+
+      pointer.speed = 0;
+      engagement = 0;
+      glowOpacity = 0;
+      glow.style.opacity = "0";
+      drawStatic();
+    };
+
+    const start = () => {
+      if (isRunning || !isVisible || !isInteractive() || width === 0 || height === 0) return;
+      isRunning = true;
+      root.dataset.dotFieldState = "running";
+      speedTimer = window.setInterval(updatePointerSpeed, 20);
+      animationFrame = requestAnimationFrame(tick);
+    };
+
+    const syncPlayback = () => {
+      if (!isInteractive()) {
+        stop(true);
+        return;
+      }
+
+      if (isVisible) {
+        start();
+      } else {
+        stop(false);
+      }
+    };
+
+    const resize = () => {
+      const bounds = root.getBoundingClientRect();
+      width = bounds.width;
+      height = bounds.height;
+      if (width === 0 || height === 0) return;
+
+      const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * devicePixelRatio);
+      canvas.height = Math.round(height * devicePixelRatio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+      buildDots();
+      buildGradient();
+      drawStatic();
+      syncPlayback();
+    };
+
+    const scheduleResize = () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(resize);
+    };
+
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!isInteractive()) return;
+
+      const bounds = root.getBoundingClientRect();
+      const nextX = event.clientX - bounds.left;
+      const nextY = event.clientY - bounds.top;
+
+      if (!pointer.inside) {
+        pointer.previousX = nextX;
+        pointer.previousY = nextY;
+      }
+
+      pointer.x = nextX;
+      pointer.y = nextY;
+      pointer.inside = true;
+      start();
+    };
+
+    const handlePointerLeave = () => {
+      pointer.inside = false;
+      pointer.speed = 0;
+      pointer.previousX = pointer.x;
+      pointer.previousY = pointer.y;
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleResize);
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        syncPlayback();
+      },
+      { threshold: 0 },
+    );
+
+    interactionArea.addEventListener("pointermove", handlePointerMove, { passive: true });
+    interactionArea.addEventListener("pointerleave", handlePointerLeave);
+    reducedMotionQuery.addEventListener("change", syncPlayback);
+    finePointerQuery.addEventListener("change", syncPlayback);
+    resizeObserver.observe(root);
+    visibilityObserver.observe(root);
+    resize();
+  });
+</script>
+
+<style>
+  .dot-field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+  }
+
+  .dot-field__canvas,
+  .dot-field__glow {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    display: block;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 25%,
+      #000 75%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 50%,
+      #000 75%,
+      transparent 100%
+    );
+  }
+
+  .dot-field__glow {
+    overflow: visible;
+  }
+
+  .dot-field__glow circle {
+    opacity: 0;
+    will-change: opacity;
+  }
+
+  .dot-field__glow-center {
+    stop-color: var(--color-bg);
+  }
+
+  .dot-field__glow-edge {
+    stop-color: transparent;
+  }
+
+  .dot-field__color {
+    width: 0;
+    height: 0;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .dot-field__color--from {
+    color: color-mix(in oklch, var(--color-primary) 35%, transparent);
+  }
+
+  .dot-field__color--to {
+    color: color-mix(in oklch, var(--color-primary-deep) 25%, transparent);
+  }
+</style>

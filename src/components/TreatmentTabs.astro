@@ -302,8 +302,10 @@ const { items } = Astro.props as Props;
   }
 
   .treatment-tabs__marker {
-    width: 0.55rem;
-    aspect-ratio: 1;
+    width: 0.75rem;
+    /* Ein reguläres, vertikal orientiertes Sechseck hat das Seitenverhältnis
+       √3:2. Bei 1:1 wird es horizontal gestaucht. */
+    aspect-ratio: 0.8660254;
     justify-self: end;
     background: var(--color-primary-strong);
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
@@ -358,6 +360,7 @@ const { items } = Astro.props as Props;
     position: relative;
     perspective: 75rem;
     background: oklch(0.17 0.025 265);
+    border-radius: var(--radius-image);
     overflow: hidden;
     contain: layout paint;
   }
