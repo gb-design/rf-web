@@ -17,7 +17,7 @@ Status: Arbeitsentwurf. Vor Veröffentlichung rechtlich prüfen und alle Platzha
 ## Medieninhaber und Diensteanbieter
 
 Univ.-Prof. Dr. René Hartmann Fortelny  
-[vollständige zustellfähige Anschrift bestätigen]  
+[vollständige zustellfähige Anschrift bestätigen — als einziger Standort ist das Ordinationszentrum Rudolfinerhaus, Billrothstraße 78, 1190 Wien vorgesehen]  
 Österreich
 
 Telefon: [bestätigen]  

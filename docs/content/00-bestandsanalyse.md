@@ -49,16 +49,20 @@ Die primäre Nutzerhandlung ist die Kontaktaufnahme zur Terminvereinbarung. Für
 
 ## Offene Fakten vor dem Go-live
 
-- Offizielle aktuelle Berufsbezeichnung und akademische Funktionen
-- Primärer Ordinationsstandort und gültige Telefonnummer
-- Für Patienten vorgesehene E-Mail-Adresse
-- Aktuelle Publikations-, Vortrags- und Rankingzahlen
-- Gültiger CV als PDF
-- Tatsächlich genutzte Social-Media-Profile
-- Zuständige Ärztekammer, Berufsrecht, Aufsichtsbehörde und gegebenenfalls UID
-- Verantwortlicher, Auftragsverarbeiter und Speicherfristen für das Kontaktformular
-- Einsatz von Analytics, Karten, Video-Einbettungen, Cookies oder Newsletter
-- Freigegebene Galerie-Assets samt Bildrechten und Einwilligungen
+Abgeglichen mit dem Live-Bestand (Stand: 24. Juli 2026). Status: ✅ beantwortet · ⚠️ teilweise/widersprüchlich · ❌ weiterhin offen.
+
+- ✅ **Berufsbezeichnung/akademische Funktionen** — „Univ.-Prof. Dr. René Hartmann Fortelny", Lehrstuhl für Allgemeinchirurgie an der Medizinischen Fakultät der Sigmund Freud Privatuniversität Wien, Facharzt für Chirurgie und Viszeral-Chirurgie.
+- ✅ **Primärer Ordinationsstandort und Telefonnummer** — Ordinationszentrum Rudolfinerhaus, Billrothstraße 78, 1190 Wien, Tel. +43 1 360 36 5900, eigene E-Mail. Der Bestand führte zusätzlich eine zweite Klinik als Impressumsadresse; diese wird auf Kundenentscheidung vom 28. Juli 2026 nicht übernommen. Das Rudolfinerhaus ist der einzige Standort der neuen Website, auch im Impressum. Telefonnummer vor Veröffentlichung bestätigen.
+- ⚠️ **Patienten-E-Mail-Adresse** — zwei Adressen im Umlauf: `dr.fortelny@gmail.com` (im Impressum als offizielle Adresse geführt) und `rene.fortelny@wienkav.at` (wirkt wie alte Spitals-Adresse). Vor Übernahme bestätigen, welche für Patientenanfragen vorgesehen ist.
+- ✅ **Publikations-, Vortrags- und Rankingzahlen** (Aktualität zu bestätigen) — Platz 5 „Expertscape – Experts in Hernia" weltweit, 250 wissenschaftliche Vorträge, 122 Publikationen in Peer-Review-Journalen, 4 Buchbeiträge. Kein Stand-Datum auf der Live-Seite angegeben.
+- ❌ **Gültiger CV als PDF** — auf Home, Profil und Ordination kein PDF-Link auffindbar. Muss neu beschafft werden.
+- ✅ **Tatsächlich genutzte Social-Media-Profile** — Facebook (`facebook.com/rene.fortelny`) und LinkedIn (`linkedin.com/in/...fortelny...`) verlinkt. Kein Instagram, X oder Xing.
+- ⚠️ **Zuständige Ärztekammer, Berufsrecht, Aufsichtsbehörde, UID** — „Kammerzugehörigkeit: Ärztekammer Wien" im Footer aller Seiten vorhanden. Keine UID/ATU-Nummer auf der Live-Seite auffindbar — weiterhin zu klären.
+- ❌ **Verantwortlicher, Auftragsverarbeiter und Speicherfristen für das Kontaktformular** — aktuelle Datenschutzseite enthält nur generischen Boilerplate-Text ohne Angaben zur Formularverarbeitung oder zu Speicherfristen.
+- ⚠️ **Einsatz von Analytics, Karten, Video-Einbettungen, Cookies oder Newsletter** — kein Google Analytics/Tag Manager/Matomo und kein Google-Maps-Embed im Live-HTML gefunden. Ein YouTube-Video ist auf der Startseite eingebettet („Abdominal Wall Reconstruction Europe 2026"). Cookies werden im Datenschutztext nur generisch erwähnt, nicht spezifiziert. Kein Newsletter-Formular vorhanden.
+- ❌ **Freigegebene Galerie-Assets samt Bildrechten und Einwilligungen** — keine eigene `/galerie`-Seite im Bestand. Auf `/ordination` existiert eine kleine Bildkarussell-Sektion mit Klinikfotos, aber keine erkennbare Rechte- oder Einwilligungsdokumentation.
+
+**Zusätzlicher Fund:** Auf jeder Live-Seite steht im Footer die vollständige Bankverbindung (Kontonummer, IBAN, BIC) — bestätigt den bestehenden Hinweis, dass diese Angaben für eine reine Informationswebsite entfernt werden sollten (siehe Impressum-Overlay in der Tabelle oben).
 
 ## Quellen der Bestandsanalyse
 

@@ -73,17 +73,11 @@ Bitte bringen Sie vorhandene Befunde, Bildgebung, eine aktuelle Medikamentenlist
 
 **Fehlermeldung:** Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut oder kontaktieren Sie die Ordination telefonisch.
 
-## Sektion 5 — Weitere berufliche Standorte
+## Sektion 5 — Universitäre Tätigkeit
 
-**H2:** Klinische und universitäre Tätigkeit
+**H2:** Universitäre Tätigkeit
 
-Diese Angaben dienen der fachlichen Einordnung und sind nicht automatisch Anlaufstellen für Terminvereinbarungen.
-
-### Privatklinik Confraternität
-
-Skodagasse 32, 1080 Wien  
-Telefon: +43 1 401 14 5701  
-Website: https://www.privatklinik-confraternitaet.at
+Diese Angabe dient der fachlichen Einordnung und ist keine Anlaufstelle für Terminvereinbarungen.
 
 ### Fakultät für Medizin der Sigmund Freud PrivatUniversität
 
@@ -91,7 +85,7 @@ Freudplatz 3, 1020 Wien
 Telefon: +43 1 90 500 70 1111  
 Website: https://med.sfu.ac.at
 
-**Redaktionshinweis:** Aktuelle Zugehörigkeit, Anschriften und Telefonnummern vor Veröffentlichung bestätigen. Falls keine aktive Funktion mehr besteht, den jeweiligen Eintrag entfernen.
+**Redaktionshinweis:** Aktuelle Zugehörigkeit, Anschrift und Telefonnummer vor Veröffentlichung bestätigen. Falls keine aktive Funktion mehr besteht, den Eintrag entfernen. Das Ordinationszentrum Rudolfinerhaus ist der einzige Standort der Website; weitere Kliniken werden bewusst nicht genannt.
 
 ## Sektion 6 — Notfallhinweis
 
