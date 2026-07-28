@@ -30,7 +30,7 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 | Pflichtseiten | 🟡 | Routen und Arbeitsentwürfe vorhanden; vollständige Umsetzung und rechtliche Freigabe fehlen |
 | Sanity CMS | ⬜ | Noch nicht installiert oder konfiguriert |
 | Kontaktformular | ⬜ | Resend-Endpoint, Validierung, Consent, Honeypot und Rate-Limit fehlen |
-| Cloudflare Pages | 🟡 | Preview-Deployment über einen leeren Commit angestoßen; Ergebnis noch nicht verifiziert und hier dokumentiert |
+| Cloudflare Pages | ✅ | Projekt `rf-web` verbunden, automatische Deployments aktiv. Stabile Preview des Branches `dev`: `https://dev.rf-web-5ik.pages.dev` |
 | SEO-Grundlagen | 🟡 | Titel und Descriptions je Seite vorhanden; `site` in `astro.config.mjs`, Canonical-Tags, Open-Graph-Daten, `robots.txt` und Sitemap fehlen |
 | Qualitätssicherung | 🟡 | Foundation, Hero und Behandlungsschwerpunkte von 320 bis 2560 px geprüft; vollständiger Seitenpass über alle Sektionen steht noch aus |
 | Production Release | ⬜ | `main`, Production-Deployment und Go-live-Prüfung stehen aus |
@@ -132,6 +132,11 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 - Profilseite bei 1440, 1024, 768, 390 und 320 Pixel geprüft: kein horizontaler Overflow, keine Konsolenmeldungen. Startseite, Leistungen und Kontakt als Regressionstest gegen die globale CSS-Änderung mitgeprüft.
 - `npm run build` inklusive `astro check` nach der Profilseite ausgeführt: 21 Dateien, 0 Fehler, 0 Warnungen, 0 Hinweise.
 
+- Content-Security-Policy-Verstoß im Deployment behoben: Astro bettete kleine Skripte inline ins HTML ein, die `script-src 'self'` aus `public/_headers` blockierte. Auf der Preview liefen dadurch weder das Punktraster im Startseiten-Hero noch Zeitachse und Count-up auf der Profilseite. `assetsInlineLimit: 0` und `inlineStylesheets: "never"` erzwingen externe Dateien; die Skripte erfüllen damit `script-src 'self'` und bleiben zusätzlich cachebar.
+- Prüfverfahren dafür ergänzt: Das Build-Ergebnis wird lokal mit den echten Headern aus `public/_headers` ausgeliefert und im Browser auf Verstöße geprüft, statt sich auf den Dev-Server zu verlassen, der die Header nicht anwendet. Ergebnis über vier Seiten: keine Verstöße, keine Konsolenfehler, alle Skripte aktiv.
+- Sicherheitsmeldungen der Abhängigkeiten von sechs auf eine reduziert. `fast-uri`, `postcss` und `svgo` über `npm audit fix` gehoben; `sharp` auf 0.35.3 und `esbuild` auf 0.28.1 über `overrides` in `package.json`, statt für sie zwei Major-Versionen auf Astro 7 zu springen. Alle betroffenen Pakete sind reine Build-Abhängigkeiten und landen nicht im Browser.
+- Stabile Vorschau-URL des Entwicklungsstands dokumentiert: `https://dev.rf-web-5ik.pages.dev`. Cloudflare legt diesen Branch-Alias automatisch an, er zeigt immer den aktuellen Stand von `dev`. Die zufälligen Deployment-URLs je Commit bleiben zusätzlich bestehen.
+
 ## Nächstes Arbeitspaket
 
 **Static MVP — Startseite abschließen**
@@ -160,7 +165,7 @@ Danach folgen Kontakt, Galerie sowie die vollständigen Pflichtseiten. Events we
 **Technische Restarbeiten, unabhängig vom Seitenfortschritt**
 
 - ⬜ `site` in `astro.config.mjs` setzen sowie Canonical-Tags, Open-Graph-Daten, `robots.txt` und Sitemap ergänzen.
-- ⬜ Status des Cloudflare-Pages-Projekts und der Preview-URL verifizieren und hier dokumentieren.
+- ⬜ Astro von 5.18.2 auf 7.1.4 heben, bevor das Kontaktformular gebaut wird. Acht offene XSS-Advisories betreffen `define:vars`, Spread-Props, View Transitions, dynamische Slots, Server Islands und SSR-Fehlerseiten; keines dieser Muster kommt derzeit vor, weil die Seite vollständig statisch ist und keine Nutzereingaben verarbeitet. Mit dem Resend-Endpoint entstehen SSR und Nutzereingaben, dann werden sie real. Astro 5.18.2 ist die letzte 5.x, auf dieser Linie gibt es keinen Patch.
 
 ## Phasen
 
