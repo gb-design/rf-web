@@ -1,14 +1,1211 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import PageIntro from "../components/PageIntro.astro";
+import ButtonLink from "../components/ButtonLink.astro";
+import Container from "../components/Container.astro";
+import Grid from "../components/Grid.astro";
+
+const standKennzahlen = "2026";
+
+const werdegang = [
+  {
+    zeitraum: "1980 — 2000",
+    stationen: [
+      {
+        jahr: "1985 – 1988",
+        text: "Turnusarztausbildung in Allgemeinmedizin im Wilhelminenspital Wien",
+      },
+      {
+        jahr: "1988 – 1993",
+        text: "Ausbildung zum Facharzt für Chirurgie an der 2. Chirurgie des Wilhelminenspitals unter Prim. Univ.-Prof. Dr. Kreuzer",
+      },
+      {
+        jahr: "1993",
+        text: "Anerkennung als Facharzt für Chirurgie",
+        meilenstein: true,
+        details: [
+          "Facharztdiplom der Österreichischen Gesellschaft für Chirurgie",
+          "Ernennung zum Spitalsoberarzt und stationsführenden Oberarzt der 2. Chirurgie",
+          "Spezialisierung für laparoskopische Chirurgie, MIC-Kurs am Ausbildungszentrum Vélizy bei Paris",
+          "Hospitation in der Strumachirurgie am Kaiserin-Elisabeth-Spital Wien",
+        ],
+      },
+      {
+        jahr: "1994",
+        text: "Leitung der Schilddrüsen- und Hernienambulanz sowie der abteilungsspezifischen Administration",
+      },
+      {
+        jahr: "seit 1994",
+        text: "Leitung und Durchführung zahlreicher approbierter nationaler Hernienkurse",
+      },
+      {
+        jahr: "1996",
+        text: "Leitender Oberarzt der Allgemein-, Viszeral- und Tumorchirurgie im Wilhelminenspital",
+        meilenstein: true,
+      },
+      {
+        jahr: "1998",
+        text: "Diplom des postgradualen Lehrgangs für Gesundheitsmanagement an der Donau-Universität Krems",
+      },
+    ],
+  },
+  {
+    zeitraum: "2000 —",
+    stationen: [
+      {
+        jahr: "2002 – 2004",
+        text: "Supplierender Leiter der 2. Chirurgie am Wilhelminenspital",
+      },
+      {
+        jahr: "seit 2004",
+        text: "Leitender Oberarzt der Abteilung unter Prim. Univ.-Prof. Dr. Karl Glaser",
+      },
+      {
+        jahr: "seit 2006",
+        text: "Universitätslektor der Medizinischen Universität Wien",
+      },
+      {
+        jahr: "2008",
+        text: "Anerkennung als Facharzt für Viszeral-Chirurgie",
+        meilenstein: true,
+      },
+      {
+        jahr: "2010",
+        text: "Habilitation an der Paracelsus Medizinischen Privatuniversität Salzburg",
+        meilenstein: true,
+      },
+      {
+        jahr: "2013",
+        text: "Fellowship of the European Board of Surgery",
+        meilenstein: true,
+      },
+      {
+        jahr: "seit 2013",
+        text: "Zertifizierung des Hernienzentrums mit dem Gütesiegel der Deutschen Hernien Gesellschaft",
+      },
+      {
+        jahr: "2016",
+        text: "Verleihung des Titels Universitätsprofessor und Berufung auf den Lehrstuhl für Allgemeinchirurgie an der Medizinischen Fakultät der Sigmund Freud PrivatUniversität Wien",
+        meilenstein: true,
+      },
+    ],
+  },
+];
+
+// Die Expertscape-Platzierung steht als eigene Auszeichnung im Hero, nicht hier.
+// Die Rail führt ausschließlich Kennzahlen wissenschaftlicher Arbeit.
+const kennzahlen = [
+  { wert: 250, label: "Wissenschaftliche Vorträge" },
+  { wert: 122, label: "Publikationen in Peer-Review-Journalen" },
+  { wert: 4, label: "Buchbeiträge" },
+];
+
+const funktionenNational = [
+  "Lehrstuhl für Allgemeinchirurgie an der Medizinischen Fakultät der Sigmund Freud PrivatUniversität Wien",
+  "Leitender Oberarzt der 2. Chirurgie am Wilhelminenspital, 1996 bis 2020",
+  "Leiter der experimentellen Herniengruppe am Ludwig-Boltzmann-Institut für experimentelle und klinische Traumatologie",
+  "Past-Präsident der Österreichischen Gesellschaft für Minimal Invasive Chirurgie",
+  "Past-Präsident der Österreichischen Herniengesellschaft",
+  "Präsident des EHS-Meetings 2017 in Wien",
+  "Berufsverband Österreichischer Chirurgen, BÖC",
+];
+
+const funktionenInternational = [
+  "Mitglied des EHS-Boards, Secretary for Congresses",
+  "General Secretary der International Endohernia Society, IEHS",
+  "Deutsche Hernien Gesellschaft, DHG",
+  "European Hernia Society, EHS",
+  "American Hernia Society, AHS",
+  "Asia Pacific Hernia Society, APHS",
+  "International Society for Digestive Surgery, ISDS",
+  "European Association for Endoscopic Surgery, EAES",
+  "Society of American Gastrointestinal and Endoscopic Surgeons, SAGES",
+  "International Society of Surgery, ISS/SIC",
+];
 ---
+
 <BaseLayout
   title="Univ.-Prof. Dr. René H. Fortelny | Profil & Werdegang"
   description="Erfahren Sie mehr über den Werdegang, die Spezialisierung und die wissenschaftliche Tätigkeit von Univ.-Prof. Dr. René H. Fortelny in Wien."
 >
-  <PageIntro
-    eyebrow="Profil"
-    title="Medizinische Kompetenz braucht persönliche Verantwortung."
-    description="Eine sorgfältige Untersuchung und ein offenes Gespräch schaffen die Grundlage für Vertrauen und nachvollziehbare medizinische Entscheidungen."
-  />
+  <section class="hero">
+    <Container>
+      <Grid class="hero__grid">
+        <div class="hero__head">
+          <p class="eyebrow">Profil</p>
+          <h1>Medizinische Kompetenz braucht persönliche Verantwortung.</h1>
+        </div>
+
+        <div class="hero__aside">
+          <figure class="credential">
+            <img
+              class="credential__badge"
+              src="/images/temp/rankBadge.png"
+              alt=""
+              width="438"
+              height="441"
+              loading="eager"
+            />
+            <figcaption class="credential__caption">
+              <span class="credential__rank">Platz 5 weltweit</span>
+              <span class="credential__source">Expertscape, Experts in Hernia</span>
+            </figcaption>
+          </figure>
+
+          <p class="hero__lead">
+            Facharzt für Chirurgie und für Viszeral-Chirurgie mit Schwerpunkt Hernien- und
+            Bauchwandchirurgie. Lehrstuhl für Allgemeinchirurgie an der Medizinischen Fakultät der
+            Sigmund Freud PrivatUniversität Wien.
+          </p>
+          <p class="hero__intro">
+            Für mich stehen Patientinnen und Patienten im Mittelpunkt jeder medizinischen
+            Entscheidung. Eine sorgfältige Untersuchung und ein offenes Gespräch schaffen die
+            Grundlage für Vertrauen – und für eine Behandlung, die fachlich begründet und
+            persönlich nachvollziehbar ist.
+          </p>
+        </div>
+      </Grid>
+
+      <Grid class="metrics">
+        <ul class="metrics__list" data-countup>
+          {kennzahlen.map((kennzahl) => (
+            <li>
+              <p class="metrics__value">
+                <span class="visually-hidden">{kennzahl.wert}</span>
+                <span class="metrics__digits" aria-hidden="true" data-count-to={kennzahl.wert}
+                  >{kennzahl.wert}</span
+                >
+              </p>
+              <p class="metrics__label">{kennzahl.label}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="metrics__note">Stand {standKennzahlen}</p>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section attitude" data-section-theme="dark">
+    <Container>
+      <Grid class="attitude__grid">
+        <p class="eyebrow attitude__eyebrow">Medizinische Haltung</p>
+        <h2 class="attitude__title">Zuhören, erklären, gemeinsam entscheiden.</h2>
+        <div class="attitude__copy">
+          <p>
+            Das Wohlergehen meiner Patientinnen und Patienten hat oberste Priorität. Vertrauen
+            zwischen Patient und Arzt entsteht nur im persönlichen Gespräch, getragen von einer
+            empathischen ärztlichen Grundeinstellung.
+          </p>
+          <p>
+            Beschwerden, Lebenssituation und Erwartungen unterscheiden sich von Mensch zu Mensch.
+            Deshalb beginnt die Behandlung nicht mit einem Standardverfahren, sondern mit einer
+            genauen Abklärung. Ich erkläre Ihnen Befunde, mögliche Therapien und Alternativen in
+            verständlicher Form. Die Entscheidung treffen wir gemeinsam.
+          </p>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section career" id="werdegang">
+    <Container>
+      <Grid class="section-heading">
+        <div class="section-heading__title">
+          <p class="eyebrow">Werdegang</p>
+          <h2>Klinischer und akademischer Werdegang</h2>
+        </div>
+        <p class="section-heading__intro">
+          Vier Jahrzehnte Chirurgie in Wien – von der Turnusarztausbildung im Wilhelminenspital bis
+          zum Lehrstuhl für Allgemeinchirurgie.
+        </p>
+      </Grid>
+
+      <Grid class="career__group">
+        <div class="career__track" data-timeline>
+          <span class="career__axis" aria-hidden="true"></span>
+          <span class="career__progress" aria-hidden="true"></span>
+          <span class="career__marker" aria-hidden="true"></span>
+
+          {werdegang.map((gruppe) => (
+            <>
+              <h3 class="career__period">{gruppe.zeitraum}</h3>
+              <dl class="career__register">
+                {gruppe.stationen.map((station) => (
+                  <div
+                    class:list={["career__entry", station.meilenstein && "career__entry--milestone"]}
+                  >
+                    <dt>{station.jahr}</dt>
+                    <dd>
+                      <p>{station.text}</p>
+                      {station.details && (
+                        <ul>
+                          {station.details.map((detail) => <li>{detail}</li>)}
+                        </ul>
+                      )}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </>
+          ))}
+        </div>
+      </Grid>
+
+      <Grid class="career__media">
+        <figure class="career__figure">
+          <img
+            src="/images/temp/ehrung.jpg"
+            alt="Überreichung der Ernennungsurkunde an Univ.-Prof. Dr. René H. Fortelny"
+            width="750"
+            height="441"
+            loading="lazy"
+          />
+          <figcaption>
+            Überreichung der Urkunde zur Berufung auf den Lehrstuhl für Allgemeinchirurgie der
+            Medizinischen Fakultät der Sigmund Freud PrivatUniversität.
+          </figcaption>
+        </figure>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section research">
+    <Container>
+      <Grid class="research__grid">
+        <div class="research__copy">
+          <p class="eyebrow">Wissenschaft und Forschung</p>
+          <h2>Forschung mit Bezug zur chirurgischen Praxis</h2>
+          <p>
+            Ein Schwerpunkt der wissenschaftlichen Arbeit liegt auf Hernien,
+            Bauchwandrekonstruktion, Biomaterialien und minimalinvasiven Operationsverfahren.
+            Erkenntnisse aus Forschung, Lehre und internationalem Austausch fließen in die
+            differenzierte Beurteilung chirurgischer Fragestellungen ein.
+          </p>
+          <p>
+            Von 2003 bis 2015 Aufbau und Leitung der experimentellen Herniengruppe am
+            Ludwig-Boltzmann-Institut für experimentelle und klinische Traumatologie der AUVA im
+            Austrian Cluster for Tissue Regeneration unter Univ.-Prof. Dr. Heinz Redl.
+          </p>
+          <ButtonLink
+            href="https://pubmed.ncbi.nlm.nih.gov/?term=Fortelny+RH"
+            variant="text"
+            target="_blank"
+            arrow
+          >
+            Publikationen bei PubMed
+          </ButtonLink>
+        </div>
+
+        <figure class="research__figure">
+          <img
+            src="/images/temp/medizin-team_wsp01-history.jpg"
+            alt="Team der 2. Chirurgie des Wilhelminenspitals im Jahr 2002"
+            width="747"
+            height="485"
+            loading="lazy"
+          />
+          <figcaption>Team der 2. Chirurgie des Wilhelminenspitals, 2002.</figcaption>
+        </figure>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section network">
+    <Container>
+      <Grid class="section-heading">
+        <div class="section-heading__title">
+          <p class="eyebrow">Funktionen und Mitgliedschaften</p>
+          <h2>Fachlich vernetzt</h2>
+        </div>
+        <p class="section-heading__intro">
+          Die Mitarbeit in nationalen und internationalen Fachgesellschaften unterstützt den
+          Austausch über Qualitätsstandards, neue Verfahren und chirurgische Ausbildung.
+        </p>
+      </Grid>
+
+      <Grid class="network__columns">
+        <div class="network__column">
+          <h3>National</h3>
+          <ul>
+            {funktionenNational.map((funktion) => <li>{funktion}</li>)}
+          </ul>
+        </div>
+        <div class="network__column">
+          <h3>International</h3>
+          <ul>
+            {funktionenInternational.map((funktion) => <li>{funktion}</li>)}
+          </ul>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section teaching">
+    <Container>
+      <Grid class="teaching__grid">
+        <div class="teaching__copy">
+          <p class="eyebrow">Kongresse und Lehre</p>
+          <h2>Wissen weitergeben</h2>
+          <p>
+            Vorträge, Operationskurse und Kongressorganisationen sind ein fester Bestandteil der
+            fachlichen Tätigkeit. Der Fokus liegt auf praxisnaher Aus- und Weiterbildung in der
+            Hernien- und minimalinvasiven Chirurgie.
+          </p>
+          <p>
+            Als Kongressorganisator verantwortet Univ.-Prof. Dr. Fortelny die Salzburger
+            Hernientage und Hernie-kompakt Österreich. Hinzu kommen zahlreiche Vorträge und
+            Vorsitze bei nationalen und internationalen Kongressen sowie bei
+            Fortbildungsveranstaltungen der Österreichischen Gesellschaft für Chirurgie.
+          </p>
+          <ButtonLink href="/events" variant="text" arrow>Aktuelle Veranstaltungen</ButtonLink>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="contact-cta" data-section-theme="dark">
+    <Container>
+      <Grid class="contact-cta__grid">
+        <div class="contact-cta__inner">
+          <p class="eyebrow">Persönliche Beratung</p>
+          <h2>Persönliche Beratung in Wien</h2>
+          <p>
+            Wenn Sie einen Befund besprechen oder eine chirurgische Zweitmeinung einholen möchten,
+            können Sie eine Terminanfrage an die Ordination senden.
+          </p>
+          <div class="button-group">
+            <ButtonLink href="/kontakt" arrow>Termin anfragen</ButtonLink>
+            <ButtonLink href="/kontakt" variant="ghost">Ordination und Anreise</ButtonLink>
+          </div>
+        </div>
+      </Grid>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  .eyebrow {
+    color: var(--color-primary-strong);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  [data-section-theme="dark"] .eyebrow {
+    color: var(--color-primary);
+  }
+
+  h2 {
+    max-width: 18ch;
+    font-size: var(--text-h2);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    line-height: 1.25;
+  }
+
+  /* ── Hero ──────────────────────────────────────────── */
+
+  .hero {
+    padding-block: clamp(var(--space-16), 9vw, var(--space-32)) var(--space-16);
+    background: var(--color-bg);
+  }
+
+  /* Oben ausgerichtet: Eyebrow und Auszeichnung bilden eine gemeinsame
+     Kopfzeile. Bei `end` sackte die rechte Spalte ab und ließ die obere
+     rechte Ecke leer. */
+  :global(.hero__grid) {
+    align-items: start;
+  }
+
+  .hero__head {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .hero h1 {
+    max-width: 100%;
+    font-size: clamp(2.75rem, 1.9rem + 3.4vw, 4.5rem);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    /* Lange deutsche Komposita sprengen sonst die schmale Spalte */
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  .hero__aside {
+    grid-column: 8 / -1;
+    padding-bottom: 0.4rem;
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .hero__lead {
+    color: var(--color-text);
+    font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+    line-height: 1.55;
+  }
+
+  .hero__intro {
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  /* Auszeichnung als Emblem mit Bildunterschrift. Die Bildmarke selbst trägt
+     `alt=""`, weil die Unterschrift die Aussage bereits auf Deutsch führt —
+     die englische Marke allein wäre für Patientinnen und Patienten nicht
+     unmittelbar lesbar. */
+  .credential {
+    padding-bottom: var(--space-2);
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-4);
+  }
+
+  .credential__badge {
+    width: clamp(6.5rem, 4rem + 8vw, 10rem);
+    height: auto;
+    border-radius: 0;
+  }
+
+  .credential__caption {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .credential__rank {
+    color: var(--color-primary-strong);
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 1.1rem + 1.1vw, 1.875rem);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  .credential__source {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Sektionsköpfe ─────────────────────────────────── */
+
+  :global(.section-heading) {
+    margin-bottom: var(--content-space);
+    align-items: end;
+  }
+
+  .section-heading__title {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .section-heading__intro {
+    grid-column: 8 / -1;
+    max-width: 46ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  /* ── Medizinische Haltung ──────────────────────────── */
+
+  .attitude__eyebrow {
+    grid-column: 1 / span 3;
+    padding-top: 0.6rem;
+  }
+
+  .attitude__title {
+    grid-column: 4 / -1;
+    max-width: 16ch;
+    margin-bottom: var(--space-8);
+  }
+
+  .attitude__copy {
+    grid-column: 4 / span 6;
+    display: grid;
+    gap: var(--space-6);
+    color: var(--color-text-muted);
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.75;
+  }
+
+  /* ── Werdegang-Register ────────────────────────────── */
+
+  :global(.career__group) {
+    margin-bottom: var(--content-space);
+    align-items: start;
+  }
+
+  .career__track {
+    /* Achsenposition wird aus denselben Tracks berechnet, die das Raster aufspannen */
+    --year-col: clamp(5.75rem, 8vw, 7.75rem);
+    --axis-track: 1.75rem;
+    --axis-x: calc(var(--year-col) + var(--space-4) + var(--axis-track) / 2);
+    --node: 0.5rem;
+    --entry-pad: var(--space-6);
+    --hexagon: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+
+    grid-column: 3 / -1;
+    min-width: 0;
+    position: relative;
+  }
+
+  /* Ruhende Achse. Die Randwerte verfeinert das Skript auf die tatsächlichen
+     Knotenmitten; die Vorgaben tragen die Darstellung ohne JavaScript. */
+  .career__axis,
+  .career__progress {
+    width: 1px;
+    position: absolute;
+    inset-block: var(--axis-top, 3.5rem) var(--axis-bottom, 3.5rem);
+    inset-inline-start: var(--axis-x);
+    translate: -0.5px 0;
+  }
+
+  .career__axis {
+    background: var(--color-border);
+  }
+
+  .career__progress {
+    background: var(--color-primary-strong);
+    transform-origin: top;
+    transform: scaleY(var(--timeline-progress, 0));
+  }
+
+  .career__marker {
+    width: 1.5rem;
+    aspect-ratio: 0.8660254;
+    position: absolute;
+    inset-block-start: var(--axis-top, 3.5rem);
+    inset-inline-start: var(--axis-x);
+    display: grid;
+    place-items: center;
+    /* Freistellungsring, damit der Marker nicht mit den ruhenden Knoten verschmilzt */
+    background: var(--color-bg);
+    clip-path: var(--hexagon);
+    opacity: 0;
+    translate: -50% -50%;
+    transform: translateY(calc(var(--timeline-progress, 0) * var(--timeline-length, 0px)));
+  }
+
+  .career__marker::after {
+    content: "";
+    width: 62%;
+    aspect-ratio: 0.8660254;
+    background: var(--color-primary-strong);
+    clip-path: var(--hexagon);
+  }
+
+  [data-timeline-active] .career__marker {
+    opacity: 1;
+  }
+
+  .career__period {
+    margin-block: var(--space-12) var(--space-4);
+    padding-inline-start: calc(var(--axis-x) + var(--space-4) + var(--axis-track) / 2);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .career__period:first-of-type {
+    margin-block-start: 0;
+  }
+
+  .career__entry {
+    padding-block: var(--entry-pad);
+    display: grid;
+    grid-template-columns: var(--year-col) var(--axis-track) minmax(0, 1fr);
+    column-gap: var(--space-4);
+    align-items: start;
+  }
+
+  .career__entry dt {
+    grid-column: 1;
+    position: relative;
+    color: var(--color-primary-strong);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Knoten sitzt auf der Achse, vertikal auf der Mitte der Jahreszeile */
+  .career__entry dt::after {
+    content: "";
+    width: var(--node);
+    aspect-ratio: 0.8660254;
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: calc(100% + var(--space-4) + var(--axis-track) / 2);
+    background: var(--color-border-strong);
+    clip-path: var(--hexagon);
+    translate: -50% -50%;
+  }
+
+  .career__entry--milestone {
+    --node: 0.875rem;
+  }
+
+  .career__entry--milestone dt {
+    font-weight: 500;
+  }
+
+  .career__entry--milestone dt::after {
+    background: var(--color-primary-strong);
+  }
+
+  .career__entry dd {
+    grid-column: 3;
+  }
+
+  /* Abblendung nur, wenn das Skript läuft und die Einträge auch wieder aufhellt */
+  [data-timeline-active] .career__entry,
+  [data-timeline-active] .career__period {
+    opacity: 0.5;
+    transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  [data-timeline-active] .career__entry.is-revealed,
+  [data-timeline-active] .career__period.is-revealed {
+    opacity: 1;
+  }
+
+  .career__entry dd {
+    max-width: 58ch;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .career__entry dd p {
+    color: var(--color-text);
+    font-size: var(--text-body);
+    line-height: 1.6;
+  }
+
+  .career__entry dd ul {
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+    list-style: none;
+  }
+
+  .career__entry dd li {
+    padding-left: var(--space-4);
+    position: relative;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.65;
+  }
+
+  .career__entry dd li::before {
+    content: "";
+    width: 0.3125rem;
+    aspect-ratio: 0.8660254;
+    position: absolute;
+    inset-block-start: 0.6em;
+    inset-inline-start: 0;
+    background: var(--color-border-strong);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .career__figure {
+    grid-column: 3 / -1;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .career__figure img,
+  .research__figure img {
+    width: 100%;
+    height: auto;
+  }
+
+  .career__figure figcaption,
+  .research__figure figcaption {
+    max-width: 52ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.6;
+  }
+
+  /* ── Wissenschaft und Forschung ────────────────────── */
+
+  :global(.research__grid) {
+    align-items: center;
+  }
+
+  .research__copy {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .research__copy p {
+    max-width: 52ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  .research__figure {
+    grid-column: 8 / -1;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  /* ── Kennzahlen-Register ───────────────────────────── */
+
+  /* Meta-Rail am Fuß des Hero */
+  :global(.metrics) {
+    margin-top: clamp(var(--space-16), 9vh, var(--space-24));
+    align-items: end;
+  }
+
+  .metrics__list {
+    grid-column: 1 / -1;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--site-gutter);
+    list-style: none;
+  }
+
+  .metrics__list li {
+    padding-top: var(--space-4);
+    display: grid;
+    gap: var(--space-2);
+    border-top: 1px solid var(--color-border-strong);
+  }
+
+  .metrics__value {
+    color: var(--color-primary-strong);
+    font-family: var(--font-mono);
+    font-size: clamp(2.5rem, 1.8rem + 2.9vw, 4.25rem);
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    /* Feste Ziffernbreite, damit die Rail beim Hochzählen nicht springt */
+    font-variant-numeric: tabular-nums;
+  }
+
+
+  .metrics__label {
+    max-width: 22ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  .metrics__note {
+    grid-column: 1 / -1;
+    /* global.css kappt jedes p auf 72ch; hier ist die volle Rasterbreite nötig,
+       damit die rechtsbündige Ausrichtung greift */
+    max-width: none;
+    margin-top: var(--space-6);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  /* ── Funktionen und Mitgliedschaften ───────────────── */
+
+  .network__column {
+    grid-column: span 6;
+    min-width: 0;
+  }
+
+  .network__column h3 {
+    padding-bottom: var(--space-4);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+
+  .network__column ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  .network__column li {
+    padding-block: var(--space-4);
+    padding-inline-end: var(--space-8);
+    color: var(--color-text);
+    font-size: var(--text-body);
+    line-height: 1.6;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  /* ── Kongresse und Lehre ───────────────────────────── */
+
+  .teaching__copy {
+    grid-column: 1 / span 7;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .teaching__copy p {
+    max-width: 56ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  /* ── Abschluss-CTA ─────────────────────────────────── */
+
+  .contact-cta {
+    padding-block: clamp(var(--space-24), 9vw, var(--space-32));
+  }
+
+  .contact-cta__inner {
+    grid-column: 1 / span 8;
+    display: grid;
+    gap: var(--space-6);
+    justify-items: start;
+  }
+
+  .contact-cta__inner p:not(.eyebrow) {
+    max-width: 52ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  /* ── Responsive ────────────────────────────────────── */
+
+  @media (max-width: 64rem) {
+    :global(.section-heading) {
+      --grid-row-gap: var(--space-6);
+    }
+
+    .section-heading__title,
+    .section-heading__intro {
+      grid-column: 1 / -1;
+    }
+
+    /* Gestapelt stoßen H1 und Kurzprofil sonst fast aneinander; die H1 hat
+       durch line-height 0.98 kaum Luft unter der letzten Zeile.
+       Der Abstand muss über `--grid-row-gap` gesetzt werden: Ein direktes
+       `row-gap` verliert gegen die gescopte Regel in `Grid.astro`. */
+    :global(.hero__grid) {
+      --grid-row-gap: clamp(var(--space-12), 6vw, var(--space-16));
+    }
+
+    .hero__head,
+    .hero__aside {
+      grid-column: 1 / -1;
+    }
+
+    .hero__aside {
+      max-width: 62ch;
+      padding-bottom: 0;
+    }
+
+    .attitude__eyebrow,
+    .attitude__title,
+    .attitude__copy {
+      grid-column: 1 / -1;
+    }
+
+    .attitude__eyebrow {
+      padding-top: 0;
+    }
+
+    .attitude__title {
+      max-width: 20ch;
+      margin-bottom: 0;
+    }
+
+    .career__track,
+    .career__figure {
+      grid-column: 1 / -1;
+    }
+
+    .research__copy,
+    .research__figure {
+      grid-column: 1 / -1;
+    }
+
+    /* Drei Werte bleiben nebeneinander; zwei Spalten würden den letzten
+       allein in eine zweite Reihe stellen */
+    .metrics__list {
+      grid-column: 1 / -1;
+    }
+
+    .metrics__note {
+      grid-column: 1 / -1;
+      padding-top: 0;
+      text-align: left;
+    }
+
+    .teaching__copy,
+    .contact-cta__inner {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .network__column {
+      grid-column: 1 / -1;
+    }
+
+    .network__column + .network__column {
+      margin-top: var(--space-8);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .metrics__list {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-8);
+    }
+
+    .metrics__label {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 34rem) {
+    /* Achse rückt an den linken Rand, Jahr steht über der Beschreibung */
+    .career__track {
+      --year-col: 0px;
+      --axis-track: 1.25rem;
+      --axis-x: calc(var(--axis-track) / 2);
+    }
+
+    .career__period {
+      padding-inline-start: calc(var(--axis-track) + var(--space-3));
+    }
+
+    .career__entry {
+      grid-template-columns: var(--axis-track) minmax(0, 1fr);
+      column-gap: var(--space-3);
+      row-gap: var(--space-1);
+    }
+
+    .career__entry dt {
+      grid-column: 2;
+      line-height: 1.5;
+      text-align: start;
+    }
+
+    .career__entry dt::after {
+      inset-inline-start: calc(-1 * (var(--space-3) + var(--axis-track) / 2));
+    }
+
+    .career__entry dd {
+      grid-column: 2;
+    }
+
+    .career__marker {
+      width: 1rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Ohne Bewegung bleibt die Achse vollständig gezogen und nichts wird abgeblendet */
+    .career__progress {
+      transform: none;
+    }
+
+    .career__marker {
+      display: none;
+    }
+
+    [data-timeline-active] .career__entry,
+    [data-timeline-active] .career__period {
+      opacity: 1;
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>("[data-timeline]");
+
+  if (track) {
+    const progress = track.querySelector<HTMLElement>(".career__progress");
+    const marker = track.querySelector<HTMLElement>(".career__marker");
+    const items = Array.from(
+      track.querySelectorAll<HTMLElement>(".career__entry, .career__period")
+    );
+    const years = Array.from(track.querySelectorAll<HTMLElement>(".career__entry dt"));
+    const stillMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let axisTop = 0;
+    let axisLength = 0;
+    let queued = false;
+
+    // Achse läuft von der Mitte des ersten bis zur Mitte des letzten Knotens
+    const measure = () => {
+      if (years.length < 2) return;
+      const trackTop = track.getBoundingClientRect().top;
+      const first = years[0].getBoundingClientRect();
+      const last = years[years.length - 1].getBoundingClientRect();
+      axisTop = first.top - trackTop + first.height / 2;
+      const axisBottom = last.top - trackTop + last.height / 2;
+      axisLength = Math.max(0, axisBottom - axisTop);
+
+      track.style.setProperty("--axis-top", `${axisTop}px`);
+      track.style.setProperty("--axis-bottom", `${track.offsetHeight - axisBottom}px`);
+      track.style.setProperty("--timeline-length", `${axisLength}px`);
+    };
+
+    // Der Marker folgt einer Leselinie im oberen Bildschirmdrittel
+    const update = () => {
+      queued = false;
+      if (axisLength <= 0) return;
+      const readLine = window.innerHeight * 0.42;
+      const offset = readLine - track.getBoundingClientRect().top - axisTop;
+      const ratio = Math.min(1, Math.max(0, offset / axisLength));
+      track.style.setProperty("--timeline-progress", String(ratio));
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(update);
+    };
+
+    // Einträge hellen auf, sobald sie in den bequemen Lesebereich kommen, und
+    // bleiben aufgehellt — erneutes Abblenden würde das Lesen stören
+    const reveal = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("is-revealed");
+          reveal.unobserve(entry.target);
+        }
+      },
+      // Abgeblendet bleibt nur das unterste Sechstel des Bildschirms; alles im
+      // eigentlichen Lesebereich steht auf voller Deckkraft
+      { rootMargin: "0px 0px -15% 0px", threshold: 0 }
+    );
+
+    const start = () => {
+      if (stillMotion.matches) {
+        track.removeAttribute("data-timeline-active");
+        items.forEach((item) => item.classList.add("is-revealed"));
+        measure();
+        track.style.setProperty("--timeline-progress", "1");
+        return;
+      }
+
+      track.setAttribute("data-timeline-active", "");
+      items.forEach((item) => reveal.observe(item));
+      measure();
+      update();
+    };
+
+    if (progress && marker) {
+      start();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", () => {
+        measure();
+        update();
+      });
+      // Webfonts verschieben die Zeilenhöhen und damit die Knotenmitten
+      if (document.fonts) {
+        document.fonts.ready.then(() => {
+          measure();
+          update();
+        });
+      }
+      stillMotion.addEventListener("change", start);
+    }
+  }
+</script>
+
+<script>
+  const list = document.querySelector<HTMLElement>("[data-countup]");
+
+  if (list) {
+    const digits = Array.from(list.querySelectorAll<HTMLElement>(".metrics__digits"));
+    const stillMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const render = (el: HTMLElement, wert: number) => {
+      el.textContent = String(wert);
+    };
+
+    // Quart statt Expo: Expo erreicht 98 Prozent in einem Viertel der Zeit und
+    // der Rest kriecht — als Zählvorgang liest sich das nicht mehr als Zählen.
+    const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
+
+    const countUp = (el: HTMLElement) => {
+      const ziel = Number(el.dataset.countTo ?? 0);
+      if (!Number.isFinite(ziel) || ziel <= 0) return;
+      const dauer = 1600;
+      let start: number | null = null;
+
+      const frame = (now: number) => {
+        if (start === null) start = now;
+        const t = Math.min(1, (now - start) / dauer);
+        render(el, Math.round(easeOutQuart(t) * ziel));
+        if (t < 1) requestAnimationFrame(frame);
+      };
+
+      requestAnimationFrame(frame);
+    };
+
+    if (!stillMotion.matches) {
+      // Serverseitig steht der echte Wert, damit die Rail ohne JavaScript stimmt.
+      // Sobald das Skript läuft, wird sofort genullt — sonst blitzt der Endwert
+      // auf und springt beim Sichtbarwerden zurück auf null.
+      digits.forEach((el) => render(el, 0));
+
+      const seen = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            countUp(entry.target as HTMLElement);
+            seen.unobserve(entry.target);
+          }
+        },
+        { rootMargin: "0px 0px -10% 0px", threshold: 0 }
+      );
+      digits.forEach((el) => seen.observe(el));
+    }
+  }
+</script>
