@@ -104,6 +104,18 @@ Die Zeilenliste löst das Kernproblem der optionalen Bilder: In einem Raster hin
 
 Datum links in Mono mit `tabular-nums` übernimmt bewusst die Behandlung der Werdegang-Zeitachse auf der Profilseite. Mono bleibt damit auf technische und tabellarische Werte beschränkt, wie im Projekt festgelegt.
 
+## Auszeichnung, externe Links und strukturierte Daten
+
+**Datumsangaben** stehen in `<time datetime="2026-09-17">`. Die sichtbare deutsche Schreibweise bleibt unverändert, das maschinenlesbare Attribut trägt ISO. Bei Zeiträumen erhält jeder der beiden Werte sein eigenes `<time>`-Element.
+
+**Die Liste** ist eine `<ol>`, weil die Reihenfolge Bedeutung trägt (chronologisch). Jedes Event ist ein `<li>`. Das Archiv ist je Jahr eine eigene `<ol>` unter einer `<h3>` mit der Jahreszahl.
+
+**Externe Links** öffnen im selben Tab und tragen `rel="noopener noreferrer"`. Ein neuer Tab würde eine für Screenreader ankündigungspflichtige Zustandsänderung erzeugen und den Zurück-Button entwerten; die Beschriftung „Veranstaltungsseite ↗" signalisiert bereits, dass die Seite verlassen wird. Sollte der Kunde ausdrücklich neue Tabs wünschen, ist das eine Änderung an einer Stelle plus ein `<span class="visually-hidden">(öffnet in neuem Tab)</span>` — die Utility-Klasse existiert seit der Profilseite.
+
+**Strukturierte Daten:** Die Seite gibt kommende Events zusätzlich als JSON-LD nach `schema.org/Event` aus. Für einen Veranstaltungskalender ist das der SEO-Hebel mit dem besten Verhältnis von Aufwand zu Wirkung, weil Suchmaschinen daraus Event-Rich-Results erzeugen. `cancelled` wird dabei als `eventStatus: EventCancelled` abgebildet, Online-Termine als `eventAttendanceMode: OnlineEventAttendanceMode`.
+
+**Achtung CSP:** Ob ein inline eingebettetes `<script type="application/ld+json">` unter `script-src 'self'` durchgeht, ist zwischen Browsern nicht einheitlich — es ist kein ausführbares Skript, wird aber von manchen Implementierungen trotzdem gegen `script-src` geprüft. Das wird **nicht angenommen, sondern im CSP-Durchgang mit den echten Headern verifiziert**. Falls es blockiert wird, sind die Auswege eine `_headers`-Ergänzung per Hash oder die Auslieferung als separate Datei. Diese Prüfung steht ausdrücklich in der Abschlussliste, weil genau diese Klasse von Fehlern zuletzt erst im Deployment aufgefallen ist.
+
 ## Bild und Alt-Text
 
 Das Bild ist optional und **dekorativ**. Titel, Typ, Datum, Ort und Kurzbeschreibung stehen bereits als Text daneben; das Bild trägt keine Information, die nicht schon vorhanden ist.
@@ -125,6 +137,14 @@ Eingesetzt wird das ausschließlich als Vorbefüllung für den Ausnahmefall eine
 Native Checkboxen, Zustand über `:has()` gelesen. Vollständige Logik:
 
 ```css
+/* Die Zeile hält ihren eigenen Anzeigemodus in einer Custom Property,
+   damit die Filterregel ihn nicht gegen den Breakpoint überschreibt. */
+.event { display: var(--event-display, grid); }
+
+@media (max-width: 42rem) {
+  .event { --event-display: block; }
+}
+
 /* Kein Filter aktiv → alles sichtbar, keine Regel nötig */
 
 .events:has(.filter__input:checked) .event { display: none; }
@@ -132,10 +152,12 @@ Native Checkboxen, Zustand über `:has()` gelesen. Vollständige Logik:
 .events:has(#f-congress:checked) .event[data-type="congress"],
 .events:has(#f-course:checked)   .event[data-type="course"],
 .events:has(#f-workshop:checked) .event[data-type="workshop"],
-.events:has(#f-webinar:checked)  .event[data-type="webinar"] { display: grid; }
+.events:has(#f-webinar:checked)  .event[data-type="webinar"] { display: var(--event-display, grid); }
 ```
 
 Multiselect fällt von selbst an, weil sich die Einblendregeln addieren — die Auswahl mehrerer Typen ergibt deren Vereinigung. `:has()` ist seit Dezember 2023 Baseline in allen Zielbrowsern.
+
+Die Custom Property ist kein Umweg, sondern verhindert einen konkreten Fehler: Stünde in der Einblendregel fest `display: grid`, würde jede gefilterte Ansicht auf Mobile das dortige Zeilenlayout überschreiben. Der Fehler wäre nur im gefilterten Zustand unterhalb von 42rem sichtbar — also genau dort, wo man ihn beim Prüfen am ehesten übersieht.
 
 **Zurücksetzen ohne JavaScript:** Die Filter liegen in einem `<form>`; `<button type="reset">` leert alle Checkboxen nativ. Der Button erscheint nur bei aktiver Filterung über `.filter:has(.filter__input:checked)`.
 
@@ -144,6 +166,10 @@ Multiselect fällt von selbst an, weil sich die Einblendregeln addieren — die 
 ## Leerzustände
 
 **Filterung erzeugt nie einen Leerzustand.** Es werden ausschließlich Filter für Typen gerendert, die tatsächlich kommende Events haben (`verfuegbareTypen()` zur Buildzeit). Damit hat jede Einzelauswahl mindestens einen Treffer, und weil Multiselect eine Vereinigung nicht-leerer Mengen bildet, hat auch jede Kombination mindestens einen. Ein Ergebnis mit null Treffern ist strukturell unmöglich.
+
+Damit diese Garantie hält, müssen Filterliste und Trefferzahlen **aus genau demselben Array abgeleitet werden, das anschließend gerendert wird** — also aus dem Ergebnis von `kommendeEvents()` einschließlich der `cancelled`-Einträge, nicht aus den Rohdaten. Zählte `verfuegbareTypen()` aus einer anderen Menge als die Liste rendert, entstünden Filter ohne Treffer und die Garantie bräche still. `verfuegbareTypen()` nimmt deshalb das gefilterte Array als Argument entgegen, statt selbst auf die Daten zuzugreifen.
+
+Abgesagte Events bleiben regulär filterbar und behalten ihre Position in der Sortierung. Sie sind sichtbarer Inhalt, kein Sonderfall der Filterlogik.
 
 Das löst zugleich die einzige echte Schwäche des CSS-Ansatzes: CSS kann sichtbare Elemente nicht zählen und könnte einen leeren Zustand gar nicht erkennen. Statt das Problem zu behandeln, wird es ausgeschlossen.
 
@@ -213,6 +239,8 @@ Alle Sektionen nutzen `Container.astro` und `Grid.astro` nach den Regeln in `doc
 - Kontrast aller Textfarben gegen WCAG AA gemessen
 - Alle vier Datumsrandfälle sichtbar korrekt
 - Zustand `cancelled` korrekt gekennzeichnet
+- Gefilterte Ansicht **unterhalb von 42rem** geprüft — dort würde ein fest verdrahtetes `display` in der Filterregel das mobile Zeilenlayout brechen
+- JSON-LD im gebauten Ergebnis vorhanden, gegen die CSP geprüft und mit dem Rich-Results-Test validiert
 - Gebautes Ergebnis lokal **mit den echten Headern aus `public/_headers`** ausgeliefert und auf CSP-Verstöße geprüft — der Dev-Server wendet die Header nicht an, weshalb ein CSP-Fehler zuletzt erst im Deployment auffiel
 
 ## Offene Punkte für Etappe B
