@@ -1,6 +1,6 @@
 # Projektstatus — Dr. René H. Fortelny Website
 
-Stand: 28. Juli 2026
+Stand: 31. Juli 2026
 Branch: `dev`
 Repository: `gb-design/rf-web`
 Gesamtstatus: **Foundation abgeschlossen · Static MVP in Arbeit**
@@ -26,9 +26,10 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 | Content-Konzept | ✅ | Bestandsanalyse und Entwürfe für Haupt- und Pflichtseiten dokumentiert; offene Fakten gegen den Live-Bestand abgeglichen |
 | Statische Assets | 🟡 | Logo, Icons, Lottie-Dateien und temporäre Fotos vorhanden; Rechte und finale Auswahl offen |
 | Globale UI | ✅ | Header, Navigation, Footer, Container, globales Grid und Button-Komponenten stehen |
-| Hauptseiten | 🟡 | Startseite und Profilseite inhaltlich und visuell umgesetzt; Leistungen, Events, Galerie und Kontakt bestehen bisher nur aus dem gemeinsamen Seitenintro |
+| Hauptseiten | 🟡 | Startseite, Profilseite und Eventseite inhaltlich und visuell umgesetzt; Leistungen, Galerie und Kontakt bestehen bisher nur aus dem gemeinsamen Seitenintro |
 | Pflichtseiten | 🟡 | Routen und Arbeitsentwürfe vorhanden; vollständige Umsetzung und rechtliche Freigabe fehlen |
-| Sanity CMS | ⬜ | Noch nicht installiert oder konfiguriert |
+| Sanity CMS | ⬜ | Noch nicht installiert oder konfiguriert. Die Eventseite ist über `src/lib/events.ts` als Tauschpunkt vorbereitet |
+| Automatisierte Tests | 🟡 | `npm test` über Nodes eingebauten Runner, ohne neue Abhängigkeit. 16 Tests decken Datumsformat und Eventselektoren ab; Astro-Komponenten weiterhin nur im Browser geprüft |
 | Kontaktformular | ⬜ | Resend-Endpoint, Validierung, Consent, Honeypot und Rate-Limit fehlen |
 | Cloudflare Pages | ✅ | Projekt `rf-web` verbunden, automatische Deployments aktiv. Stabile Preview des Branches `dev`: `https://dev.rf-web-5ik.pages.dev` |
 | SEO-Grundlagen | 🟡 | Titel und Descriptions je Seite vorhanden; `site` in `astro.config.mjs`, Canonical-Tags, Open-Graph-Daten, `robots.txt` und Sitemap fehlen |
@@ -137,6 +138,21 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 - Sicherheitsmeldungen der Abhängigkeiten von sechs auf eine reduziert. `fast-uri`, `postcss` und `svgo` über `npm audit fix` gehoben; `sharp` auf 0.35.3 und `esbuild` auf 0.28.1 über `overrides` in `package.json`, statt für sie zwei Major-Versionen auf Astro 7 zu springen. Alle betroffenen Pakete sind reine Build-Abhängigkeiten und landen nicht im Browser.
 - Stabile Vorschau-URL des Entwicklungsstands dokumentiert: `https://dev.rf-web-5ik.pages.dev`. Cloudflare legt diesen Branch-Alias automatisch an, er zeigt immer den aktuellen Stand von `dev`. Die zufälligen Deployment-URLs je Commit bleiben zusätzlich bestehen.
 
+- Eventseite `/events` als Etappe A umgesetzt: Editorial-Zeilenliste, CSS-only Multiselect-Filter, Archiv nach Jahr, Hinweissektion. Design und Plan in `docs/superpowers/specs/2026-07-31-events-etappe-a-design.md` und `docs/superpowers/plans/2026-07-31-events-etappe-a.md`.
+- Kartenraster für Events verworfen. In einem Raster hinterlässt ein fehlendes Bild eine Lücke, die mit Dekoration gefüllt werden müsste; in einer Zeile rückt der Text einfach weiter. Damit sind Zeilen mit und ohne Bild gleichermaßen bewusst, ohne Platzhalter — die Voraussetzung dafür, dass das Eventbild optional bleiben kann.
+- Filter vollständig ohne JavaScript: native Checkboxen, Zustand über `:has()` gelesen, Vereinigung mehrerer Typen ergibt Multiselect. Zurücksetzen über `<button type="reset">`.
+- Leerzustand durch Filterung strukturell ausgeschlossen: Es werden nur Filter für Typen gerendert, die tatsächlich Termine haben. Jede Einzelauswahl und damit jede Vereinigung hat mindestens einen Treffer. Das umgeht, dass CSS sichtbare Elemente nicht zählen kann.
+- JavaScript ausschließlich als Aufsatz, rund dreißig Zeilen: Trefferzähler in einer `aria-live`-Region und Escape im Fokusbereich der Filterleiste. Ohne Skript funktionieren Filtern, Multiselect und Reset unverändert — im Browser mit deaktiviertem JavaScript verifiziert.
+- Archivierung wird aus `endDate` abgeleitet, nicht gepflegt. Ein zweites Datumsfeld wurde verworfen, weil es eine widersprechbare zweite Wahrheit und einen Vergessen-Zustand erzeugt. Kundenentscheidung vom 31. Juli 2026. Das Statusfeld deckt die Fälle ab, die kein Datum abdeckt: `draft` versteckt vollständig, `cancelled` bleibt sichtbar und gekennzeichnet.
+- Zeitzonenfehler vorbeugend ausgeschlossen: Datum und Tagesgrenzen laufen ausschließlich über `Intl.DateTimeFormat` mit `timeZone: "Europe/Vienna"`, nie über die lokalen `getX()`-Methoden. Ein UTC-Build hätte sonst Termine dem Vortag zugeordnet. Die Tests laufen zusätzlich unter `TZ=UTC` grün.
+- Filter-CSS bewusst global statt gescopt: Die `:has()`-Regeln verbinden `EventFilter.astro` mit `EventCard.astro`, und Astros Scoping hätte solche komponentenübergreifenden Regeln still wirkungslos gemacht. Alles unterhalb von `.events` verschachtelt.
+- Anzeigemodus der Eventzeile in `--event-display` statt fest in der Filterregel. Ein festes `display: grid` hätte im gefilterten Zustand unterhalb von 48 Rem das mobile Layout überschrieben — nur in dieser Kombination sichtbar.
+- Externe Links öffnen in neuem Tab mit `rel="noopener noreferrer"` und verstecktem Hinweis für die Sprachausgabe, da der Tabwechsel sonst unangekündigt bliebe. Kundenentscheidung vom 31. Juli 2026.
+- Eventbild ist optional und dekorativ, `alt=""` ist der Default. Ein Alt-Text wird nur gesetzt, wenn das Bild Information trägt, die nicht im Text steht. Zwei Testbilder mit Higgsfield erzeugt, auf 1200 × 900 gebracht.
+- JSON-LD nach `schema.org/Event` ergänzt, inklusive `EventCancelled` und `OnlineEventAttendanceMode`. Gegen die echte CSP geprüft: keine Verstöße.
+- Prüfung automatisiert: 16 Unit-Tests plus 32 Browser-Prüfungen gegen das gebaute Ergebnis, ausgeliefert mit den echten Headern aus `public/_headers`. Abgedeckt sind CSP, JSON-LD, alle vier Datumsfälle, Einzel- und Mehrfachfilter, Trefferzähler, Escape, externe Links, Bilder, Overflow bei 320 bis 1440 Pixel und der vollständige Ablauf ohne JavaScript.
+- Überschriftenhierarchie der Eventseite ohne Sprünge: Eventtitel stehen auf `h3`, im Archiv unter der Jahres-`h3` auf `h4`.
+
 ## Nächstes Arbeitspaket
 
 **Static MVP — Startseite abschließen**
@@ -154,13 +170,27 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 3. ✅ CV-Download bewusst nicht verlinkt, da kein freigegebenes PDF vorliegt.
 4. ✅ Responsive-Pass bei 320, 390, 768, 1024, 1440, 1920 und 2560 Pixel ohne Overflow oder Konsolenmeldungen; Kontrast aller Textfarben gemessen und WCAG AA bestätigt.
 
+**Eventseite Etappe A — abgeschlossen**
+
+1. ✅ Datums- und Datenmodul mit 16 Unit-Tests über Nodes eingebauten Runner.
+2. ✅ Editorial-Zeilenliste, CSS-only Multiselect-Filter, Archiv nach Jahr.
+3. ✅ Optionales Eventbild, dekorativ mit `alt=""` als Default.
+4. ✅ 32 Browser-Prüfungen gegen das gebaute Ergebnis mit den echten CSP-Headern, einschließlich Ablauf ohne JavaScript.
+
 **Nächstes Arbeitspaket — Leistungsseite**
 
-1. ⬜ Inhaltsentwurf `docs/content/leistungen.md` zuerst gegen den Live-Bestand abgleichen, wie bei der Profilseite.
+1. ⬜ Inhaltsentwurf `docs/content/leistungen.md` zuerst gegen den Live-Bestand abgleichen, wie bei der Profilseite. Der Entwurf stammt vom 2. Juli und wurde noch nicht abgeglichen.
 2. ⬜ Behandlungsschwerpunkte, Verfahren und Ablauf als eigenständige Seite umsetzen, ohne die Startseite zu duplizieren.
 3. ⬜ Responsive- und Accessibility-Pass von 320 bis 2560 Pixel.
 
-Danach folgen Kontakt, Galerie sowie die vollständigen Pflichtseiten. Events werden zunächst mit einem belastbaren Leerzustand vorbereitet und später an Sanity angebunden.
+**Danach — Eventseite Etappe B**
+
+1. ⬜ Sanity-Projekt, Schema und Studio unter `/studio`. Eigene CSP-Ausnahme ausschließlich für `/studio/*`, da das Studio unter anderem `unsafe-eval` benötigt; die Härtung der übrigen Seiten bleibt unverändert.
+2. ⬜ GROQ-Query ersetzt das Testdaten-Array in `src/lib/events.ts`. Typ und Funktionssignaturen bleiben, die Komponenten werden nicht angefasst.
+3. ⬜ Nächtlicher Rebuild über GitHub Actions auf einen Cloudflare Deploy Hook, damit abgelaufene Termine ohne Zutun ins Archiv rücken. Zusätzlich ein Sanity-Webhook für Inhaltsänderungen.
+4. ⬜ Feldhilfe für `imageAlt`, optional AI-Assist-Vorbefüllung — nur als Vorschlag, nie ungeprüft veröffentlicht.
+
+Danach folgen Kontakt, Galerie sowie die vollständigen Pflichtseiten.
 
 **Technische Restarbeiten, unabhängig vom Seitenfortschritt**
 

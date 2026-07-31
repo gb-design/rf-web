@@ -1,7 +1,40 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/Container.astro";
+import Grid from "../components/Grid.astro";
 import PageIntro from "../components/PageIntro.astro";
+import EventCard from "../components/EventCard.astro";
+import EventList from "../components/EventList.astro";
+import { kommendeEvents, vergangeneEvents, nachJahr } from "../lib/events";
+
+const kommend = kommendeEvents();
+const archivJahre = nachJahr(vergangeneEvents());
+
+const jsonLd = kommend.map((e) => ({
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: e.title,
+  startDate: e.startDate,
+  endDate: e.endDate,
+  description: e.excerpt,
+  eventStatus:
+    e.status === "cancelled"
+      ? "https://schema.org/EventCancelled"
+      : "https://schema.org/EventScheduled",
+  eventAttendanceMode: e.isOnline
+    ? "https://schema.org/OnlineEventAttendanceMode"
+    : "https://schema.org/OfflineEventAttendanceMode",
+  location: e.isOnline
+    ? { "@type": "VirtualLocation", url: e.externalUrl }
+    : {
+        "@type": "Place",
+        name: e.locationName,
+        address: { "@type": "PostalAddress", addressLocality: e.city },
+      },
+  ...(e.externalUrl ? { url: e.externalUrl } : {}),
+}));
 ---
+
 <BaseLayout
   title="Events & Kongresse | Hernienchirurgie"
   description="Aktuelle Kongresse, Kurse und Fortbildungen zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiver Chirurgie."
@@ -11,4 +44,135 @@ import PageIntro from "../components/PageIntro.astro";
     title="Events und Kongresse"
     description="Ausgewählte Kongresse, Kurse, Workshops und Webinare zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiven Verfahren."
   />
+
+  <section class="section">
+    <Container>
+      <Grid class="events-sektion">
+        <h2 class="events-sektion__titel">Kommende Veranstaltungen</h2>
+        <div class="events-sektion__inhalt">
+          <EventList
+            events={kommend}
+            leerText="Derzeit sind keine neuen Veranstaltungen veröffentlicht. Schauen Sie zu einem späteren Zeitpunkt wieder vorbei."
+          />
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  {archivJahre.length > 0 && (
+    <section class="section">
+      <Container>
+        <Grid class="events-sektion">
+          <h2 class="events-sektion__titel">Vergangene Veranstaltungen</h2>
+          <div class="events-sektion__inhalt">
+            <p class="events-sektion__text">
+              Frühere Termine können nach Jahr aufgerufen werden. Das Archiv dient der
+              Dokumentation; Anmeldelinks abgelaufener Veranstaltungen werden nicht
+              hervorgehoben.
+            </p>
+            {archivJahre.map(({ jahr, events }) => (
+              <div class="archiv-jahr">
+                <h3 class="archiv-jahr__titel">{jahr}</h3>
+                <ol class="archiv-jahr__liste">
+                  {events.map((event) => (
+                    <EventCard event={event} compact headingLevel={4} />
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+        </Grid>
+      </Container>
+    </section>
+  )}
+
+  <section class="section section--hinweis">
+    <Container>
+      <Grid>
+        <p class="events-hinweis">
+          Für Programm, Anmeldung, Teilnahmebedingungen und mögliche Änderungen ist der
+          jeweilige Veranstalter verantwortlich. Externe Links führen auf die Website des
+          Veranstalters.
+        </p>
+      </Grid>
+    </Container>
+  </section>
+
+  {/* Bewusst inline: JSON-LD ist Datenblock, kein ausfuehrbares Skript. Ob das
+      unter script-src 'self' durchgeht, wird im CSP-Durchgang verifiziert. */}
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 </BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(var(--space-16), 8vw, var(--space-24));
+  }
+
+  .section--hinweis {
+    padding-top: 0;
+  }
+
+  :global(.events-sektion) {
+    --grid-row-gap: var(--space-8);
+  }
+
+  .events-sektion__titel {
+    grid-column: 1 / span 3;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .events-sektion__inhalt {
+    grid-column: 4 / -1;
+  }
+
+  .events-sektion__text {
+    margin: 0 0 var(--space-12);
+    max-width: 55ch;
+    color: var(--color-text-muted);
+  }
+
+  .archiv-jahr {
+    margin-top: var(--space-12);
+  }
+
+  .archiv-jahr:first-of-type {
+    margin-top: 0;
+  }
+
+  .archiv-jahr__titel {
+    margin: 0 0 var(--space-4);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+  }
+
+  .archiv-jahr__liste {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .events-hinweis {
+    grid-column: 4 / -1;
+    margin: 0;
+    max-width: 62ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+  }
+
+  @media (max-width: 48rem) {
+    .events-sektion__titel,
+    .events-sektion__inhalt,
+    .events-hinweis {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

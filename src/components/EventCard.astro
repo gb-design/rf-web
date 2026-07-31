@@ -5,9 +5,13 @@ import { TYP_LABEL, type EventItem } from "../lib/events";
 interface Props {
   event: EventItem;
   compact?: boolean;
+  // Im Archiv traegt die Jahreszahl bereits ein h3, dort ruecken die Titel auf h4.
+  headingLevel?: 3 | 4;
 }
 
-const { event, compact = false } = Astro.props;
+const { event, compact = false, headingLevel = 3 } = Astro.props;
+
+const Titel = `h${headingLevel}` as "h3" | "h4";
 
 const abgesagt = event.status === "cancelled";
 const ort = event.isOnline
@@ -32,7 +36,7 @@ if (event.language === "en") merkmale.push("EN");
       {abgesagt && <span class="event__abgesagt">Abgesagt</span>}
     </p>
 
-    <h4 class="event__titel">{event.title}</h4>
+    <Titel class="event__titel">{event.title}</Titel>
 
     {!compact && <p class="event__text">{event.excerpt}</p>}
 

@@ -3,7 +3,7 @@
 // Ansage des Trefferstands und die Escape-Abkuerzung.
 
 const form = document.querySelector<HTMLFormElement>("#event-filter");
-const statusZeile = form?.querySelector<HTMLElement>(".filter__statusZeile");
+const statusZeile = form?.querySelector<HTMLElement>(".filter__status");
 const wurzel = form?.closest<HTMLElement>(".events");
 
 if (form && statusZeile && wurzel) {
