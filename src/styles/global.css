@@ -171,6 +171,11 @@ h1, h2, h3, h4, h5, h6 {
    selbst Trennung nicht mehr rettet. */
 .grid-label {
   hyphens: auto;
+  /* Ohne Grenzen zerlegt die Trennung „Vergangene Veranstaltungen" in
+     VER-GAN-GENE VER-AN-STAL-TUN-GEN. Erst ab zwölf Zeichen trennen und
+     mindestens fünf Zeichen je Seite stehen lassen — kurze Wörter bleiben
+     damit ganz, lange brechen an genau einer sinnvollen Stelle. */
+  hyphenate-limit-chars: 12 5 5;
   overflow-wrap: break-word;
 }
 

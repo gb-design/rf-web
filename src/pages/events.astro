@@ -116,7 +116,11 @@ const jsonLd = kommend.map((e) => ({
     <section class="section">
       <Container>
         <Grid class="events-sektion">
-          <h2 class="events-sektion__titel grid-label">Vergangene Veranstaltungen</h2>
+          {/* Gleiche Struktur wie oben, damit der Titel seine drei Spalten
+              behält. Ohne den Wrapper fiele er in eine einzelne Zwölftelspalte. */}
+          <div class="events-sektion__aside events-sektion__aside--statisch">
+            <h2 class="events-sektion__titel grid-label">Vergangene Veranstaltungen</h2>
+          </div>
           <div class="events-sektion__inhalt">
             <p class="events-sektion__text">
               Frühere Termine können nach Jahr aufgerufen werden. Das Archiv dient der
@@ -293,7 +297,16 @@ const jsonLd = kommend.map((e) => ({
     align-self: start;
   }
 
+  /* Das Archiv braucht keine mitlaufende Spalte — es ist kurz und trägt
+     keinen Filter. */
+  .events-sektion__aside--statisch {
+    position: static;
+  }
+
   .events-sektion__titel {
+    /* Auch gesetzt, falls der Titel einmal ohne Wrapper direkt im Raster
+       steht: sonst landet er in einer einzelnen Zwölftelspalte. */
+    grid-column: 1 / span 3;
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--text-h3);
