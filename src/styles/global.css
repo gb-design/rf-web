@@ -163,6 +163,17 @@ h1, h2, h3, h4, h5, h6 {
   border: 0;
 }
 
+/* Schmale Rasterlabels stehen in nur drei der zwölf Spalten. Lange deutsche
+   Komposita sind breiter als diese Spalte, und ein einzelnes Wort kann ohne
+   Trennung nicht umbrechen — es liefe über die Spaltengrenze in den Nachbarn,
+   weil Grid-Items nicht clippen. `hyphens: auto` greift, weil das Dokument
+   `lang="de"` trägt; `overflow-wrap` ist die letzte Instanz für Breiten, die
+   selbst Trennung nicht mehr rettet. */
+.grid-label {
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
 .skip-link {
   position: fixed;
   inset-block-start: var(--space-3);

@@ -1,39 +1,19 @@
 ---
 import EventCard from "./EventCard.astro";
-import EventFilter from "./EventFilter.astro";
-import { verfuegbareTypen, type EventItem } from "../lib/events";
+import type { EventItem } from "../lib/events";
 
 interface Props {
   events: EventItem[];
-  leerText: string;
 }
 
-const { events, leerText } = Astro.props;
-
-const typen = verfuegbareTypen(events);
-
-// Ein einzelner Filter kann nichts eingrenzen und waere nur Dekoration.
-const zeigeFilter = typen.length > 1;
+const { events } = Astro.props;
 ---
 
-{events.length === 0 ? (
-  <p class="events__leer">{leerText}</p>
-) : (
-  <div class="events">
-    {zeigeFilter && <EventFilter typen={typen} gesamt={events.length} />}
-    <ol class="events__liste">
-      {events.map((event) => <EventCard event={event} />)}
-    </ol>
-  </div>
-)}
+<ol class="events__liste">
+  {events.map((event) => <EventCard event={event} />)}
+</ol>
 
 <style>
-  .events__leer {
-    margin: 0;
-    max-width: 55ch;
-    color: var(--color-text-muted);
-  }
-
   .events__liste {
     margin: 0;
     padding: 0;
@@ -43,10 +23,11 @@ const zeigeFilter = typen.length > 1;
 
 <style is:global>
   /* Diese Regeln verbinden die Checkboxen aus EventFilter mit den Zeilen aus
-     EventCard, also ueber zwei Komponentengrenzen hinweg. Astro haengt an
-     jeden gescopten Selektor ein [data-astro-cid-…] der jeweiligen Komponente;
-     eine solche Regel wuerde damit still nie greifen. Deshalb global und
-     vollstaendig unterhalb von .events verschachtelt, damit nichts leckt. */
+     EventCard — über zwei Komponentengrenzen und seit der Sticky-Spalte auch
+     über zwei Rasterspalten hinweg. Astro hängt an jeden gescopten Selektor
+     ein [data-astro-cid-…] der jeweiligen Komponente; eine solche Regel würde
+     damit still nie greifen. Deshalb global und vollständig unterhalb von
+     .events verschachtelt, damit nichts leckt. */
   .events:has(.filter__input:checked) .event {
     display: none;
   }

@@ -2,13 +2,27 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Container from "../components/Container.astro";
 import Grid from "../components/Grid.astro";
-import PageIntro from "../components/PageIntro.astro";
 import EventCard from "../components/EventCard.astro";
+import EventFilter from "../components/EventFilter.astro";
 import EventList from "../components/EventList.astro";
-import { kommendeEvents, vergangeneEvents, nachJahr } from "../lib/events";
+import { datumBereich } from "../lib/eventDatum";
+import {
+  kommendeEvents,
+  vergangeneEvents,
+  nachJahr,
+  verfuegbareTypen,
+} from "../lib/events";
 
 const kommend = kommendeEvents();
 const archivJahre = nachJahr(vergangeneEvents());
+
+// Liest aus denselben Daten wie die Liste. Ein fest eingetragener Termin würde
+// gegen den Inhalt altern, sobald der Kunde Termine pflegt.
+const naechster = kommend[0];
+
+const typen = verfuegbareTypen(kommend);
+// Ein einzelner Filter kann nichts eingrenzen und wäre nur Dekoration.
+const zeigeFilter = typen.length > 1;
 
 const jsonLd = kommend.map((e) => ({
   "@context": "https://schema.org",
@@ -39,21 +53,60 @@ const jsonLd = kommend.map((e) => ({
   title="Events & Kongresse | Hernienchirurgie"
   description="Aktuelle Kongresse, Kurse und Fortbildungen zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiver Chirurgie."
 >
-  <PageIntro
-    eyebrow="Fachveranstaltungen"
-    title="Events und Kongresse"
-    description="Ausgewählte Kongresse, Kurse, Workshops und Webinare zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiven Verfahren."
-  />
+  <section class="hero">
+    <Container>
+      <Grid class="hero__grid">
+        <div class="hero__head">
+          <p class="hero__eyebrow grid-label">Fachveranstaltungen</p>
+          <h1 class="hero__titel">Events und Kongresse</h1>
+          <p class="hero__lead">
+            Ausgewählte Kongresse, Kurse, Workshops und Webinare zu Hernienchirurgie,
+            Bauchwandrekonstruktion und minimalinvasiven Verfahren.
+          </p>
+        </div>
+
+        <div class="hero__media">
+          <img
+            src="/images/events/hero-kongress.jpg"
+            width="1400"
+            height="1750"
+            alt=""
+            loading="eager"
+            fetchpriority="high"
+          />
+        </div>
+      </Grid>
+
+      {naechster && (
+        <div class="hero__rail">
+          <dl class="hero__facts">
+            <dt>Nächster Termin</dt>
+            <dd>{datumBereich(naechster.startDate, naechster.endDate)}</dd>
+          </dl>
+        </div>
+      )}
+    </Container>
+  </section>
 
   <section class="section">
     <Container>
-      <Grid class="events-sektion">
-        <h2 class="events-sektion__titel">Kommende Veranstaltungen</h2>
+      {/* `.events` muss Filter und Zeilen gemeinsam umschließen — die
+          :has()-Regeln in EventList lesen von hier aus nach unten. */}
+      <Grid class:list={["events-sektion", { events: kommend.length > 0 }]}>
+        <div class="events-sektion__aside">
+          <h2 class="events-sektion__titel grid-label">Kommende Veranstaltungen</h2>
+          {zeigeFilter && <EventFilter typen={typen} gesamt={kommend.length} />}
+        </div>
+
         <div class="events-sektion__inhalt">
-          <EventList
-            events={kommend}
-            leerText="Derzeit sind keine neuen Veranstaltungen veröffentlicht. Schauen Sie zu einem späteren Zeitpunkt wieder vorbei."
-          />
+          {kommend.length === 0 ? (
+            <p class="events-sektion__leer">
+              Derzeit sind keine neuen Veranstaltungen veröffentlicht. Schauen Sie zu einem
+              späteren Zeitpunkt wieder vorbei.
+            </p>
+          ) : (
+            <EventList events={kommend} />
+          )}
         </div>
       </Grid>
     </Container>
@@ -63,7 +116,7 @@ const jsonLd = kommend.map((e) => ({
     <section class="section">
       <Container>
         <Grid class="events-sektion">
-          <h2 class="events-sektion__titel">Vergangene Veranstaltungen</h2>
+          <h2 class="events-sektion__titel grid-label">Vergangene Veranstaltungen</h2>
           <div class="events-sektion__inhalt">
             <p class="events-sektion__text">
               Frühere Termine können nach Jahr aufgerufen werden. Das Archiv dient der
@@ -104,6 +157,115 @@ const jsonLd = kommend.map((e) => ({
 </BaseLayout>
 
 <style>
+  /* ── Hero ──────────────────────────────────────────── */
+
+  .hero {
+    /* Abstand vom Containerrand bis zur Viewportkante. Genau darum darf das
+       Bild nach rechts überlaufen. */
+    --bleed: max(var(--site-margin), (100vw - var(--site-max-width)) / 2);
+
+    padding-block: clamp(var(--space-12), 7vw, var(--space-24)) 0;
+    background: var(--color-bg);
+  }
+
+  :global(.hero__grid) {
+    align-items: center;
+    --grid-row-gap: var(--space-12);
+  }
+
+  .hero__head {
+    grid-column: 1 / span 6;
+  }
+
+  .hero__eyebrow {
+    margin: 0 0 var(--space-6);
+    color: var(--color-primary-strong);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .hero__titel {
+    margin: 0 0 var(--space-8);
+    max-width: 12ch;
+    font-size: var(--text-h1);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  .hero__lead {
+    margin: 0;
+    max-width: 46ch;
+    color: var(--color-text-muted);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+  }
+
+  .hero__media {
+    grid-column: 7 / -1;
+  }
+
+  .hero__media img {
+    /* Läuft randlos aus dem Viewport. Sicher, weil global.css `overflow: clip`
+       auf dem Body setzt — die Scrollbalkenbreite in 100vw erzeugt dadurch
+       keinen horizontalen Overflow. */
+    width: calc(100% + var(--bleed));
+    max-width: none;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    max-height: 34rem;
+    object-fit: cover;
+    border-radius: var(--radius-image) 0 0 var(--radius-image);
+  }
+
+  .hero__rail {
+    padding-block: clamp(var(--space-6), 3vh, var(--space-8));
+    margin-top: clamp(var(--space-12), 6vw, var(--space-16));
+    position: relative;
+  }
+
+  .hero__rail::before {
+    content: "";
+    width: 100vw;
+    height: 1px;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-border) 12%,
+      var(--color-border) 88%,
+      transparent
+    );
+    transform: translateX(-50%);
+  }
+
+  .hero__facts {
+    margin: 0;
+  }
+
+  .hero__facts dt {
+    margin-bottom: var(--space-2);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero__facts dd {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--text-h3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Sektionen ─────────────────────────────────────── */
+
   .section {
     padding-block: clamp(var(--space-16), 8vw, var(--space-24));
   }
@@ -116,8 +278,22 @@ const jsonLd = kommend.map((e) => ({
     --grid-row-gap: var(--space-8);
   }
 
-  .events-sektion__titel {
+  .events-sektion__aside {
     grid-column: 1 / span 3;
+    display: grid;
+    /* Der gewünschte Abstand zwischen Titel und Filterleiste. */
+    gap: var(--space-8);
+    align-content: start;
+
+    position: sticky;
+    /* Der Header ist selbst sticky und muss freigehalten werden. */
+    top: calc(var(--header-height) + var(--space-8));
+    /* Ohne `start` streckt das Grid-Item sich über die volle Zeilenhöhe und
+       hat dann keinen Weg, an dem es kleben könnte. */
+    align-self: start;
+  }
+
+  .events-sektion__titel {
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--text-h3);
@@ -128,6 +304,12 @@ const jsonLd = kommend.map((e) => ({
 
   .events-sektion__inhalt {
     grid-column: 4 / -1;
+  }
+
+  .events-sektion__leer {
+    margin: 0;
+    max-width: 55ch;
+    color: var(--color-text-muted);
   }
 
   .events-sektion__text {
@@ -168,11 +350,53 @@ const jsonLd = kommend.map((e) => ({
     font-size: var(--text-meta);
   }
 
-  @media (max-width: 48rem) {
+  /* Drei Spalten fassen „Veranstaltungen" nicht mehr. Derselbe Wert wie in
+     PageIntro, index.astro und profil.astro. */
+  @media (max-width: 64rem) {
+    .events-sektion__aside,
     .events-sektion__titel,
     .events-sektion__inhalt,
     .events-hinweis {
       grid-column: 1 / -1;
+    }
+
+    /* Nicht sticky auf Tablet und Mobil: Die Pillen brechen dort auf zwei
+       Zeilen um und würden zusammen mit Titel und Trefferzähler rund ein
+       Viertel des Viewports dauerhaft belegen — bei Zeilen von etwa 200 Pixel
+       Höhe ein schlechter Tausch. Der Block scrollt einfach mit. */
+    .events-sektion__aside {
+      position: static;
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+
+    .hero__head,
+    .hero__media {
+      grid-column: 1 / -1;
+    }
+
+    .hero__titel {
+      max-width: 16ch;
+    }
+
+    /* Ab Tablet abwärts bleibt das Bild in der Containerbreite und trägt den
+       globalen Medienradius, statt randlos auszulaufen. */
+    .hero__media img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: 22rem;
+      border-radius: var(--radius-image);
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .hero__titel {
+      max-width: 100%;
+    }
+
+    .hero__media img {
+      aspect-ratio: 4 / 3;
+      max-height: 18rem;
     }
   }
 </style>

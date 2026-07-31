@@ -14,7 +14,7 @@ const { eyebrow, title, description } = Astro.props;
 <section class="page-intro">
   <Container>
     <Grid class="page-intro__grid">
-      <p class="page-intro__eyebrow">{eyebrow}</p>
+      <p class="page-intro__eyebrow grid-label">{eyebrow}</p>
       <div class="page-intro__copy">
         <h1>{title}</h1>
         <p>{description}</p>
@@ -72,23 +72,27 @@ const { eyebrow, title, description } = Astro.props;
     font-size: clamp(1rem, 1.5vw, 1.125rem);
   }
 
+  /* Drei Spalten fassen lange Eyebrow-Komposita nicht mehr. Derselbe Wert wie
+     bei den Rasterlabels in index.astro und profil.astro. */
+  @media (max-width: 64rem) {
+    .page-intro__eyebrow,
+    .page-intro__copy {
+      grid-column: 1 / -1;
+    }
+
+    .page-intro__eyebrow {
+      padding-top: 0;
+    }
+  }
+
   @media (max-width: 42rem) {
     .page-intro {
       min-height: clamp(27rem, 68svh, 38rem);
       background: var(--color-bg);
     }
 
-    .page-intro__eyebrow,
-    .page-intro__copy {
-      grid-column: 1 / -1;
-    }
-
     :global(.page-intro__grid) {
       row-gap: var(--space-6);
-    }
-
-    .page-intro__eyebrow {
-      padding-top: 0;
     }
 
     h1 {

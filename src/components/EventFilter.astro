@@ -11,7 +11,10 @@ const { typen, gesamt } = Astro.props;
 
 <form class="filter" id="event-filter">
   <fieldset class="filter__set">
-    <legend class="filter__legende">Nach Veranstaltungstyp filtern</legend>
+    {/* Bleibt als Zugänglichkeitsname des Fieldsets bestehen, auch wenn er
+        visuell entfällt — ohne ihn kündigt die Sprachausgabe eine namenlose
+        Gruppe an. */}
+    <legend class="visually-hidden">Nach Veranstaltungstyp filtern</legend>
 
     {typen.map(({ typ, label, anzahl }) => (
       <Fragment>
@@ -43,10 +46,6 @@ const { typen, gesamt } = Astro.props;
 </script>
 
 <style>
-  .filter {
-    margin-bottom: var(--space-12);
-  }
-
   .filter__set {
     margin: 0;
     padding: 0;
@@ -55,16 +54,6 @@ const { typen, gesamt } = Astro.props;
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-3);
-  }
-
-  .filter__legende {
-    padding: 0;
-    width: 100%;
-    margin-bottom: var(--space-4);
-    color: var(--color-text-muted);
-    font-size: var(--text-label);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
   }
 
   /* Sichtbar versteckt, aber fokussierbar. Der Fokusring liegt auf dem Label. */
@@ -122,8 +111,12 @@ const { typen, gesamt } = Astro.props;
     outline-offset: 3px;
   }
 
+  /* `display` statt `visibility`: In der schmalen Sticky-Spalte behielte eine
+     nur unsichtbare Schaltfläche ihre Box und belegte eine ganze Flex-Zeile.
+     Solange nichts gefiltert ist, gibt es auch nichts zurückzusetzen — der
+     Button darf dann ganz entfallen, auch aus der Tabreihenfolge. */
   .filter__reset {
-    visibility: hidden;
+    display: none;
     margin-inline-start: var(--space-2);
     padding: var(--space-2) var(--space-2);
     border: 0;
@@ -141,7 +134,7 @@ const { typen, gesamt } = Astro.props;
   }
 
   .filter__set:has(.filter__input:checked) .filter__reset {
-    visibility: visible;
+    display: inline;
   }
 
   .filter__status {
