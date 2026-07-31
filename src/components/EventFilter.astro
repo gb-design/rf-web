@@ -1,0 +1,158 @@
+---
+import type { TypAuswahl } from "../lib/events";
+
+interface Props {
+  typen: TypAuswahl[];
+  gesamt: number;
+}
+
+const { typen, gesamt } = Astro.props;
+---
+
+<form class="filter" id="event-filter">
+  <fieldset class="filter__set">
+    <legend class="filter__legende">Nach Veranstaltungstyp filtern</legend>
+
+    {typen.map(({ typ, label, anzahl }) => (
+      <Fragment>
+        <input
+          class="filter__input"
+          type="checkbox"
+          id={`f-${typ}`}
+          name="typ"
+          value={typ}
+          autocomplete="off"
+        />
+        <label class="filter__label" for={`f-${typ}`}>
+          {label}
+          <span class="filter__anzahl">{anzahl}</span>
+        </label>
+      </Fragment>
+    ))}
+
+    <button class="filter__reset" type="reset">Alle anzeigen</button>
+  </fieldset>
+
+  <p class="filter__status" role="status" aria-live="polite" data-gesamt={gesamt}>
+    {gesamt} Termine
+  </p>
+</form>
+
+<script>
+  import "../scripts/eventFilter.ts";
+</script>
+
+<style>
+  .filter {
+    margin-bottom: var(--space-12);
+  }
+
+  .filter__set {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .filter__legende {
+    padding: 0;
+    width: 100%;
+    margin-bottom: var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-label);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Sichtbar versteckt, aber fokussierbar. Der Fokusring liegt auf dem Label. */
+  .filter__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .filter__label {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    cursor: pointer;
+    transition:
+      border-color 0.15s ease,
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .filter__label:hover {
+    border-color: var(--color-primary-strong);
+  }
+
+  .filter__anzahl {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .filter__input:checked + .filter__label {
+    background: var(--color-primary-strong);
+    border-color: var(--color-primary-strong);
+    color: #fff;
+  }
+
+  .filter__input:checked + .filter__label .filter__anzahl {
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .filter__input:focus-visible + .filter__label {
+    outline: 2px solid var(--color-primary-strong);
+    outline-offset: 3px;
+  }
+
+  .filter__reset {
+    visibility: hidden;
+    margin-inline-start: var(--space-2);
+    padding: var(--space-2) var(--space-2);
+    border: 0;
+    background: none;
+    color: var(--color-text-muted);
+    font: inherit;
+    font-size: var(--text-meta);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .filter__reset:hover {
+    color: var(--color-text);
+  }
+
+  .filter__set:has(.filter__input:checked) .filter__reset {
+    visibility: visible;
+  }
+
+  .filter__status {
+    margin: var(--space-4) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .filter__label {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,182 @@
+---
+import { datumBereich, isoDatum } from "../lib/eventDatum";
+import { TYP_LABEL, type EventItem } from "../lib/events";
+
+interface Props {
+  event: EventItem;
+  compact?: boolean;
+}
+
+const { event, compact = false } = Astro.props;
+
+const abgesagt = event.status === "cancelled";
+const ort = event.isOnline
+  ? "Online"
+  : [event.locationName, event.city].filter(Boolean).join(", ");
+
+const merkmale = [TYP_LABEL[event.eventType]];
+if (event.isOnline) merkmale.push("Online");
+if (event.language === "en") merkmale.push("EN");
+---
+
+<li class:list={["event", { "event--compact": compact }]} data-type={event.eventType}>
+  <p class="event__datum">
+    <time datetime={isoDatum(event.startDate)}>
+      {datumBereich(event.startDate, event.endDate)}
+    </time>
+  </p>
+
+  <div class="event__inhalt">
+    <p class="event__merkmale">
+      <span>{merkmale.join(" · ")}</span>
+      {abgesagt && <span class="event__abgesagt">Abgesagt</span>}
+    </p>
+
+    <h4 class="event__titel">{event.title}</h4>
+
+    {!compact && <p class="event__text">{event.excerpt}</p>}
+
+    <p class="event__meta">
+      <span>{ort}</span>
+      {event.externalUrl && (
+        <a
+          class="event__link"
+          href={event.externalUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Veranstaltungsseite<span class="visually-hidden"> (öffnet in neuem Tab)</span>
+        </a>
+      )}
+    </p>
+  </div>
+
+  {!compact && event.image && (
+    <img
+      class="event__bild"
+      src={event.image.src}
+      width={event.image.width}
+      height={event.image.height}
+      alt={event.imageAlt ?? ""}
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+</li>
+
+<style>
+  /* Der Anzeigemodus liegt in einer Custom Property, damit die globale
+     Filterregel in EventList.astro ihn beim Wiedereinblenden nicht gegen
+     den Breakpoint ueberschreibt. */
+  .event {
+    display: var(--event-display, grid);
+    grid-template-columns: 9rem minmax(0, 1fr) minmax(0, 12rem);
+    column-gap: var(--space-8);
+    row-gap: var(--space-4);
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--color-border);
+    align-items: start;
+  }
+
+  .event:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .event:not(:has(.event__bild)) {
+    grid-template-columns: 9rem minmax(0, 1fr);
+  }
+
+  .event--compact {
+    padding-block: var(--space-6);
+  }
+
+  .event__datum {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.5;
+  }
+
+  .event__merkmale {
+    margin: 0 0 var(--space-2);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .event__abgesagt {
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
+  .event__titel {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-h3);
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .event--compact .event__titel {
+    margin-bottom: var(--space-2);
+  }
+
+  .event__text {
+    margin: 0 0 var(--space-4);
+    max-width: 55ch;
+    color: var(--color-text-muted);
+  }
+
+  .event__meta {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+  }
+
+  .event__link {
+    color: var(--color-primary-strong);
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+
+  .event__link:hover {
+    color: var(--color-primary-strong-hover);
+  }
+
+  .event__bild {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-image);
+  }
+
+  @media (max-width: 48rem) {
+    .event,
+    .event:not(:has(.event__bild)) {
+      --event-display: block;
+    }
+
+    .event__datum {
+      margin-bottom: var(--space-3);
+    }
+
+    .event__bild {
+      margin-top: var(--space-6);
+      max-width: 22rem;
+    }
+  }
+</style>
