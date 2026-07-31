@@ -224,7 +224,13 @@ Beide Skripte respektieren die bestehende CSP (`script-src 'self'`) und laufen a
 | über Monatsgrenze | `30. Sep – 2. Okt 2026` |
 | über Jahresgrenze | `28. Dez 2026 – 3. Jan 2027` |
 
-Die Testdaten werden so angelegt, dass **jeder dieser vier Fälle auf der Seite tatsächlich vorkommt**. Damit ist die Formatierung im Browser sichtbar geprüft, ohne ein Test-Framework einzuführen — das Projekt hat bisher keines, und Etappe A ist nicht der Anlass, eines einzuführen. Falls später Vitest hinzukommt, ist dieses Modul der natürliche erste Kandidat.
+Die Testdaten werden so angelegt, dass **jeder dieser vier Fälle auf der Seite tatsächlich vorkommt**.
+
+**Zusätzlich echte Unit-Tests, ohne neue Abhängigkeit.** Node 22.23 (lokal installiert) führt TypeScript-Dateien direkt aus und bringt mit `node:test` einen Testrunner mit. `npm test` = `node --test src/lib/*.test.ts`. Vitest oder ein anderes Framework wird dafür nicht gebraucht — es kommt kein Paket in `package.json`, kein Config-File und nichts in den Browser.
+
+Getestet werden die beiden Logikmodule: die vier Datumsfälle in `eventDatum.ts` sowie Zeitgrenze, Statusfilterung, Sortierung und Typzählung in `events.ts`. Die Astro-Komponenten bleiben ungetestet — dort ist die Prüfung der Browser-Durchgang.
+
+**Zeitzonenfalle, die diese Tests abdecken.** `new Date(iso).getDate()` liefert den Tag in der Zeitzone der Laufzeitumgebung. Ein Build auf einem UTC-Runner würde ein Event, das um 00:30 Wiener Zeit beginnt, dem Vortag zuordnen. Datum und Tagesgrenzen werden deshalb ausschließlich über `Intl.DateTimeFormat` mit `timeZone: "Europe/Vienna"` bestimmt, nie über die lokalen `getX()`-Methoden. Ein Test setzt dafür gezielt `TZ=UTC`.
 
 ## Komponenten
 
@@ -240,6 +246,8 @@ Die Testdaten werden so angelegt, dass **jeder dieser vier Fälle auf der Seite 
 Das Archiv nutzt dieselbe `EventCard` mit `compact` — eine Zeilendefinition, zwei Dichten. Eine zweite Komponente hätte zwei Stellen erzeugt, die bei jeder Änderung an der Zeile mitgepflegt werden müssten.
 
 Alle Sektionen nutzen `Container.astro` und `Grid.astro` nach den Regeln in `docs/design-system/layout-grid.md`. Zeilenabstände werden über `--grid-row-gap` gesetzt, nicht über direktes `row-gap` auf dem Grid-Root — ein direktes `row-gap` verliert gegen die gescopte Regel in `Grid.astro`, ein bereits einmal aufgetretener Fehler.
+
+**Die Filter-CSS muss global sein.** Die `:has()`-Regeln verbinden die Checkboxen in `EventFilter.astro` mit den Zeilen in `EventCard.astro` — also über zwei Komponentengrenzen hinweg. Astros Scoping hängt an jeden Selektor ein `[data-astro-cid-…]` der jeweiligen Komponente, wodurch eine solche Regel stillschweigend nie greift. Die Filterregeln stehen deshalb in einem `<style is:global>` in `EventList.astro`, sämtlich unterhalb der Wurzelklasse `.events` verschachtelt, damit nichts nach außen leckt. Dieselbe Klasse von Fehler hat das Projekt schon einmal getroffen (Scoping-Regression der Grid-Roots, `STATUS.md`).
 
 ## Prüfung vor Abschluss
 
