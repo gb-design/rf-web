@@ -81,7 +81,15 @@ const jsonLd = kommend.map((e) => ({
         <div class="hero__rail">
           <dl class="hero__facts">
             <dt>Nächster Termin</dt>
-            <dd>{datumBereich(naechster.startDate, naechster.endDate)}</dd>
+            <dd>
+              {/* Datum in Mono, Titel in Sans. Dieselbe Grammatik wie die
+                  Zeilen unten: erst wann, dann was. */}
+              <span class="hero__datum">
+                {datumBereich(naechster.startDate, naechster.endDate)}
+              </span>
+              <span class="hero__trenner" aria-hidden="true">·</span>
+              <span class="hero__event">{naechster.title}</span>
+            </dd>
           </dl>
         </div>
       )}
@@ -263,9 +271,25 @@ const jsonLd = kommend.map((e) => ({
 
   .hero__facts dd {
     margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
     color: var(--color-text);
     font-size: var(--text-h3);
+  }
+
+  .hero__datum {
+    font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
+  }
+
+  .hero__trenner {
+    color: var(--color-text-subtle);
+  }
+
+  .hero__event {
+    font-weight: 500;
   }
 
   /* ── Sektionen ─────────────────────────────────────── */
@@ -283,8 +307,14 @@ const jsonLd = kommend.map((e) => ({
   }
 
   .events-sektion__aside {
-    grid-column: 1 / span 3;
+    /* Vier statt drei Spalten, damit die Filterpillen nicht zu zweit
+       umbrechen. */
+    grid-column: 1 / span 4;
     display: grid;
+    /* Ohne feste Spur legt sich die einzige auto-Spalte auf die Max-Content-
+       Breite der Überschrift, und die Filterleiste bleibt schmaler als ihre
+       Rasterspalte. Die Pillen brachen dadurch am Titel um, nicht am Raster. */
+    grid-template-columns: minmax(0, 1fr);
     /* Der gewünschte Abstand zwischen Titel und Filterleiste. */
     gap: var(--space-8);
     align-content: start;
@@ -303,10 +333,11 @@ const jsonLd = kommend.map((e) => ({
     position: static;
   }
 
+  /* Bewusst ohne eigenes `grid-column`: Der Titel liegt immer in
+     `.events-sektion__aside`, und diese Spalte ist selbst ein Grid. Eine
+     Spaltenregel hier würde dort vier Spuren erzwingen und die Filterleiste
+     in die erste davon drücken. Die Rasterbreite setzt allein der Wrapper. */
   .events-sektion__titel {
-    /* Auch gesetzt, falls der Titel einmal ohne Wrapper direkt im Raster
-       steht: sonst landet er in einer einzelnen Zwölftelspalte. */
-    grid-column: 1 / span 3;
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--text-h3);
@@ -316,7 +347,7 @@ const jsonLd = kommend.map((e) => ({
   }
 
   .events-sektion__inhalt {
-    grid-column: 4 / -1;
+    grid-column: 5 / -1;
   }
 
   .events-sektion__leer {
@@ -356,7 +387,7 @@ const jsonLd = kommend.map((e) => ({
   }
 
   .events-hinweis {
-    grid-column: 4 / -1;
+    grid-column: 5 / -1;
     margin: 0;
     max-width: 62ch;
     color: var(--color-text-muted);

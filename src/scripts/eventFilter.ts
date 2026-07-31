@@ -12,17 +12,20 @@ if (form && statusZeile && wurzel) {
   const aktiveEingaben = () =>
     [...form.querySelectorAll<HTMLInputElement>(".filter__input:checked")];
 
+  // Nur Zahlen aus dem eigenen Markup, keine Nutzereingabe.
+  const zahl = (n: number) => `<b class="filter__zahl">${n}</b>`;
+
   const aktualisieren = () => {
     const aktiv = aktiveEingaben();
 
     if (aktiv.length === 0) {
-      statusZeile.textContent = `${gesamt} Termine`;
+      statusZeile.innerHTML = `${zahl(gesamt)} Termine`;
       return;
     }
 
     const auswahl = aktiv.map((i) => `.event[data-type="${i.value}"]`).join(",");
     const treffer = wurzel.querySelectorAll(auswahl).length;
-    statusZeile.textContent = `${treffer} von ${gesamt} Terminen`;
+    statusZeile.innerHTML = `${zahl(treffer)} von ${gesamt} Terminen`;
   };
 
   form.addEventListener("change", aktualisieren);
