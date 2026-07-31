@@ -1,7 +1,7 @@
 # Design: Events-Seite `/events` — Etappe A
 
 Stand: 31. Juli 2026
-Status: zur Freigabe
+Status: freigegeben, in Umsetzung
 
 ## Ziel
 
@@ -110,7 +110,18 @@ Datum links in Mono mit `tabular-nums` übernimmt bewusst die Behandlung der Wer
 
 **Die Liste** ist eine `<ol>`, weil die Reihenfolge Bedeutung trägt (chronologisch). Jedes Event ist ein `<li>`. Das Archiv ist je Jahr eine eigene `<ol>` unter einer `<h3>` mit der Jahreszahl.
 
-**Externe Links** öffnen im selben Tab und tragen `rel="noopener noreferrer"`. Ein neuer Tab würde eine für Screenreader ankündigungspflichtige Zustandsänderung erzeugen und den Zurück-Button entwerten; die Beschriftung „Veranstaltungsseite ↗" signalisiert bereits, dass die Seite verlassen wird. Sollte der Kunde ausdrücklich neue Tabs wünschen, ist das eine Änderung an einer Stelle plus ein `<span class="visually-hidden">(öffnet in neuem Tab)</span>` — die Utility-Klasse existiert seit der Profilseite.
+**Externe Links** öffnen in einem neuen Tab. Kundenentscheidung vom 31. Juli 2026: Wer auf eine Veranstalterseite wechselt, soll die Terminliste nicht verlieren.
+
+```html
+<a href={externalUrl} target="_blank" rel="noopener noreferrer">
+  Veranstaltungsseite
+  <span class="visually-hidden">(öffnet in neuem Tab)</span>
+</a>
+```
+
+Der versteckte Hinweis ist bei `target="_blank"` nicht optional, sondern die Voraussetzung dafür, dass die Entscheidung barrierefrei bleibt: Ein unangekündigt geöffneter Tab lässt Screenreader-Nutzer in einem Kontext zurück, dessen Wechsel sie nicht bemerkt haben, und der Zurück-Button funktioniert dort nicht mehr (WCAG 3.2.5). Die Utility-Klasse `.visually-hidden` existiert seit der Profilseite in `global.css`.
+
+`rel="noopener noreferrer"` verhindert, dass die Zielseite über `window.opener` auf das Ursprungsdokument zugreift. Bei fremden Veranstalterseiten, deren Code niemand kontrolliert, ist das Pflicht und nicht Vorsicht.
 
 **Strukturierte Daten:** Die Seite gibt kommende Events zusätzlich als JSON-LD nach `schema.org/Event` aus. Für einen Veranstaltungskalender ist das der SEO-Hebel mit dem besten Verhältnis von Aufwand zu Wirkung, weil Suchmaschinen daraus Event-Rich-Results erzeugen. `cancelled` wird dabei als `eventStatus: EventCancelled` abgebildet, Online-Termine als `eventAttendanceMode: OnlineEventAttendanceMode`.
 
@@ -241,6 +252,7 @@ Alle Sektionen nutzen `Container.astro` und `Grid.astro` nach den Regeln in `doc
 - Zustand `cancelled` korrekt gekennzeichnet
 - Gefilterte Ansicht **unterhalb von 42rem** geprüft — dort würde ein fest verdrahtetes `display` in der Filterregel das mobile Zeilenlayout brechen
 - JSON-LD im gebauten Ergebnis vorhanden, gegen die CSP geprüft und mit dem Rich-Results-Test validiert
+- Externe Links: neuer Tab funktioniert, `rel="noopener noreferrer"` gesetzt, versteckter Hinweis wird von der Sprachausgabe vorgelesen
 - Gebautes Ergebnis lokal **mit den echten Headern aus `public/_headers`** ausgeliefert und auf CSP-Verstöße geprüft — der Dev-Server wendet die Header nicht an, weshalb ein CSP-Fehler zuletzt erst im Deployment auffiel
 
 ## Offene Punkte für Etappe B
