@@ -4,13 +4,14 @@ import type { EventItem } from "../lib/events";
 
 interface Props {
   events: EventItem[];
+  compact?: boolean;
 }
 
-const { events } = Astro.props;
+const { events, compact = false } = Astro.props;
 ---
 
 <ol class="events__liste">
-  {events.map((event) => <EventCard event={event} />)}
+  {events.map((event) => <EventCard event={event} compact={compact} />)}
 </ol>
 
 <style>

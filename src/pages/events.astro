@@ -1,16 +1,19 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ButtonLink from "../components/ButtonLink.astro";
 import Container from "../components/Container.astro";
 import Grid from "../components/Grid.astro";
 import EventCard from "../components/EventCard.astro";
 import EventFilter from "../components/EventFilter.astro";
 import EventList from "../components/EventList.astro";
-import { datumBereich } from "../lib/eventDatum";
+import MetaIcon from "../components/MetaIcon.astro";
+import { datumBereich, isoDatum, zeitBereich } from "../lib/eventDatum";
 import {
   kommendeEvents,
   vergangeneEvents,
   nachJahr,
   verfuegbareTypen,
+  TYP_LABEL,
 } from "../lib/events";
 
 const kommend = kommendeEvents();
@@ -19,6 +22,24 @@ const archivJahre = nachJahr(vergangeneEvents());
 // Liest aus denselben Daten wie die Liste. Ein fest eingetragener Termin würde
 // gegen den Inhalt altern, sobald der Kunde Termine pflegt.
 const naechster = kommend[0];
+
+const naechsterZeit = naechster
+  ? zeitBereich(
+      naechster.startTime,
+      naechster.endTime,
+      isoDatum(naechster.startDate) !== isoDatum(naechster.endDate),
+    )
+  : null;
+const naechsterOrt = naechster
+  ? naechster.isOnline
+    ? "Online"
+    : [naechster.locationName, naechster.city].filter(Boolean).join(", ")
+  : "";
+const naechsterTyp = naechster
+  ? [TYP_LABEL[naechster.eventType], naechster.isOnline ? "Online" : null]
+      .filter(Boolean)
+      .join(" · ")
+  : "";
 
 const typen = verfuegbareTypen(kommend);
 // Ein einzelner Filter kann nichts eingrenzen und wäre nur Dekoration.
@@ -77,24 +98,70 @@ const jsonLd = kommend.map((e) => ({
         </div>
       </Grid>
 
-      {naechster && (
-        <div class="hero__rail">
-          <dl class="hero__facts">
-            <dt>Nächster Termin</dt>
-            <dd>
-              {/* Datum in Mono, Titel in Sans. Dieselbe Grammatik wie die
-                  Zeilen unten: erst wann, dann was. */}
-              <span class="hero__datum">
-                {datumBereich(naechster.startDate, naechster.endDate)}
-              </span>
-              <span class="hero__trenner" aria-hidden="true">·</span>
-              <span class="hero__event">{naechster.title}</span>
-            </dd>
-          </dl>
-        </div>
-      )}
     </Container>
   </section>
+
+  {naechster && (
+    <section class="naechster" aria-labelledby="naechster-label">
+      <Container>
+        <Grid>
+          <article class="naechster__karte">
+            <p class="naechster__label grid-label" id="naechster-label">
+              <span class="naechster__marke" aria-hidden="true"></span>
+              Nächster Termin
+            </p>
+
+            {/* Erst wann, dann was — dieselbe Grammatik wie die Zeilen unten. */}
+            <div class="naechster__wann">
+              <p class="naechster__datum">
+                <time datetime={isoDatum(naechster.startDate)}>
+                  {datumBereich(naechster.startDate, naechster.endDate)}
+                </time>
+              </p>
+              {naechsterZeit && (
+                <p class="naechster__uhr">
+                  <MetaIcon name="clock" />
+                  <span>{naechsterZeit}</span>
+                </p>
+              )}
+            </div>
+
+            <div class="naechster__was">
+              <p class="naechster__typ">{naechsterTyp}</p>
+              <h2 class="naechster__titel">{naechster.title}</h2>
+              <p class="naechster__ort">
+                <MetaIcon name="pin" />
+                <span>{naechsterOrt}</span>
+              </p>
+              {naechster.externalUrl && (
+                <ButtonLink
+                  href={naechster.externalUrl}
+                  variant="text"
+                  arrow
+                  target="_blank"
+                  class="naechster__cta"
+                >
+                  {naechster.linkLabel ?? "Zur Veranstaltung"}
+                </ButtonLink>
+              )}
+            </div>
+
+            {naechster.image && (
+              <img
+                class="naechster__bild"
+                src={naechster.image.src}
+                width={naechster.image.width}
+                height={naechster.image.height}
+                alt={naechster.imageAlt ?? ""}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </article>
+        </Grid>
+      </Container>
+    </section>
+  )}
 
   <section class="section">
     <Container>
@@ -233,63 +300,125 @@ const jsonLd = kommend.map((e) => ({
     border-radius: var(--radius-image) 0 0 var(--radius-image);
   }
 
-  .hero__rail {
-    padding-block: clamp(var(--space-6), 3vh, var(--space-8));
-    margin-top: clamp(var(--space-12), 6vw, var(--space-16));
-    position: relative;
+  /* ── Nächster Termin ───────────────────────────────── */
+
+  .naechster {
+    padding-block: var(--content-space);
   }
 
-  .hero__rail::before {
-    content: "";
-    width: 100vw;
-    height: 1px;
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 50%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      var(--color-border) 12%,
-      var(--color-border) 88%,
-      transparent
-    );
-    transform: translateX(-50%);
+  .naechster__karte {
+    grid-column: 1 / -1;
+    display: grid;
+    /* Wann · Was · Bild — dieselbe Gliederung wie die Listenzeilen darunter.
+       Das Bild verankert die rechte Kante; ohne Bild fällt die Spalte weg,
+       statt eine leere Fläche stehen zu lassen. */
+    grid-template-columns: minmax(0, 3fr) minmax(0, 6fr) minmax(0, 3fr);
+    column-gap: var(--space-12);
+    row-gap: var(--space-8);
+    align-items: start;
+    padding: clamp(var(--space-8), 4vw, var(--space-12));
+    background: var(--color-surface);
+    /* Einzige Akzentfläche der Seite. Sie trägt allein die Hierarchie —
+       deshalb links kein Radius, damit die Kante scharf bleibt. */
+    border-inline-start: 3px solid var(--color-accent);
+    border-radius: 0 var(--radius-image) var(--radius-image) 0;
   }
 
-  .hero__facts {
+  .naechster__label {
+    grid-column: 1 / -1;
     margin: 0;
-  }
-
-  .hero__facts dt {
-    margin-bottom: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
     color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-meta);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
-  .hero__facts dd {
+  /* Dasselbe Sechseck wie im Statuslabel der Startseite. */
+  .naechster__marke {
+    width: 0.6rem;
+    aspect-ratio: 0.8660254;
+    flex-shrink: 0;
+    background: var(--color-accent);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .naechster__wann {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .naechster__datum,
+  .naechster__uhr {
     margin: 0;
     display: flex;
-    flex-wrap: wrap;
     align-items: baseline;
-    gap: var(--space-3);
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+
+  .naechster__datum {
     color: var(--color-text);
     font-size: var(--text-h3);
   }
 
-  .hero__datum {
-    font-family: var(--font-mono);
-    font-variant-numeric: tabular-nums;
+  .naechster__uhr {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
   }
 
-  .hero__trenner {
-    color: var(--color-text-subtle);
+  .naechster__was {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
   }
 
-  .hero__event {
+  .naechster__typ {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .naechster__titel {
+    margin: 0;
+    font-size: var(--text-h2);
     font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  .naechster__ort {
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+  }
+
+  .naechster__karte:not(:has(.naechster__bild)) {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+  }
+
+  .naechster__bild {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-image);
+  }
+
+  :global(.naechster__cta) {
+    margin-top: var(--space-3);
   }
 
   /* ── Sektionen ─────────────────────────────────────── */
@@ -309,7 +438,7 @@ const jsonLd = kommend.map((e) => ({
   .events-sektion__aside {
     /* Vier statt drei Spalten, damit die Filterpillen nicht zu zweit
        umbrechen. */
-    grid-column: 1 / span 4;
+    grid-column: 1 / span 3;
     display: grid;
     /* Ohne feste Spur legt sich die einzige auto-Spalte auf die Max-Content-
        Breite der Überschrift, und die Filterleiste bleibt schmaler als ihre
@@ -430,6 +559,18 @@ const jsonLd = kommend.map((e) => ({
       aspect-ratio: 16 / 9;
       max-height: 22rem;
       border-radius: var(--radius-image);
+    }
+
+    /* Drei Spalten für den Datumsblock sind hier zu schmal für "30. Sep –
+       2. Okt 2026" — die Karte wird einspaltig. */
+    .naechster__karte,
+    .naechster__karte:not(:has(.naechster__bild)) {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-6);
+    }
+
+    .naechster__bild {
+      max-width: 22rem;
     }
   }
 

@@ -9,12 +9,20 @@ export type EventItem = {
   eventType: EventTyp;
   startDate: string;
   endDate: string;
+  // Uhrzeiten liegen bewusst getrennt von startDate/endDate: die ISO-Strings
+  // tragen immer eine Zeit, koennen also nie "nicht gesetzt" sein. Nur ein
+  // eigenes Feld erlaubt es der Redaktion, die Anzeige leer zu lassen.
+  startTime?: string;
+  endTime?: string;
   locationName: string;
   city?: string;
   isOnline: boolean;
   language?: "de" | "en";
   excerpt: string;
   externalUrl?: string;
+  // Frei waehlbarer Anzeigetext fuer externalUrl. Ohne Angabe greift der
+  // Fallback in EventCard, damit nie eine rohe URL im Fliesstext steht.
+  linkLabel?: string;
   image?: { src: string; width: number; height: number };
   imageAlt?: string;
   status: EventStatus;
@@ -36,6 +44,9 @@ const EVENTS: EventItem[] = [
     eventType: "congress",
     startDate: "2026-09-17T09:00:00+02:00",
     endDate: "2026-09-18T17:00:00+02:00",
+    // Mehrtaegig mit Startzeit: die Anzeige verkuerzt auf "ab 09:00".
+    startTime: "09:00",
+    endTime: "17:00",
     locationName: "Medizinisches Forum Wien",
     city: "Wien",
     isOnline: false,
@@ -43,6 +54,7 @@ const EVENTS: EventItem[] = [
     excerpt:
       "Fiktive zweitägige Fortbildung zu aktuellen Konzepten der Leisten- und Narbenhernienchirurgie.",
     externalUrl: "https://example.org/test-wiener-hernien-update-2026",
+    linkLabel: "Programm und Anmeldung",
     image: { src: "/images/events/test-kongress-wien.jpg", width: 1200, height: 900 },
     status: "published",
   },
@@ -67,6 +79,9 @@ const EVENTS: EventItem[] = [
     eventType: "webinar",
     startDate: "2026-11-12T18:00:00+01:00",
     endDate: "2026-11-12T19:30:00+01:00",
+    // Eintaegig mit Ende: der einzige Fall, der eine Zeitspanne zeigt.
+    startTime: "18:00",
+    endTime: "19:30",
     locationName: "Online",
     isOnline: true,
     language: "de",
@@ -88,6 +103,7 @@ const EVENTS: EventItem[] = [
     excerpt:
       "Fiktives internationales Fallforum zu komplexen Entscheidungen in der Bauchwandrekonstruktion.",
     externalUrl: "https://example.org/test-european-case-forum",
+    linkLabel: "Case Forum Website",
     image: { src: "/images/events/test-workshop-prag.jpg", width: 1200, height: 900 },
     status: "published",
   },
@@ -113,6 +129,8 @@ const EVENTS: EventItem[] = [
     eventType: "course",
     startDate: "2027-01-22T09:00:00+01:00",
     endDate: "2027-01-22T17:00:00+01:00",
+    // Eintaegig ohne Endzeit: die Anzeige zeigt "ab 09:00".
+    startTime: "09:00",
     locationName: "Fortbildungszentrum Salzburg",
     city: "Salzburg",
     isOnline: false,

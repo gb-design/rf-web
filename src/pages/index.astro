@@ -3,8 +3,12 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import ButtonLink from "../components/ButtonLink.astro";
 import Container from "../components/Container.astro";
 import DotField from "../components/DotField.astro";
+import EventList from "../components/EventList.astro";
 import Grid from "../components/Grid.astro";
 import TreatmentTabs from "../components/TreatmentTabs.astro";
+import { kommendeEvents } from "../lib/events";
+
+const eventTeaser = kommendeEvents().slice(0, 3);
 
 const schwerpunkte = [
   {
@@ -236,11 +240,22 @@ const prinzipien = [
         <p class="events__intro">Aktuelle Termine zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiven Verfahren – national und international.</p>
       </Grid>
 
-      <Grid class="events__empty">
-        <p class="events__status grid-label"><span></span> Termine werden laufend ergänzt</p>
-        <p class="events__empty-copy">Der Veranstaltungskalender wird derzeit vorbereitet. Künftige Termine finden Sie gesammelt im Eventbereich.</p>
-        <ButtonLink href="/events" variant="text" arrow class="events__action">Zum Eventbereich</ButtonLink>
-      </Grid>
+      {eventTeaser.length > 0 ? (
+        <Grid class="events__teaser">
+          <div class="events__teaser-liste">
+            {/* Kompakt: ohne Bild und Beschreibung, damit die Startseite nicht
+                zur zweiten Eventseite wird. */}
+            <EventList events={eventTeaser} compact />
+          </div>
+          <ButtonLink href="/events" variant="text" arrow class="events__action">Mehr Events</ButtonLink>
+        </Grid>
+      ) : (
+        <Grid class="events__empty">
+          <p class="events__status grid-label"><span></span> Termine werden laufend ergänzt</p>
+          <p class="events__empty-copy">Der Veranstaltungskalender wird derzeit vorbereitet. Künftige Termine finden Sie gesammelt im Eventbereich.</p>
+          <ButtonLink href="/events" variant="text" arrow class="events__action">Zum Eventbereich</ButtonLink>
+        </Grid>
+      )}
     </Container>
   </section>
 
@@ -909,6 +924,22 @@ const prinzipien = [
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   }
 
+  :global(.events__teaser) {
+    margin-top: var(--space-16);
+    --grid-row-gap: var(--space-8);
+  }
+
+  /* Spiegelt das Verhältnis von Filterspalte zu Liste auf /events, damit die
+     Zeilen auf beiden Seiten an derselben Kante beginnen. */
+  .events__teaser-liste {
+    grid-column: 5 / -1;
+  }
+
+  :global(.events__teaser .events__action) {
+    grid-column: 5 / -1;
+    justify-self: end;
+  }
+
   .contact-cta {
     padding-block: clamp(var(--space-24), 11vw, var(--space-32));
     color: var(--color-text);
@@ -986,6 +1017,15 @@ const prinzipien = [
 
     :global(.events__action) {
       grid-column: 6 / -1;
+      justify-self: start;
+    }
+
+    .events__teaser-liste,
+    :global(.events__teaser .events__action) {
+      grid-column: 1 / -1;
+    }
+
+    :global(.events__teaser .events__action) {
       justify-self: start;
     }
   }

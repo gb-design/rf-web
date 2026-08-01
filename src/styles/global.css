@@ -88,11 +88,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Schafft den Scrollweg, über den der Footer freigelegt wird. Das Skript in
+   SiteFooter.astro setzt die Variable; ohne JavaScript bleibt sie 0. */
+body {
+  padding-block-end: var(--footer-height, 0px);
+}
+
 .page-wrap {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   overflow: clip;
+  /* Die Seitenfläche liegt über dem fixierten Footer und deckt ihn ab. Ohne
+     eigenen Hintergrund würde er durchscheinen — der Body-Hintergrund allein
+     genügt nicht, weil er hinter beiden liegt. */
+  position: relative;
+  z-index: 1;
+  background: var(--color-bg);
 }
 
 .grid-span-full {

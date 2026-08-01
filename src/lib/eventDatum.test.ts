@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { datumBereich, isoDatum } from "./eventDatum.ts";
+import { datumBereich, isoDatum, zeitBereich } from "./eventDatum.ts";
 
 test("eintägig", () => {
   assert.equal(
@@ -39,4 +39,22 @@ test("isoDatum liefert den Wiener Kalendertag", () => {
 test("Tagesgrenze bleibt Wien, unabhängig von der Laufzeit-Zeitzone", () => {
   assert.equal(isoDatum("2026-09-17T00:30:00+02:00"), "2026-09-17");
   assert.equal(isoDatum("2026-09-17T23:30:00+02:00"), "2026-09-17");
+});
+
+test("ohne Startzeit gibt es keine Zeitangabe", () => {
+  assert.equal(zeitBereich(undefined, "17:00"), null);
+  assert.equal(zeitBereich(""), null);
+});
+
+test("eintägig mit Endzeit ergibt eine Spanne", () => {
+  assert.equal(zeitBereich("18:00", "19:30"), "18:00–19:30");
+});
+
+test("eintägig ohne Endzeit ergibt nur den Beginn", () => {
+  assert.equal(zeitBereich("09:00"), "ab 09:00");
+});
+
+// Eine Spanne über zwei Tage läse sich als Dauer eines einzelnen Tages.
+test("mehrtägig zeigt nur den Beginn, auch wenn eine Endzeit gesetzt ist", () => {
+  assert.equal(zeitBereich("09:00", "17:00", true), "ab 09:00");
 });

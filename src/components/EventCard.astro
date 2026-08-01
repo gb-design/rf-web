@@ -1,6 +1,7 @@
 ---
-import { datumBereich, isoDatum } from "../lib/eventDatum";
+import { datumBereich, isoDatum, zeitBereich } from "../lib/eventDatum";
 import { TYP_LABEL, type EventItem } from "../lib/events";
+import MetaIcon from "./MetaIcon.astro";
 
 interface Props {
   event: EventItem;
@@ -18,17 +19,29 @@ const ort = event.isOnline
   ? "Online"
   : [event.locationName, event.city].filter(Boolean).join(", ");
 
+const mehrtaegig = isoDatum(event.startDate) !== isoDatum(event.endDate);
+const zeit = zeitBereich(event.startTime, event.endTime, mehrtaegig);
+
 const merkmale = [TYP_LABEL[event.eventType]];
 if (event.isOnline) merkmale.push("Online");
 if (event.language === "en") merkmale.push("EN");
 ---
 
 <li class:list={["event", { "event--compact": compact }]} data-type={event.eventType}>
-  <p class="event__datum">
-    <time datetime={isoDatum(event.startDate)}>
-      {datumBereich(event.startDate, event.endDate)}
-    </time>
-  </p>
+  <div class="event__zeitblock">
+    <p class="event__datum">
+      <MetaIcon name="calendar" />
+      <time datetime={isoDatum(event.startDate)}>
+        {datumBereich(event.startDate, event.endDate)}
+      </time>
+    </p>
+    {zeit && (
+      <p class="event__zeit">
+        <MetaIcon name="clock" />
+        <span>{zeit}</span>
+      </p>
+    )}
+  </div>
 
   <div class="event__inhalt">
     <p class="event__merkmale">
@@ -41,7 +54,10 @@ if (event.language === "en") merkmale.push("EN");
     {!compact && <p class="event__text">{event.excerpt}</p>}
 
     <p class="event__meta">
-      <span>{ort}</span>
+      <span class="event__ort">
+        <MetaIcon name="pin" />
+        <span>{ort}</span>
+      </span>
       {event.externalUrl && (
         <a
           class="event__link"
@@ -49,7 +65,7 @@ if (event.language === "en") merkmale.push("EN");
           target="_blank"
           rel="noopener noreferrer"
         >
-          Veranstaltungsseite<span class="visually-hidden"> (öffnet in neuem Tab)</span>
+          {event.linkLabel ?? "Veranstaltungsseite"}<span class="visually-hidden"> (öffnet in neuem Tab)</span>
         </a>
       )}
     </p>
@@ -74,7 +90,9 @@ if (event.language === "en") merkmale.push("EN");
      den Breakpoint ueberschreibt. */
   .event {
     display: var(--event-display, grid);
-    grid-template-columns: 9rem minmax(0, 1fr) minmax(0, 12rem);
+    /* 10.5rem statt 9rem: das Kalendersymbol und sein Abstand kosten die
+       Breite, die "17.–18. Sep 2026" sonst einzeilig gehalten hat. */
+    grid-template-columns: 10.5rem minmax(0, 1fr) minmax(0, 12rem);
     column-gap: var(--space-8);
     row-gap: var(--space-4);
     padding-block: var(--space-8);
@@ -87,20 +105,37 @@ if (event.language === "en") merkmale.push("EN");
   }
 
   .event:not(:has(.event__bild)) {
-    grid-template-columns: 9rem minmax(0, 1fr);
+    grid-template-columns: 10.5rem minmax(0, 1fr);
   }
 
   .event--compact {
     padding-block: var(--space-6);
   }
 
-  .event__datum {
+  .event__zeitblock {
+    display: grid;
+    gap: var(--space-1);
+    align-content: start;
+  }
+
+  .event__datum,
+  .event__zeit {
     margin: 0;
-    color: var(--color-text);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
     font-family: var(--font-mono);
     font-size: var(--text-meta);
     font-variant-numeric: tabular-nums;
     line-height: 1.5;
+  }
+
+  .event__datum {
+    color: var(--color-text);
+  }
+
+  .event__zeit {
+    color: var(--color-text-muted);
   }
 
   .event__merkmale {
@@ -148,6 +183,12 @@ if (event.language === "en") merkmale.push("EN");
     font-size: var(--text-meta);
   }
 
+  .event__ort {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
   .event__link {
     color: var(--color-primary-strong);
     font-weight: 500;
@@ -174,7 +215,7 @@ if (event.language === "en") merkmale.push("EN");
       --event-display: block;
     }
 
-    .event__datum {
+    .event__zeitblock {
       margin-bottom: var(--space-3);
     }
 

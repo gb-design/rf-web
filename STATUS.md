@@ -178,6 +178,7 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 - Zwei verdeckte Rasterfehler dabei gefunden. Erstens war die Sticky-Spalte ein Grid mit einer einzigen `auto`-Spur; die legte sich auf die Max-Content-Breite der Überschrift, wodurch die Filterleiste 314 statt 410 Pixel breit war. Die Pillen brachen also nie an der Spaltenbreite um, sondern an der Breite des Titels. Behoben über `grid-template-columns: minmax(0, 1fr)`.
 - Zweitens erzeugte die zuvor als Absicherung ergänzte Spaltenregel am Sektionstitel innerhalb dieser Spalte vier Spuren und drückte das Formular in die erste davon. Die Regel ist entfernt: Die Rasterbreite setzt allein der Wrapper. Damit ist zum dritten Mal in dieser Seite eine Grid-Placement-Regel die Fehlerursache gewesen — Spaltenregeln gehören ausschließlich auf die direkten Kinder des Seitenrasters.
 - Hero-Rail auf den nächsten Termin reduziert; Anzahl der Termine und Typen entfielen auf Kundenwunsch. Bildspalte von 8 auf 7 vorgezogen, wodurch der Abstand zwischen Text und Bild schmaler wird. Ab 64 Rem abwärts bleibt das Bild in der Containerbreite und trägt `--radius-image`, statt randlos auszulaufen.
+- Zählwerte der Eventfilter als feste runde Badges ausgearbeitet. Im Ruhezustand tragen sie eine hellblaue Fläche mit kräftig blauer Zahl; im aktiven und aktiven Hover-Zustand kehrt sich der Kontrast passend zur Filterpille um. Die Pillen haben nun mindestens 44 Pixel Höhe und wurden bei 1440 und 390 Pixel in Default-, Active- und Hover-Zustand geprüft.
 
 ## Nächstes Arbeitspaket
 
@@ -203,6 +204,24 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 3. ✅ Optionales Eventbild, dekorativ mit `alt=""` als Default.
 4. ✅ 32 Browser-Prüfungen gegen das gebaute Ergebnis mit den echten CSP-Headern, einschließlich Ablauf ohne JavaScript.
 
+**Eventseite Etappe A2 — abgeschlossen**
+
+1. ✅ „Nächster Termin" vom Hero gelöst und als eigene helle Karte im Raster gebaut: Akzentkante links, Datum und Uhrzeit in Mono, Titel auf `--text-h2`, Bild rechts. Ohne Bild fällt die dritte Spalte weg, statt eine leere Fläche stehen zu lassen.
+2. ✅ Metadaten der Eventzeile mit Symbolen verankert: Kalender am Datum, Uhr an der Zeit, Pin am Ort. Neue Komponente `MetaIcon.astro`; `ButtonIcon.astro` blieb unangetastet, weil dessen Größe und Hover-Transform an `.rf-button` hängen.
+3. ✅ Optionale Uhrzeit über `startTime`/`endTime` plus `zeitBereich()`. Ohne Startzeit wird kein Element gerendert — keine leere Zeile, kein verwaistes Symbol.
+4. ✅ Frei wählbarer Linktext über `linkLabel`, damit im Fließtext nie eine rohe URL steht. Fallback „Veranstaltungsseite".
+5. ✅ Startseitenteaser zeigt die nächsten drei Termine als kompakte Zeilen mit CTA „Mehr Events". Der bisherige Leerzustand bleibt als Zweig erhalten und greift, sobald keine kommenden Termine existieren.
+6. ✅ Datumsspalte der Eventzeile von 9 auf 10,5 Rem verbreitert; das Kalendersymbol hatte „17.–18. Sep 2026" sonst in den Umbruch gezwungen.
+7. ✅ 20 Unit-Tests grün, `npm run build` ohne Fehler, Produktionsbuild unter den echten CSP-Headern ohne Konsolenfehler geprüft.
+
+**Footer als Vorhang — abgeschlossen**
+
+1. ✅ Footer liegt fixiert am unteren Viewportrand, `.page-wrap` schiebt sich als deckende Fläche darüber. Kein Scroll-Handler, keine Animation — reine Stapelung plus reservierter Scrollweg über `--footer-height`.
+2. ✅ Dafür musste `<SiteFooter />` aus `.page-wrap` heraus und Geschwister werden: dort gilt `overflow: clip` für den Hero-Bleed, das jeden fixierten Nachfahren wegschneidet. Der Skip-Link wanderte aus demselben Grund mit, damit ihn der neue Stapelkontext der Seitenfläche nicht einschließt.
+3. ✅ Rückfallebene: `<html data-footer="static">` ist der Ausgangszustand, erst `src/scripts/footerVorhang.ts` schaltet nach erfolgreicher Messung auf `reveal`. Ohne JavaScript bleibt der Footer ein gewöhnlicher Block am Seitenende.
+4. ✅ Der Effekt greift nur, wenn der Footer in 90 Prozent der Viewporthöhe passt. Ab 768 Pixel Breite ist das erfüllt; bei 390 und 320 Pixel ist dieser Footer höher als der Bildschirm und fällt auf statisch zurück, statt einen leeren Scrollbereich zu erzeugen.
+5. ✅ Geprüft bei 1440×900, 1280×720, 768×1024, 390×780 und 320×640 auf Modus, Scrollweg und horizontalen Overflow; Skip-Link nach dem Umbau weiterhin über allem sichtbar.
+
 **Nächstes Arbeitspaket — Leistungsseite**
 
 1. ⬜ Inhaltsentwurf `docs/content/leistungen.md` zuerst gegen den Live-Bestand abgleichen, wie bei der Profilseite. Der Entwurf stammt vom 2. Juli und wurde noch nicht abgeglichen.
@@ -212,7 +231,7 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 **Danach — Eventseite Etappe B**
 
 1. ⬜ Sanity-Projekt, Schema und Studio unter `/studio`. Eigene CSP-Ausnahme ausschließlich für `/studio/*`, da das Studio unter anderem `unsafe-eval` benötigt; die Härtung der übrigen Seiten bleibt unverändert.
-2. ⬜ GROQ-Query ersetzt das Testdaten-Array in `src/lib/events.ts`. Typ und Funktionssignaturen bleiben, die Komponenten werden nicht angefasst.
+2. ⬜ GROQ-Query ersetzt das Testdaten-Array in `src/lib/events.ts`. Typ und Funktionssignaturen bleiben, die Komponenten werden nicht angefasst. Im Schema anzulegen: `startTime` und `endTime` als `string` mit `HH:MM`-Validierung und dem Hinweis, dass ein leeres Feld die Zeitangabe ausblendet; `linkLabel` als `string` mit dem Hinweis, dass ohne Angabe „Veranstaltungsseite" erscheint.
 3. ⬜ Nächtlicher Rebuild über GitHub Actions auf einen Cloudflare Deploy Hook, damit abgelaufene Termine ohne Zutun ins Archiv rücken. Zusätzlich ein Sanity-Webhook für Inhaltsänderungen.
 4. ⬜ Feldhilfe für `imageAlt`, optional AI-Assist-Vorbefüllung — nur als Vorschlag, nie ungeprüft veröffentlicht.
 

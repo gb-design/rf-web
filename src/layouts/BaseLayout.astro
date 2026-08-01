@@ -12,9 +12,16 @@ const {
 
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+
+// data-footer="static" ist der sichere Ausgangszustand des Footer-Vorhangs:
+// erst wenn footerVorhang.ts die Höhe gemessen hat, schaltet es auf "reveal".
+// Ohne JavaScript bleibt der Footer ein gewöhnlicher Block am Seitenende.
+// Der Hinweis steht hier und nicht als Kommentar vor <html> — ein Ausdruck
+// oberhalb des Wurzelelements lässt Astro das Dokument als Fragment behandeln
+// und <html> samt <body> aus dem Ergebnis fallen.
 ---
 <!doctype html>
-<html lang="de">
+<html lang="de" data-footer="static">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -26,14 +33,18 @@ import SiteHeader from "../components/SiteHeader.astro";
     <link rel="icon" type="image/svg+xml" href="/rf_logo.svg" />
   </head>
   <body>
+    {/* Außerhalb von .page-wrap, damit der Fokusrahmen nicht vom Stapelkontext
+        der Seitenfläche eingeschlossen wird. */}
+    <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
     <div class="page-wrap">
-      <a class="skip-link" href="#main-content">Zum Inhalt springen</a>
       <SiteHeader />
       <main id="main-content" tabindex="-1">
         <slot />
       </main>
-      <SiteFooter />
     </div>
+    {/* Ebenfalls Geschwister von .page-wrap: dort greift `overflow: clip` und
+        würde den fixierten Footer wegschneiden. */}
+    <SiteFooter />
   </body>
 </html>
 

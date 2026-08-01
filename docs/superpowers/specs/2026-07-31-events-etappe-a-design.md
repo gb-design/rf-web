@@ -37,17 +37,24 @@ type EventItem = {
   eventType: "congress" | "course" | "workshop" | "webinar";
   startDate: string;          // ISO 8601 mit Zeitzonen-Offset
   endDate: string;            // ISO 8601 mit Zeitzonen-Offset
+  startTime?: string;         // "HH:MM", Wiener Ortszeit. Leer => keine Anzeige
+  endTime?: string;           // "HH:MM", nur zusammen mit startTime sinnvoll
   locationName: string;
   city?: string;
   isOnline: boolean;
   language?: "de" | "en";
   excerpt: string;
   externalUrl?: string;
+  linkLabel?: string;         // Anzeigetext für externalUrl
   image?: { src: string; width: number; height: number };
   imageAlt?: string;
   status: "published" | "draft" | "cancelled";
 };
 ```
+
+`startTime` und `endTime` liegen bewusst getrennt von `startDate`/`endDate`. Die ISO-Strings tragen immer eine Uhrzeit, auch `T00:00` — sie können also nie „nicht gesetzt" sein. Nur ein eigenes, optionales Feld erlaubt es der Redaktion, die Anzeige leer zu lassen; genau das war die Anforderung. Die Anzeige selbst regelt `zeitBereich()` in `src/lib/eventDatum.ts`: ohne Startzeit erscheint kein Element, mehrtägige Termine zeigen nur `ab HH:MM`, weil eine Spanne über zwei Tage sich als Tagesdauer läse.
+
+`linkLabel` existiert, damit im Fließtext nie eine rohe URL steht. Ohne Angabe greift der Fallback „Veranstaltungsseite" in `EventCard.astro`; die Karte „Nächster Termin" fällt auf „Zur Veranstaltung" zurück.
 
 Gegenüber dem Entwurf entfallen `organizer`, `country` und `isTestData`.
 

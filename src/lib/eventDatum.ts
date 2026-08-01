@@ -50,6 +50,22 @@ export function datumBereich(startISO: string, endISO: string): string {
   return `${a.tag}. ${monatA} ${a.jahr}`;
 }
 
+// Die Uhrzeiten kommen bereits als lokale Wiener Zeit aus dem CMS. Ein Umweg
+// ueber Date wuerde nur wieder Zeitzonenrisiko einbringen, deshalb reine
+// Stringlogik. Ohne Startzeit gibt es keine Angabe — der Aufrufer rendert dann
+// kein Element, statt eine leere Zeile stehen zu lassen.
+export function zeitBereich(
+  startTime?: string,
+  endTime?: string,
+  mehrtaegig = false,
+): string | null {
+  if (!startTime) return null;
+  // Ueber mehrere Tage ist "09:00–17:00" irrefuehrend: es liest sich wie eine
+  // Dauer, meint aber zwei Tagesraender. Dort bleibt nur der Beginn stehen.
+  if (mehrtaegig || !endTime) return `ab ${startTime}`;
+  return `${startTime}–${endTime}`;
+}
+
 export function jahrVon(iso: string): number {
   return teile(iso).jahr;
 }

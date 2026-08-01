@@ -44,11 +44,30 @@ const year = new Date().getFullYear();
   </Container>
 </footer>
 
+<script>
+  import "../scripts/footerVorhang.ts";
+</script>
+
 <style>
   .site-footer {
     color: var(--color-text);
     background: var(--color-bg);
     border-top: 1px solid var(--color-border);
+  }
+
+  /* Der Vorhang: der Footer steht fest am unteren Viewportrand, .page-wrap
+     liegt darüber und schiebt sich beim Scrollen weg. */
+  :global(html[data-footer="reveal"]) .site-footer {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 0;
+  }
+
+  @media print {
+    .site-footer {
+      position: static;
+    }
   }
 
   :global(.site-footer__primary) {
