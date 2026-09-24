@@ -35,12 +35,12 @@ Spaltenangaben gelten ab 64rem. Darunter belegen alle Inhalte `1 / -1`; das ist 
 | # | Sektion | Anker | Theme | Raster und Behandlung |
 | --- | --- | --- | --- | --- |
 | 1 | Hero | — | hell | `PageIntro` mit Eyebrow, H1, Intro und primärem CTA im Slot. Spalten wie in der Komponente: Eyebrow `1 / span 3`, Copy `4 / -1`. H1-Breite lokal überschrieben, siehe unten. |
-| 2 | Auf dieser Seite | — | hell | Label `1 / span 3`, Linkraster `4 / -1` in zwei bis drei Spalten. Fünf Ankerlinks, nummeriert. Statisch, kein JavaScript. |
-| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Nummer und H2 in `1 / span 3`, Fließtext und optionales Leistungsspektrum in `4 / -1`. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
-| 4 | Verfahrenswahl | `#verfahren` | **dunkel** | H2 `1 / span 6`, Fließtext und Kriterienliste `8 / -1`. Editorial-Break in der Seitenmitte. |
+| 2 | Auf dieser Seite | `#uebersicht` | hell | Label `1 / span 3`, Linkraster `4 / -1` in zwei bis drei Spalten. Fünf Ankerlinks, nummeriert. Statisch, kein JavaScript. |
+| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Nummer in `1 / span 2`, H2 mit Fließtext und optionalem Leistungsspektrum in `3 / -1`. Eigene Überschriftengröße, siehe unten. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
+| 4 | Verfahrenswahl | `#verfahren` | **dunkel** | H2 in `--text-h2` über `1 / span 6`, Fließtext und Kriterienliste `8 / -1`. Editorial-Break in der Seitenmitte. |
 | 5 | Ablauf | `#ablauf` | hell | Label `1 / span 3`, fünfteiliges Register `4 / -1`. |
-| 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Label `1 / span 3`, Liste `4 / -1`. |
-| 7 | Medizinischer Hinweis | — | hell | Getönte Fläche über `4 / -1`, nicht über die volle Rasterbreite — der Hinweis ist Beiwerk, keine Sektion mit eigenem Gewicht. |
+| 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Label `1 / span 3`, H2 und Liste `4 / -1`. |
+| 7 | Medizinischer Hinweis | — | hell | Getönte Fläche über `4 / -1`. |
 | 8 | Abschluss-CTA | — | **dunkel** | Gleiches Muster wie Startseite und Profilseite. |
 
 ### Ankerschema
@@ -49,6 +49,7 @@ Die IDs sind ein URL-Kontrakt und danach nicht mehr frei änderbar. Sie lauten:
 
 | Sektion | ID |
 | --- | --- |
+| Auf dieser Seite | `uebersicht` |
 | Leisten-, Nabel- und Narbenhernien | `hernien` |
 | Gallenblase und Gallensteine | `gallensteine` |
 | Refluxerkrankung und Hiatushernie | `reflux` |
@@ -60,31 +61,39 @@ Die IDs sind ein URL-Kontrakt und danach nicht mehr frei änderbar. Sie lauten:
 
 Kleinschreibung, keine Umlaute, keine Nummernpräfixe — die Nummerierung 01 bis 05 ist eine redaktionelle Reihenfolge und darf die Adresse nicht binden, falls später eine Indikation dazukommt oder die Reihenfolge wechselt.
 
+Die ID liegt auf dem `<section>`-Element, nicht auf der Überschrift. Für `aria-labelledby` bekommt die Überschrift eine zweite, abgeleitete ID nach dem Muster `hernien-titel`. Zwei getrennte IDs, weil der Sprunganker auf den Sektionsanfang zeigen muss und nicht auf die Überschrift allein.
+
 ## Eingehende Verlinkung der Startseite
 
 Die drei Startseiten-CTAs zeigen derzeit alle auf `href="/leistungen"` ohne Fragment (`src/pages/index.astro:157`, `:182`, `:202`). Damit landen sie am Seitenanfang, und das Ziel dieser Spec — jedem CTA echte Tiefe liefern — wäre nicht prüfbar. Teil dieses Arbeitspakets ist deshalb, die drei Ziele auf Anker umzustellen:
 
-| CTA auf der Startseite | Zeile | neues Ziel |
-| --- | --- | --- |
-| Alle Leistungen im Überblick | `index.astro:157` | `/leistungen#hernien` |
-| Mehr über das Erstgespräch | `index.astro:182` | `/leistungen#ablauf` |
-| Behandlung und Ablauf ansehen | `index.astro:202` | `/leistungen#verfahren` |
+| CTA auf der Startseite | Zeile | neues Ziel | Text |
+| --- | --- | --- | --- |
+| Alle Leistungen im Überblick | `index.astro:157` | `/leistungen#uebersicht` | unverändert |
+| Mehr über das Erstgespräch | `index.astro:182` | `/leistungen#ablauf` | unverändert |
+| Behandlung und Ablauf ansehen | `index.astro:202` | `/leistungen#verfahren` | → „Verfahrenswahl ansehen" |
 
-Das ist der einzige Eingriff in `index.astro`. Der CTA-Text bleibt unverändert.
+Zwei Feinheiten dazu.
+
+**„Alle Leistungen im Überblick" zielt auf die Übersicht, nicht auf die erste Indikation.** Deshalb hat Sektion 2 eine eigene ID bekommen. Ein Sprung auf `#hernien` würde über genau das Element hinwegscrollen, das die Übersicht ist — wer einen Überblick anklickt, soll den Seitenindex sehen und nicht in Indikation 01 landen.
+
+**Ein CTA-Text ändert sich.** „Behandlung und Ablauf ansehen" verspricht den Ablauf, zeigt künftig aber auf die Verfahrenswahl — während der CTA eine Sektion darüber bereits auf `#ablauf` zielt. Zwei CTAs, die dasselbe versprechen und woanders landen, sind eine Orientierungsfalle. Der Text wird deshalb zu „Verfahrenswahl ansehen". Das ist die einzige inhaltliche Änderung an der Startseite; alles andere bleibt.
 
 ## Abgrenzung zur Startseite
 
-Die Startseite behandelt drei der acht Themen dieser Seite bereits an. Wo sich die Inhalte berühren, gilt Folgendes.
+Drei der acht Themen dieser Seite behandelt die Startseite bereits an. Wo sich die Inhalte berühren, gilt Folgendes.
 
-**Indikationen.** Die Startseite nennt jede der fünf in einem Satz (`index.astro:56–98`). Diese Seite erklärt Beschwerdebild und Entscheidungsgrundlage. Kein Satz wird übernommen.
+**Indikationen.** Die Startseite nennt jede der fünf in einem Satz (`index.astro:13–41`). Diese Seite erklärt Beschwerdebild und Entscheidungsgrundlage. Kein Satz wird übernommen.
 
 Die H2 dieser Seite sind bei drei von fünf Indikationen wortgleich mit den Tabtiteln der Startseite, und die Nummerierung 01 bis 05 wiederholt deren Reihenfolge. Das ist gewollt: Wer auf der Startseite „Leisten-, Nabel- und Narbenhernien" angeklickt hat, muss hier dieselbe Bezeichnung wiederfinden, sonst bricht die Orientierung. Wiedererkennung schlägt an dieser Stelle Variation.
 
-**Hero-Intro.** Der Entwurf formuliert das Intro vierteilig: „Nicht jede Beschwerde erfordert eine Operation. Am Anfang stehen das persönliche Gespräch, eine klinische Untersuchung und die Bewertung Ihrer Befunde. Daraus entsteht eine Empfehlung, die …". Satz zwei ist inhaltlich deckungsgleich mit `index.astro:154` („Eine fundierte Empfehlung entsteht deshalb erst nach einem persönlichen Gespräch, einer klinischen Untersuchung und – falls erforderlich – ergänzender Diagnostik"), und dieser Absatz steht auf der Startseite direkt über dem CTA hierher. Der Nutzer würde dieselbe Aussage zweimal hintereinander lesen.
+**Hero-Intro.** Der Entwurf formuliert das Intro vierteilig: „Nicht jede Beschwerde erfordert eine Operation. Am Anfang stehen das persönliche Gespräch, eine klinische Untersuchung und die Bewertung Ihrer Befunde. Daraus entsteht eine Empfehlung, die …". Satz zwei ist inhaltlich deckungsgleich mit `index.astro:151` („Eine fundierte Empfehlung entsteht deshalb erst nach einem persönlichen Gespräch, einer klinischen Untersuchung und – falls erforderlich – ergänzender Diagnostik"), und dieser Absatz steht auf der Startseite direkt über dem CTA hierher. Der Nutzer würde dieselbe Aussage zweimal hintereinander lesen.
 
-Das Intro dieser Seite trägt deshalb nur den ersten und dritten Gedanken: dass nicht jede Beschwerde eine Operation erfordert, und dass die Empfehlung medizinische Notwendigkeit, Alternativen und die persönliche Situation berücksichtigt. Der Ablaufgedanke entfällt im Hero und wird in Sektion 5 ausgespielt, wo er hingehört. Title und Meta-Description bleiben unverändert aus dem bestehenden Stub `src/pages/leistungen.astro`; sie sind entwurfsgetreu.
+Das Intro dieser Seite trägt deshalb nur den ersten und dritten Gedanken: dass nicht jede Beschwerde eine Operation erfordert, und dass die Empfehlung medizinische Notwendigkeit, Alternativen und die persönliche Situation berücksichtigt. Der Ablaufgedanke entfällt im Hero und wird in Sektion 5 ausgespielt, wo er hingehört.
 
-**Verfahrenswahl.** Hier ist die Überschneidung am größten und war im ersten Entwurf dieser Spec zu optimistisch bewertet. `index.astro:199–201` formuliert die Abwägung bereits aus: „Ob dieses Vorgehen in Ihrem Fall geeignet ist, hängt von der Diagnose, möglichen Voroperationen und weiteren medizinischen Faktoren ab. Gemeinsam wird das Verfahren gewählt, das medizinisch sinnvoll und sicher ist." Gegenüber der Startseite wäre neu allein der Satz, dass offene Verfahren bei bestimmten Befunden die sinnvollere Option bleiben. Für eine dunkle Kontrastsektion in der Seitenmitte ist das zu wenig.
+`title` und `description` bleiben unverändert aus dem bestehenden Stub `src/pages/leistungen.astro`; beide sind entwurfsgetreu. Der `description`-Prop von `PageIntro` dagegen **wird ersetzt**: der Stub trägt dort derzeit genau den Satz, der hier gestrichen wird („Am Anfang stehen das persönliche Gespräch, eine klinische Untersuchung und die sorgfältige Bewertung Ihrer Befunde."). Nicht zu verwechseln — das eine ist das Meta-Tag, das andere der sichtbare Introtext.
+
+**Verfahrenswahl.** Hier ist die Überschneidung am größten und war im ersten Entwurf dieser Spec zu optimistisch bewertet. `index.astro:201` formuliert die Abwägung bereits aus: „Ob dieses Vorgehen in Ihrem Fall geeignet ist, hängt von der Diagnose, möglichen Voroperationen und weiteren medizinischen Faktoren ab. Gemeinsam wird das Verfahren gewählt, das medizinisch sinnvoll und sicher ist." Gegenüber der Startseite wäre neu allein der Satz, dass offene Verfahren bei bestimmten Befunden die sinnvollere Option bleiben. Für eine dunkle Kontrastsektion in der Seitenmitte ist das zu wenig.
 
 Die Sektion trägt deshalb, was die Startseite nicht hat: die Entscheidungskriterien beim Namen genannt, als Liste statt als Nebensatz.
 
@@ -93,7 +102,13 @@ Die Sektion trägt deshalb, was die Startseite nicht hat: die Entscheidungskrite
 - Allgemeinzustand und Begleiterkrankungen
 - Dringlichkeit des Eingriffs
 
-Das ist eine Konkretisierung der Entwurfsformulierung „richtet sich nach der Diagnose und Ihrem individuellen Risikoprofil" und als solche eine medizinische Setzung ohne Vorlage im Bestand. Sie ist unter „Offene Punkte" als bestätigungspflichtig geführt. Kommt die Bestätigung nicht, fällt die Liste und mit ihr die Begründung für die dunkle Sektion — dann wandert der Inhalt als Absatz in den Ablauf, Schritt 4.
+Das ist eine Konkretisierung der Entwurfsformulierung „richtet sich nach der Diagnose und Ihrem individuellen Risikoprofil" und als solche eine medizinische Setzung ohne Vorlage im Bestand. Sie ist unter „Offene Punkte" als bestätigungspflichtig geführt.
+
+**Rückfallpfad, falls die Bestätigung ausbleibt.** Es entfällt ausschließlich die vierteilige Liste. Sektion 4 bleibt vollständig bestehen: gleiche Position, gleiche H2, gleicher Fließtext, weiterhin dunkel, und `#verfahren` bleibt als Adresse gültig. Das ist wichtig, weil die IDs ein URL-Kontrakt sind und `index.astro:202` künftig dorthin zeigt — eine Sektion, die je nach Freigabestand verschwindet, würde diesen Link brechen und die Rechnung „zwei dunkle Sektionen bei acht Sektionen" ungültig machen.
+
+Der Preis des Rückfalls ist, dass Sektion 4 dann inhaltlich nahe an `index.astro:201` liegt. Das ist die bewusst in Kauf genommene Schwäche des Rückfallzustands, nicht ein Grund, die Sektion aufzulösen: H2 und Fließtext sind entwurfsgedeckt, die Kernaussage der Seite braucht ihren Ort, und ein Absatz im Ablaufregister wäre dafür der falsche Platz.
+
+Die Liste wird gebaut und mit dem Hinweis unter „Offene Punkte" geführt. Sie erscheint damit auf der Cloudflare-Preview-URL, bevor die Bestätigung vorliegt — das ist vertretbar, weil die Preview nicht öffentlich beworben und nicht indexiert wird, und weil die Formulierung keine Diagnose und kein Heilversprechen enthält. Auf `main` geht sie erst nach Freigabe.
 
 ## Gestalterische Entscheidungen
 
@@ -105,33 +120,55 @@ Identische Karten je Indikation bleiben verworfen, weil wiederholte Kartenraster
 
 **Leistungsspektrum nur bei den Hernien.** Der Entwurf führt eine Spektrumsliste ausschließlich in der Hernien-Sektion. Das bleibt so: die Liste ist dort inhaltlich gedeckt und belegt das Kernfachgebiet, und für die übrigen vier Indikationen gibt es weder im Entwurf noch im Bestand Material. Vier Listen medizinischer Leistungszusagen zu erfinden, nur damit die Sektionen gleich aussehen, wäre genau der Fehler, den die Bestandsanalyse mit ihren Content-Regeln verhindern will.
 
-Die Sektionen 02 bis 05 tragen deshalb nur Nummer, H2 und Fließtext. Damit die fehlende Liste nicht als Loch wirkt, nutzt ihr Fließtext das volle Textmaß der Spalten `4 / -1`, während der Fließtext der Hernien-Sektion oberhalb der Liste bei `65ch` bleibt. Im `indikationen`-Array ist `spektrum` ein optionales Feld; fehlt es, rendert kein Listenelement und keine H3 — dasselbe Prinzip wie bei der optionalen Uhrzeit der Eventzeile.
+Die Sektionen 02 bis 05 tragen deshalb nur Nummer, H2 und Fließtext. Im `indikationen`-Array ist `spektrum` ein optionales Feld; fehlt es, rendert kein Listenelement und keine H3 — dasselbe Prinzip wie bei der optionalen Uhrzeit der Eventzeile.
+
+**Das Zeilenmaß bleibt bei allen fünf gleich.** Alle Fließtexte werden auf `65ch` begrenzt, unabhängig davon, ob eine Spektrumsliste folgt. Die Spalten `3 / -1` sind bei 1440 Pixel rund 1060 Pixel breit, was bei 16 Pixel IBM Plex Sans etwa 115 Zeichen pro Zeile ergäbe — der Designkontext setzt Body auf `max-width: 65ch`, und `PageIntro.astro:70` kappt seinen Intro-Absatz bei `62ch`. Ein Maß von 115 Zeichen wäre auf der Seite, deren erklärter Zweck Ruhe und Lesbarkeit ist, ein Eigengoal.
+
+Das Loch nach der fehlenden Liste wird stattdessen über Spacing gelöst: die Sektionen 02 bis 05 erhalten geringeres `padding-block` als die Hernien-Sektion. Die Seite bekommt dadurch einen Rhythmus, in dem die Hernien-Sektion sichtbar mehr Raum beansprucht — was ihrer Rolle als Kernfachgebiet entspricht und der Grund ist, warum sie auch den einzigen Inline-CTA trägt.
 
 **Sprungnavigation statisch, nicht klebend.** Eine mitlaufende Indexspalte mit Aktivmarkierung wäre publikationsartig und passend zum akademischen Register — sie kostet aber Scroll-Beobachtung per JavaScript. Auf dieser Seite gibt es mit dem Footer-Vorhang aus `src/scripts/footerVorhang.ts` bereits ein scrollabhängiges Verhalten. Ein zweites daneben bedeutet zwei bewegliche Teile, die sich gegenseitig stören können, für einen Orientierungsgewinn auf einer Seite mit fünf Ankern.
 
 Die Navigation steht deshalb einmal unter dem Hero und scrollt danach aus. Die Anker bleiben als stabile Adressen erhalten.
 
+Sie führt bewusst nur die fünf Indikationen, nicht alle acht Sektionen. Ein Index, der auch Verfahrenswahl, Ablauf und Vorbereitung listet, wäre eine Gliederung der Seite statt einer Auswahlhilfe — und die Aufgabe hier ist, dass jemand seine Diagnose findet. `#verfahren`, `#ablauf` und `#vorbereitung` existieren trotzdem als Adressen, weil die Startseite und spätere Verweise darauf zeigen.
+
 **`PageIntro` behalten, den Profil-Hero nicht verallgemeinern.** Die Profil-Spec vom 28. Juli 2026 hat diese Entscheidung ausdrücklich auf dieses Arbeitspaket vertagt. Sie fällt gegen eine Verallgemeinerung.
 
 Der eigene Hero der Profilseite existiert, weil dort drei Elemente unterzubringen waren — H1, Kurzprofil als Lead und die vierstellige Kennzahlen-Rail — und ein reines `PageIntro` deshalb über 40 Prozent Leerfläche ohne Hierarchiesprung erzeugte. Die Leistungsseite hat diesen Bedarf nicht: Eyebrow, H1, ein Intro-Absatz, ein CTA. Das ist genau der Fall, für den `PageIntro` gebaut wurde. Eine zweite Sonderkomposition würde die Seiten auseinanderlaufen lassen, ohne etwas zu lösen.
 
-**H1-Breite über einen Wrapper überschreiben.** `PageIntro.astro:59` begrenzt die H1 auf `max-width: 14ch`. Der Satz „Chirurgische Beratung, die bei Ihrer Diagnose beginnt." hat 54 Zeichen und bricht dort in eine schmale, hohe Textsäule.
+**H1-Breite über einen Wrapper überschreiben.** `PageIntro.astro:60` begrenzt die H1 auf `max-width: 14ch`. Der Satz „Chirurgische Beratung, die bei Ihrer Diagnose beginnt." hat 54 Zeichen und bricht dort in eine schmale, hohe Textsäule.
 
 Der Wert wird nicht in der Komponente geändert — er ist auf die kürzeren H1 der übrigen Seiten abgestimmt. Ein `:global(.page-intro__copy h1)` aus der Seite heraus hilft aber nicht: Astro liefert die Komponentenregel als `h1[data-astro-cid-…]` mit Spezifität 0-1-1 aus, der globale Selektor hätte dieselbe, und die Durchsetzung hinge an der Stylesheet-Reihenfolge.
 
-`<PageIntro>` wird deshalb in `leistungen.astro` in ein `<div class="leistungen-intro">` gewickelt und die Regel als `.leistungen-intro :global(.page-intro__copy h1)` geschrieben. Der Wrapper trägt das Scope-Attribut der Seite, die Spezifität liegt bei 0-2-1 und setzt sich unabhängig von der Reihenfolge durch. Startwert `max-width: 26ch`, was den Satz auf zwei ausgewogene Zeilen bringt; bei 1440 und 1920 Pixel visuell zu bestätigen. `text-wrap: balance` ist in der Komponente bereits gesetzt.
+`<PageIntro>` wird deshalb in `leistungen.astro` in ein `<div class="leistungen-intro">` gewickelt und die Regel als `.leistungen-intro :global(.page-intro__copy h1)` geschrieben. Der Wrapper trägt das Scope-Attribut der Seite, die Spezifität liegt damit bei 0-3-1 — das von Astro injizierte Attribut zählt mit — und setzt sich unabhängig von der Reihenfolge durch. Startwert `max-width: 26ch`, was den Satz auf zwei ausgewogene Zeilen bringt; bei 1440 und 1920 Pixel visuell zu bestätigen. `text-wrap: balance` ist in der Komponente bereits gesetzt.
+
+**Eigene Überschriftengröße für die Indikationen.** Die fünf Indikations-H2 laufen nicht auf `--text-h2`, sondern auf einer seitenlokalen Skala `clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem)` — bei 1440 Pixel 34 statt 52 Pixel.
+
+Zwei Gründe. Erstens die Rolle: fünf Registereinträge sind der H1 untergeordnet, und fünf Überschriften auf 52 Pixel wären auf einer Seite, die Ruhe herstellen soll, zu viel Stimme. Sektion 4 behält `--text-h2`, weil sie eine echte Sektionsüberschrift ist und eine von zwei Kontrastflächen trägt — dort ist die Größe gewollt.
+
+Zweitens die Breite. Der Nummernspalte stehen zwei Rasterspalten zu, dem Inhalt `3 / -1`. Ein früherer Entwurf dieser Spec stellte Nummer und H2 gemeinsam in `1 / span 3` — das bricht sichtbar: bei 1440 Pixel ist der Container 1280 Pixel breit, der `--site-gutter` liegt bei etwa 24,5 Pixel, eine Spalte damit bei rund 84 Pixel und drei Spalten bei rund 302 Pixel. „Hämorrhoiden und Enddarmerkrankungen" auf `--text-h2` braucht ein Mehrfaches davon; allein „Enddarmerkrankungen" kommt bei 52 Pixel auf rund 540 Pixel. Das Ergebnis wäre Zwangstrennung, zerhackte Wörter oder Overflow — dieselbe Fehlerklasse, die das Projekt in `179fb60` und `fa861ec` bereits zweimal reparieren musste. Drei Spalten sind im Projekt das Maß für Label-Größe, nicht für Überschriften: `PageIntro` setzt dort das Eyebrow und schiebt die H1 nach `4 / -1`.
+
+Auf `3 / -1` bei 34 Pixel bleibt die längste Überschrift auf einer Zeile. Unter 64rem gilt `1 / -1`; bei 320 Pixel liegt die Skala auf ihrem Minimum von 24 Pixel, was auch für „Enddarmerkrankungen" reicht. Zur Sicherheit gegen lange Komposita tragen die Überschriften `hyphens: auto` und `overflow-wrap: break-word`, wie `PageIntro` es für die H1 unter 42rem bereits tut.
 
 **Zwei dunkle Sektionen, gesetzt als Mittelbruch und Abschluss.** Bei acht Sektionen trägt die Seite zwei Kontrastflächen: die Verfahrenswahl etwa in der Mitte und den CTA am Ende. Häufigerer Wechsel wirkt unruhig, dieselbe Begründung wie auf der Profilseite.
 
-**Zwei Nummernserien, klar getrennt.** Die Seite trägt zwei Zählungen: Indikationen `01` bis `05` und Ablaufschritte `1` bis `5`. Ohne Regel sehen sie gleich aus und die Seite wirkt, als zählte sie zweimal dasselbe.
+**Zwei Nummernserien, klar getrennt.** Die Seite trägt zwei Zählungen: Indikationen `01` bis `05` und Ablaufschritte `1` bis `5`. Die Sprungnavigation wiederholt die erste Serie und ist keine dritte. Ohne Regel sehen beide gleich aus und die Seite wirkt, als zählte sie zweimal dasselbe.
 
-- **Indikationen:** zweistellig mit führender Null, IBM Plex Mono, `--text-meta`, Farbe `--color-text-subtle`. Sie sind Ordnungsziffern eines Registers und damit der im Projekt zulässige Mono-Fall — dieselbe Begründung wie bei den Jahreszahlen des Werdegangs.
-- **Ablaufschritte:** einstellig, IBM Plex Sans, größer gesetzt, Farbe `--color-primary`. Sie sind eine Abfolge, kein Register.
-- **Sprungnavigation:** übernimmt die Indikationsziffern unverändert in Mono, damit Anker und Ziel sichtbar dasselbe sind.
+- **Indikationen:** zweistellig mit führender Null, IBM Plex Sans mit `font-variant-numeric: tabular-nums`, `--text-label`, Farbe `--color-text-subtle`.
+- **Ablaufschritte:** einstellig, IBM Plex Sans, auf `--text-h3` vergrößert, Farbe `--color-primary-strong`.
+- **Sprungnavigation:** übernimmt die Indikationsziffern unverändert, damit Anker und Ziel sichtbar dasselbe sind.
 
-Brand-Blau liegt damit auf genau einer der drei Serien. Fünf einstellige Ziffern sind die sparsamste Verwendung, die noch Wirkung hat; auf allen fünfzehn Ziffern wäre Blau Flächenfarbe und verstieße gegen den Designkontext.
+Die Unterscheidung läuft über Größe und Farbe, nicht über die Schriftfamilie.
+
+**Kein Mono auf den Indikationsziffern.** Ein früherer Entwurf dieser Spec setzte sie in IBM Plex Mono. Das war ein Fehler: `TreatmentTabs.astro:290–293` setzt dieselben Ziffern `01` bis `05` auf der Startseite in `--font-display` mit `tabular-nums`, `--text-label` und `--color-text-subtle`. Dieselben Ordnungsziffern in zwei Schriftfamilien hätten genau die Wiedererkennung gebrochen, die oben als Grund für die wortgleichen H2 angeführt ist. Die Werte hier sind deshalb die der Startseite, Zeichen für Zeichen. `tabular-nums` löst das Ausrichtungsproblem bereits, ohne den Mono-Sonderfall zu brauchen; Mono bleibt im Projekt den Eventdaten und Filterzählern vorbehalten.
+
+**Brand-Blau nur auf den Ablaufziffern, und in der kontraststarken Variante.** Fünf einstellige Ziffern sind die sparsamste Verwendung, die noch Wirkung hat; auf allen fünfzehn Ziffern wäre Blau Flächenfarbe und verstieße gegen den Designkontext.
+
+Verwendet wird `--color-primary-strong`, nicht `--color-primary`. Gegen `--color-bg` gemessen erreicht `--color-primary` nur **2,22:1** und fällt damit durch WCAG AA, auch durch die 3:1 für Großtext — die Prüfliste dieser Spec hätte den eigenen Gestaltungsbeschluss sofort kassiert. `--color-primary-strong` erreicht **4,95:1** und besteht AA für Normaltext; `PageIntro` nutzt es aus demselben Grund bereits für das Eyebrow. `--color-text-subtle` auf den Indikationsziffern erreicht **5,04:1** und ist unbedenklich.
 
 **Hinweisblöcke als getönte Fläche.** Notfallhinweis und Proktologie-Notiz brauchen visuelles Gewicht, ohne zu alarmieren. Sie werden als Fläche in `--color-surface-tint` mit `--radius-banner` gesetzt — der Token, den der Designkontext für bannerartige Inhaltsflächen vorsieht, weshalb die 16 Pixel Rundung keine Verletzung der 4-Pixel-Regel für allgemeine Container sind. Akzentstreifen über `border-left` sind ausdrücklich als Anti-Pattern geführt und kommen nicht infrage.
+
+Der Notfallhinweis ist dabei kein Beiwerk. Er schickt Patientinnen und Patienten bei akuten Symptomen in die Notfallambulanz und ist damit der einzige Inhalt der Seite, der zeitkritisch handlungsleitend ist. Er belegt `4 / -1` statt der vollen Rasterbreite, weil er als Fläche sonst mit den beiden dunklen Sektionen um Aufmerksamkeit konkurriert — sein Gewicht kommt aus der Tönung und aus der Position unmittelbar vor dem Abschluss-CTA, also als letztes, was vor der Kontaktaufnahme gelesen wird. Textfarbe ist `--color-text`, gemessen **15,67:1** gegen die getönte Fläche.
 
 **Haarlinie zwischen den Indikationen.** Der Designkontext sagt, Sektionen werden durch Spacing getrennt, nicht durch Trennlinien, und die Profil-Spec hat die horizontalen Registerlinien deshalb aktiv entfernt. Das gilt hier unverändert für die acht Sektionen der Seite: zwischen ihnen steht nur Raum. Die Haarlinie trennt die fünf Indikationen *innerhalb* von Sektion 3 — das ist die Kartenregel („Trennung durch 1px border oder Spacing allein") und regelkonform. Sie beginnt an der ersten und endet an der letzten Indikation, läuft also nicht als Dekolinie durch die Seite.
 
@@ -141,7 +178,22 @@ Brand-Blau liegt damit auf genau einer der drei Serien. Fünf einstellige Ziffer
 
 **Minimalinvasiv nicht pauschal als überlegen.** Hier weicht die Seite bewusst vom Live-Ton ab. Live heißt es, die chirurgische Behandlung der überwiegenden Anzahl der Erkrankungen erfolge in Schlüssellochtechnik, gefolgt von einer Vorteilsliste. Die globale Content-Regel in `docs/content/00-bestandsanalyse.md` verbietet genau diese Darstellung. Die Seite formuliert stattdessen, dass minimalinvasive Eingriffe bei geeigneter Indikation kleinere Zugänge und raschere Erholung ermöglichen können und offene Verfahren bei bestimmten Befunden die medizinisch sinnvollere Option bleiben.
 
-**Überschriftenhierarchie.** Eine H1 im Hero. H2 je Sektion, bei den Indikationen zusätzlich als Ankerziel. H3 ausschließlich für „Leistungsspektrum" und „Bitte bringen Sie nach Möglichkeit mit" — beide erscheinen damit laut Designkontext in Versalien mit 0.08em Laufweite, was ihre Funktion als Listenvorspann trägt. Sektionen werden über `aria-labelledby` an ihre H2 gebunden.
+**Überschriftenhierarchie.** Eine H1 im Hero. Danach gilt nicht pauschal „H2 je Sektion" — drei Sektionen tragen keine:
+
+| Sektion | Überschrift | Benennung |
+| --- | --- | --- |
+| 1 Hero | H1 aus `PageIntro` | — |
+| 2 Auf dieser Seite | keine. „Auf dieser Seite" ist ein Label, keine Überschrift — ein Inhaltsverzeichnis gehört nicht in die Dokumentgliederung | `<nav aria-label="Auf dieser Seite">` |
+| 3 Indikationen | H2 je Indikation, fünf insgesamt | `aria-labelledby` auf die jeweilige H2 |
+| 4 Verfahrenswahl | H2 „Das passende Verfahren statt einer Standardlösung" | `aria-labelledby` |
+| 5 Ablauf | H2 „Von der Abklärung zur Behandlung" | `aria-labelledby` |
+| 6 Vorbereitung | H2 „Vorbereitung auf den Termin" | `aria-labelledby` |
+| 7 Medizinischer Hinweis | keine | `<aside aria-label="Medizinischer Hinweis">` |
+| 8 Abschluss-CTA | H2 wie auf Startseite und Profilseite | `aria-labelledby` |
+
+Die H2 von Sektion 6 ist der Sektionstitel des Entwurfs, nicht dessen Formulierung „Bitte bringen Sie nach Möglichkeit mit" — die rutscht zur H3 über der Liste. Ohne diese Trennung hätte Sektion 6 nach der Herabstufung keine Überschrift mehr.
+
+H3 gibt es genau zweimal: „Leistungsspektrum" in der Hernien-Sektion und „Bitte bringen Sie nach Möglichkeit mit" in Sektion 6. Beide erscheinen laut Designkontext in Versalien mit 0.08em Laufweite, was ihre Funktion als Listenvorspann trägt.
 
 **Keine neuen Komponenten.** Die Indikationen entstehen aus einem `indikationen`-Array im Seiten-Frontmatter, analog zu `schwerpunkte` in `src/pages/index.astro`. Sprungnavigation, Ablaufregister und Hinweisflächen sind Einmal-Markup mit scoped styles in der Seite. Wiederverwendet werden `BaseLayout`, `PageIntro`, `Container`, `Grid` und `ButtonLink`.
 
@@ -175,7 +227,9 @@ Der Live-Ablauf hat vier Schritte, der Entwurf fünf. Die Seite folgt dem Entwur
 ## Prüfung vor Abschluss
 
 - Responsive-Pass bei 320, 390, 768, 1024, 1440, 1920 und 2560 Pixel auf horizontalen Overflow und Konsolenmeldungen
-- Kontrastmessung aller Textfarben, insbesondere in den beiden dunklen Sektionen, gegen WCAG AA
+- Kontrastmessung aller Textfarben gegen WCAG AA, insbesondere in den beiden dunklen Sektionen. Im hellen Bereich sind die Werte vorab gerechnet und festgelegt: Ablaufziffern `--color-primary-strong` 4,95:1, Indikationsziffern `--color-text-subtle` 5,04:1, Hinweistext `--color-text` auf `--color-surface-tint` 15,67:1. `--color-primary` ist mit 2,22:1 auf dieser Seite für Text gesperrt
+- Überschriftenbreite: „Hämorrhoiden und Enddarmerkrankungen" bei 1440, 1024, 390 und 320 Pixel auf Zwangstrennung und Overflow prüfen — das ist die längste Überschrift der Seite und die Stelle, an der ein zu schmales Raster zuerst bricht
+- Zeilenmaß aller Indikationstexte auf 65ch begrenzt, auch dort, wo keine Spektrumsliste folgt
 - H1-Umbruch bei 1440 und 1920 Pixel gegen den `26ch`-Startwert bestätigen
 - Ankersprünge geprüft: `global.css:73` setzt bereits `scroll-padding-top: calc(var(--header-height) + var(--space-4))` auf `html`, und der Header ist `position: sticky`. Zu bestätigen ist, dass dieser globale Offset trägt — **kein zusätzliches `scroll-margin-top` pro Sektion**, das würde den Abstand verdoppeln. `prefers-reduced-motion` ist über `global.css:215` bereits abgedeckt.
 - Die drei umgestellten Startseiten-CTAs springen auf die richtigen Sektionen, auch bei geöffnetem mobilen Menü
