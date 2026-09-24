@@ -43,7 +43,7 @@ Alle Zahlenwerte dieser Spec — Schriftgrößen, Spaltenbreiten, Farbtoken, Kon
 | 5 | Ablauf | `#ablauf` | hell | Eyebrow „Beratung und Ablauf" in `1 / span 3`. H2 auf `--text-h2` und fünfteiliges Register in `4 / -1`. |
 | 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Eyebrow „Ihr Termin" in `1 / span 3`. H2 auf `--text-h2` und Liste in `4 / -1`. |
 | 7 | Medizinischer Hinweis | — | hell | Getönte Fläche über `4 / -1`. |
-| 8 | Abschluss-CTA | — | **dunkel** | Gleiches Muster wie Startseite und Profilseite. |
+| 8 | Abschluss-CTA | — | **dunkel** | Eyebrow „Persönliche Beratung", H2 „Sie möchten einen Termin vereinbaren?", wie `index.astro:266–267`. Nicht dem Muster der Profilseite folgen: `profil.astro:369–370` setzt „Persönliche Beratung" über „Persönliche Beratung in Wien" und doppelt damit, was die Regel unten ausschließt. |
 
 ### Ankerschema
 
@@ -66,6 +66,8 @@ Kleinschreibung, keine Umlaute, keine Nummernpräfixe — die Nummerierung 01 bi
 Die ID liegt immer auf dem `<section>`-Element, nicht auf der Überschrift und nicht auf einem inneren Landmark. Bei Sektion 2 und 7 heißt das: die `<section id="uebersicht">` umschließt das `<nav>`, und Sektion 7 ist eine `<section>` mit dem `<aside>` darin. Für `aria-labelledby` bekommt die Überschrift eine zweite, abgeleitete ID nach dem Muster `hernien-titel`. Zwei getrennte IDs, weil der Sprunganker auf den Sektionsanfang zeigen muss und nicht auf die Überschrift allein.
 
 Das Eyebrow einer Sektion ist nie identisch mit ihrer H2 — es benennt das Themenfeld, die H2 die Aussage. Das ist das Muster aus `index.astro` und `profil.astro`, wo etwa „Operative Verfahren" über „So schonend wie möglich, so umfassend wie nötig" steht.
+
+Das Eyebrow von Sektion 5, „Beratung und Ablauf", ist wortgleich mit `index.astro:165` — und steht dort über genau dem CTA, der künftig auf `#ablauf` zeigt. Das ist Absicht, aus demselben Grund wie die wortgleichen Indikationsüberschriften: wer einem Label folgt, muss es am Ziel wiederfinden.
 
 ## Eingehende Verlinkung der Startseite
 
@@ -114,7 +116,7 @@ Der Preis des Rückfalls ist, dass Sektion 4 dann inhaltlich nahe an `index.astr
 
 Die Liste wird gebaut und mit dem Hinweis unter „Offene Punkte" geführt. Sie erscheint damit auf der Cloudflare-Preview-URL, bevor die Bestätigung vorliegt.
 
-Das ist vertretbar, aber nicht weil die Preview unsichtbar wäre — sie ist es nicht. `BaseLayout.astro:10` setzt `robots = "index, follow"` als Default, nur `impressum.astro` und `datenschutz.astro` überschreiben ihn; `public/_headers` enthält kein `X-Robots-Tag`, und eine `robots.txt` existiert nicht, sie steht in `STATUS.md` als offene technische Restarbeit. Preview-Deployments sind damit grundsätzlich indexierbar. Das ist eine bestehende Lücke, die alle acht Seiten betrifft und nicht von dieser Sektion aufgeworfen wird; sie gehört zu den technischen Restarbeiten, nicht in diese Spec.
+Das ist vertretbar, aber nicht weil die Preview unsichtbar wäre — sie ist es nicht. `BaseLayout.astro:10` setzt `robots = "index, follow"` als Default, nur `impressum.astro` und `datenschutz.astro` überschreiben ihn; `public/_headers` enthält kein `X-Robots-Tag`, und eine `robots.txt` existiert nicht, sie steht in `STATUS.md` als offene technische Restarbeit. Preview-Deployments sind damit grundsätzlich indexierbar. Das ist eine bestehende Lücke über sechs der acht Seiten — alle außer Impressum und Datenschutz — und sie wird nicht von dieser Sektion aufgeworfen. Sie gehört zu den technischen Restarbeiten, nicht in diese Spec.
 
 Die Rechtfertigung ruht deshalb auf dem Inhalt, nicht auf Unsichtbarkeit: die vier Kriterien sind allgemeine Abwägungsgesichtspunkte, keine Diagnose, kein Heilversprechen und keine Zusage eines bestimmten Verfahrens. Sollte die Bestätigung länger ausbleiben als der nächste Preview-Zyklus, ist `robots="noindex, follow"` für diese Seite der Notausgang — bewusst nicht als Default gesetzt, weil ein vergessenes `noindex` auf einer Patientenseite teurer wäre als die kurzzeitige Indexierbarkeit einer Preview-URL. Auf `main` geht die Liste erst nach Freigabe.
 
@@ -249,5 +251,5 @@ Der Live-Ablauf hat vier Schritte, der Entwurf fünf. Die Seite folgt dem Entwur
 - H1-Umbruch bei 1440 und 1920 Pixel gegen den `26ch`-Startwert bestätigen
 - Ankersprünge geprüft: `global.css:73` setzt bereits `scroll-padding-top: calc(var(--header-height) + var(--space-4))` auf `html`, und der Header ist `position: sticky`. Zu bestätigen ist, dass dieser globale Offset trägt — **kein zusätzliches `scroll-margin-top` pro Sektion**, das würde den Abstand verdoppeln. `prefers-reduced-motion` ist über `global.css:215` bereits abgedeckt.
 - Die drei umgestellten Startseiten-CTAs springen auf die richtigen Sektionen, auch bei geöffnetem mobilen Menü
-- Semantik: eine H1; die fünf Sektionen mit H2 über `aria-labelledby` benannt, Sektion 2 und 7 über `aria-label` beziehungsweise `aria-labelledby` auf ihr sichtbares Label; Sprungnavigation als Liste
+- Semantik: eine H1; die fünf Sektionen mit H2 über `aria-labelledby` benannt, Sektion 2 über `aria-labelledby` auf ihr sichtbares Label, Sektion 7 über `aria-label`; Sprungnavigation als Liste
 - `npm run build` ohne Fehler und Warnungen, Produktionsbuild unter den echten CSP-Headern geprüft
