@@ -38,7 +38,7 @@ Alle Zahlenwerte dieser Spec — Schriftgrößen, Spaltenbreiten, Farbtoken, Kon
 | --- | --- | --- | --- | --- |
 | 1 | Hero | — | hell | `PageIntro` mit Eyebrow, H1, Intro und primärem CTA im Slot. Spalten wie in der Komponente: Eyebrow `1 / span 3`, Copy `4 / -1`. H1-Breite lokal überschrieben, siehe unten. |
 | 2 | Auf dieser Seite | `#uebersicht` | hell | Label `1 / span 3`, Linkraster `4 / -1` in zwei bis drei Spalten. Fünf Ankerlinks, nummeriert. Statisch, kein JavaScript. |
-| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Nummer in `1 / span 2`, H2 mit Fließtext und optionalem Leistungsspektrum in `3 / -1`. Eigene Überschriftengröße, siehe unten. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
+| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Nummer in `1 / span 2`, **rechtsbündig** gegen die Inhaltsspalte wie die Jahreszahlen des Werdegangs. H2 mit Fließtext und optionalem Leistungsspektrum in `3 / -1`. Eigene Überschriftengröße, siehe unten. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
 | 4 | Verfahrenswahl | `#verfahren` | **dunkel** | H2 in `--text-h2` über `1 / span 6`, Fließtext und Kriterienliste `8 / -1`. Editorial-Break in der Seitenmitte. |
 | 5 | Ablauf | `#ablauf` | hell | Eyebrow „Beratung und Ablauf" in `1 / span 3`. H2 auf `--text-h2` und fünfteiliges Register in `4 / -1`. |
 | 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Eyebrow „Ihr Termin" in `1 / span 3`. H2 auf `--text-h2` und Liste in `4 / -1`. |
@@ -207,7 +207,11 @@ Der Notfallhinweis ist dabei kein Beiwerk. Er schickt Patientinnen und Patienten
 
 Die H2 von Sektion 6 ist der Sektionstitel des Entwurfs, nicht dessen Formulierung „Bitte bringen Sie nach Möglichkeit mit" — die rutscht zur H3 über der Liste. Ohne diese Trennung hätte Sektion 6 nach der Herabstufung keine Überschrift mehr.
 
-H3 gibt es genau zweimal: „Leistungsspektrum" in der Hernien-Sektion und „Bitte bringen Sie nach Möglichkeit mit" in Sektion 6. Beide erscheinen laut Designkontext in Versalien mit 0.08em Laufweite, was ihre Funktion als Listenvorspann trägt.
+H3 gibt es siebenmal: die fünf Titel der Ablaufschritte, dazu „Leistungsspektrum" in der Hernien-Sektion und „Bitte bringen Sie nach Möglichkeit mit" in Sektion 6.
+
+Die Versalienregel aus `.impeccable.md` gilt dabei **nicht** pauschal für H3. `index.astro` und `profil.astro` setzen H3 beide schlicht auf `--text-h3` mit `line-height: 1.25`; die dokumentierte Versalien-Variante ist im Projekt nirgends umgesetzt. Das ist dieselbe Divergenz zwischen `.impeccable.md` und der Codebasis wie bei den Tokenwerten, und die Codebasis gewinnt.
+
+Die Seite hält es deshalb so: H3 ist standardmäßig schlicht, wie auf den anderen Seiten. Nur die zwei Listenvorspänne tragen zusätzlich die Klasse `.listenlabel` mit Versalien, 0.08em Laufweite und `--color-text-muted` — sie sind funktional Labels über einer Liste, keine Abschnittsüberschriften, und heben sich so vom Fließtext darüber ab, ohne ein zweites Größenniveau einzuführen.
 
 **Keine neuen Komponenten.** Die Indikationen entstehen aus einem `indikationen`-Array im Seiten-Frontmatter, analog zu `schwerpunkte` in `src/pages/index.astro`. Sprungnavigation, Ablaufregister und Hinweisflächen sind Einmal-Markup mit scoped styles in der Seite. Wiederverwendet werden `BaseLayout`, `PageIntro`, `Container`, `Grid` und `ButtonLink`.
 

@@ -1,14 +1,740 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ButtonLink from "../components/ButtonLink.astro";
+import Container from "../components/Container.astro";
+import Grid from "../components/Grid.astro";
 import PageIntro from "../components/PageIntro.astro";
+
+const indikationen = [
+  {
+    nummer: "01",
+    id: "hernien",
+    titel: "Leisten-, Nabel- und Narbenhernien",
+    text: "Eine Hernie entsteht, wenn Gewebe durch eine Schwachstelle der Bauchwand tritt. Sie kann sich als Vorwölbung, Ziehen, Druckgefühl oder belastungsabhängiger Schmerz bemerkbar machen. Manche Hernien verursachen zunächst kaum Beschwerden. Welche Behandlung sinnvoll ist, hängt unter anderem von Art und Größe der Hernie, den Symptomen, Voroperationen und Ihrem allgemeinen Gesundheitszustand ab.",
+    spektrum: [
+      "Leistenhernien",
+      "Nabel- und epigastrische Hernien",
+      "Narbenhernien nach früheren Operationen",
+      "Wiederkehrende Hernien",
+      "Komplexe Bauchwandhernien und Bauchwandrekonstruktion",
+      "Zwerchfellhernien im Zusammenhang mit Refluxbeschwerden",
+    ],
+    cta: "Hernien-Befund besprechen",
+  },
+  {
+    nummer: "02",
+    id: "gallensteine",
+    titel: "Gallenblase und Gallensteine",
+    text: "Gallensteine können unbemerkt bleiben oder Beschwerden wie kolikartige Schmerzen im rechten Oberbauch, Übelkeit und Unverträglichkeit fettreicher Speisen auslösen. Entscheidend ist, ob Beschwerden oder Komplikationen vorliegen. Nach Sichtung der Befunde wird besprochen, ob Beobachtung, weitere Diagnostik oder eine operative Behandlung angezeigt ist.",
+  },
+  {
+    nummer: "03",
+    id: "reflux",
+    titel: "Refluxerkrankung und Hiatushernie",
+    text: "Wiederkehrendes Sodbrennen, saures Aufstoßen oder Druck hinter dem Brustbein können mit einer Refluxerkrankung oder einem Zwerchfellbruch zusammenhängen. Vor einer Operationsentscheidung sind eine genaue Diagnostik und die Abwägung konservativer und operativer Möglichkeiten erforderlich.",
+  },
+  {
+    nummer: "04",
+    id: "schilddruese",
+    titel: "Schilddrüsenerkrankungen",
+    text: "Bei Knoten, Vergrößerungen oder funktionellen Erkrankungen der Schilddrüse kann eine chirurgische Beurteilung notwendig sein. Grundlage sind aktuelle Befunde, Laborwerte und bildgebende Untersuchungen. Im Gespräch werden Operationsindikation, Umfang des Eingriffs und mögliche Alternativen erläutert.",
+  },
+  {
+    nummer: "05",
+    id: "proktologie",
+    titel: "Hämorrhoiden und Enddarmerkrankungen",
+    text: "Beschwerden im Anal- und Enddarmbereich sind häufig und sollten frühzeitig abgeklärt werden. Die Untersuchung erfolgt diskret und zielgerichtet. Je nach Diagnose kommen konservative Maßnahmen oder operative Verfahren infrage.",
+    hinweis: "Blut im Stuhl sollte immer ärztlich abgeklärt werden.",
+  },
+];
+
+const kriterien = [
+  "Art, Größe und Lage des Befundes",
+  "Voroperationen und Narbengewebe im Operationsgebiet",
+  "Allgemeinzustand und Begleiterkrankungen",
+  "Dringlichkeit des Eingriffs",
+];
+
+const ablauf = [
+  {
+    titel: "Erstgespräch",
+    text: "Beschwerden, Krankengeschichte, Voroperationen und Erwartungen besprechen.",
+  },
+  {
+    titel: "Untersuchung",
+    text: "Klinische Untersuchung und Sichtung vorhandener Befunde.",
+  },
+  {
+    titel: "Ergänzende Diagnostik",
+    text: "Falls erforderlich Ultraschall, Computertomographie, Magnetresonanz oder endoskopische Untersuchungen veranlassen.",
+  },
+  {
+    titel: "Therapieentscheidung",
+    text: "Konservative und operative Möglichkeiten verständlich abwägen.",
+  },
+  {
+    titel: "Planung und Nachsorge",
+    text: "Eingriff, Klinikaufenthalt, Verhalten danach und Kontrollen festlegen.",
+  },
+];
+
+const vorbereitung = [
+  "Aktuelle Befunde und Arztbriefe",
+  "Vorhandene Bildgebung samt Bildern oder Zugangscode",
+  "Liste Ihrer Medikamente und Allergien",
+  "Informationen zu früheren Operationen",
+  "Eine kurze Notiz Ihrer wichtigsten Fragen",
+];
 ---
+
 <BaseLayout
   title="Leistungen | Hernien- & Viszeralchirurgie Wien"
   description="Behandlungsschwerpunkte von Dr. René H. Fortelny: Hernien, Gallensteine, Reflux, Schilddrüse sowie Hämorrhoiden- und Enddarmerkrankungen."
 >
-  <PageIntro
-    eyebrow="Behandlungsschwerpunkte"
-    title="Chirurgische Beratung, die bei Ihrer Diagnose beginnt."
-    description="Am Anfang stehen das persönliche Gespräch, eine klinische Untersuchung und die sorgfältige Bewertung Ihrer Befunde."
-  />
+  <div class="leistungen-intro">
+    <PageIntro
+      eyebrow="Behandlungsschwerpunkte"
+      title="Chirurgische Beratung, die bei Ihrer Diagnose beginnt."
+      description="Nicht jede Beschwerde erfordert eine Operation. Am Ende steht eine Empfehlung, die medizinische Notwendigkeit, mögliche Alternativen und Ihre persönliche Situation berücksichtigt."
+    >
+      <div>
+        <ButtonLink href="/kontakt" arrow>Termin zur Abklärung anfragen</ButtonLink>
+      </div>
+    </PageIntro>
+  </div>
+
+  <section class="section index" id="uebersicht">
+    <Container>
+      <Grid>
+        <p class="eyebrow grid-label index__label" id="uebersicht-label">Auf dieser Seite</p>
+        <nav class="index__nav" aria-labelledby="uebersicht-label">
+          <ul>
+            {indikationen.map((eintrag) => (
+              <li>
+                <a href={`#${eintrag.id}`}>
+                  <span class="index__nummer" aria-hidden="true">{eintrag.nummer}</span>
+                  <span class="index__titel">{eintrag.titel}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </Grid>
+    </Container>
+  </section>
+
+  <div class="indikationen">
+    <Container>
+      {indikationen.map((eintrag) => (
+        <section class="indikation" id={eintrag.id} aria-labelledby={`${eintrag.id}-titel`}>
+          <Grid>
+            <p class="indikation__nummer" aria-hidden="true">{eintrag.nummer}</p>
+            <div class="indikation__inhalt">
+              <h2 id={`${eintrag.id}-titel`}>{eintrag.titel}</h2>
+              <p class="indikation__text">{eintrag.text}</p>
+
+              {eintrag.spektrum && (
+                <div class="spektrum">
+                  <h3 class="listenlabel">Leistungsspektrum</h3>
+                  <ul>
+                    {eintrag.spektrum.map((position) => <li>{position}</li>)}
+                  </ul>
+                </div>
+              )}
+
+              {eintrag.hinweis && <p class="notiz">{eintrag.hinweis}</p>}
+
+              {eintrag.cta && (
+                <div class="indikation__aktion">
+                  <ButtonLink href="/kontakt" variant="text" arrow>{eintrag.cta}</ButtonLink>
+                </div>
+              )}
+            </div>
+          </Grid>
+        </section>
+      ))}
+    </Container>
+  </div>
+
+  <section
+    class="section verfahren"
+    id="verfahren"
+    aria-labelledby="verfahren-titel"
+    data-section-theme="dark"
+  >
+    <Container>
+      <Grid>
+        <div class="verfahren__kopf">
+          <p class="eyebrow">Operative Verfahren</p>
+          <h2 id="verfahren-titel">Das passende Verfahren statt einer Standardlösung.</h2>
+        </div>
+        <div class="verfahren__inhalt">
+          <p>
+            Wenn eine Operation empfohlen wird, richtet sich die Wahl des Verfahrens nach der
+            Diagnose und Ihrem individuellen Risikoprofil. Minimalinvasive Eingriffe können bei
+            geeigneter Indikation kleinere Zugänge und eine raschere Erholung ermöglichen. Offene
+            Verfahren bleiben bei bestimmten Befunden die medizinisch sinnvollere Option. Nutzen,
+            Risiken und Alternativen werden vor der Entscheidung ausführlich besprochen.
+          </p>
+          <ul class="kriterien">
+            {kriterien.map((kriterium) => <li>{kriterium}</li>)}
+          </ul>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section ablauf" id="ablauf" aria-labelledby="ablauf-titel">
+    <Container>
+      <Grid>
+        <p class="eyebrow grid-label">Beratung und Ablauf</p>
+        <div class="ablauf__inhalt">
+          <h2 id="ablauf-titel">Von der Abklärung zur Behandlung</h2>
+          <ol class="schritte">
+            {ablauf.map((schritt, index) => (
+              <li>
+                <span class="schritte__nummer" aria-hidden="true">{index + 1}</span>
+                <div>
+                  <h3>{schritt.titel}</h3>
+                  <p>{schritt.text}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="section vorbereitung" id="vorbereitung" aria-labelledby="vorbereitung-titel">
+    <Container>
+      <Grid>
+        <p class="eyebrow grid-label">Ihr Termin</p>
+        <div class="vorbereitung__inhalt">
+          <h2 id="vorbereitung-titel">Vorbereitung auf den Termin</h2>
+          <h3 class="listenlabel">Bitte bringen Sie nach Möglichkeit mit</h3>
+          <ul class="mitbringen">
+            {vorbereitung.map((position) => <li>{position}</li>)}
+          </ul>
+        </div>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="hinweis-sektion">
+    <Container>
+      <Grid>
+        <aside class="hinweis" aria-label="Medizinischer Hinweis">
+          <p>
+            Die Informationen auf dieser Seite dienen der allgemeinen Orientierung und ersetzen
+            keine persönliche Untersuchung.
+          </p>
+          <p>
+            Bei plötzlich starken Schmerzen, Fieber, Erbrechen oder einer schmerzhaften, nicht
+            zurückgehenden Vorwölbung wenden Sie sich bitte umgehend an eine Notfallambulanz oder
+            den Rettungsdienst.
+          </p>
+        </aside>
+      </Grid>
+    </Container>
+  </section>
+
+  <section class="contact-cta" aria-labelledby="kontakt-titel" data-section-theme="dark">
+    <Container>
+      <Grid>
+        <div class="contact-cta__inner">
+          <p class="eyebrow">Persönliche Beratung</p>
+          <h2 id="kontakt-titel">Sie möchten einen Termin vereinbaren?</h2>
+          <p>
+            Für Terminabsprachen und organisatorische Fragen erreichen Sie die Ordination über das
+            Kontaktformular. Medizinische Notfälle können über die Website nicht betreut werden.
+          </p>
+          <div class="button-group contact-cta__aktion">
+            <ButtonLink href="/kontakt" arrow>Termin anfragen</ButtonLink>
+          </div>
+        </div>
+      </Grid>
+    </Container>
+  </section>
 </BaseLayout>
+
+<style>
+  /* ── Seitenweite Grundlagen ─────────────────────────── */
+
+  .section {
+    padding-block: clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  .eyebrow {
+    color: var(--color-primary-strong);
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  [data-section-theme="dark"] .eyebrow {
+    color: var(--color-primary);
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    font-weight: 400;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  /* Gleiche Behandlung wie in index.astro und profil.astro. Die Versalienregel
+     aus .impeccable.md ist im Projekt nirgends umgesetzt — die Codebasis ist hier
+     die Referenz, wie auch bei den Tokenwerten. */
+  h3 {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  /* Vorspann über einer Liste, keine Abschnittsüberschrift. Die Label-Optik
+     trennt ihn vom Fließtext darüber, ohne ein zweites Größenniveau
+     einzuführen. */
+  .listenlabel {
+    color: var(--color-text-muted);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ── Hero ──────────────────────────────────────────── */
+
+  /* Die Komponente deckelt die H1 bei 14ch, abgestimmt auf die kürzeren
+     Überschriften der anderen Seiten. Dieser Satz hat 54 Zeichen und würde dort
+     zu einer schmalen, hohen Textsäule brechen. Der Wrapper trägt das
+     Scope-Attribut der Seite, die Regel liegt damit bei 0-3-1 und setzt sich
+     unabhängig von der Stylesheet-Reihenfolge durch. */
+  /* `min()` statt eines nackten ch-Werts: die Komponente setzt unter 42rem
+     bewusst `max-width: 100%`, und dieser Override ist spezifischer. Ohne die
+     100-Prozent-Grenze stünde die H1 bei 320px auf 410px Breite und würde von
+     `overflow: clip` still abgeschnitten. */
+  .leistungen-intro :global(.page-intro__copy h1) {
+    max-width: min(26ch, 100%);
+  }
+
+  /* ── Sprungnavigation ──────────────────────────────── */
+
+  /* Führt bewusst nur die fünf Indikationen. Ein Index über alle acht Sektionen
+     wäre eine Gliederung der Seite statt einer Auswahlhilfe. */
+  .index {
+    padding-block: 0 clamp(var(--space-16), 7vw, var(--space-24));
+  }
+
+  .index__label {
+    grid-column: 1 / span 3;
+    padding-top: 0.2rem;
+  }
+
+  .index__nav {
+    grid-column: 4 / -1;
+  }
+
+  .index__nav ul {
+    display: grid;
+    /* `min(15rem, 100%)` statt `15rem`: unter 15rem Spaltenbreite würde die
+       feste Mindestbreite die Spur über den Container hinaus aufspannen. */
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    gap: var(--space-2) var(--site-gutter);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .index__nav a {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    align-items: baseline;
+    /* Trägt die Zeile auf 44 Pixel Zielfläche, ohne die Zeilen auseinanderzuziehen. */
+    padding-block: var(--space-3);
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border-light);
+    transition: border-color var(--transition-fast), color var(--transition-fast);
+  }
+
+  .index__nav a:hover {
+    color: var(--color-primary-strong);
+    border-bottom-color: var(--color-primary-strong);
+  }
+
+  .index__nummer {
+    color: var(--color-text-subtle);
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    transition: color var(--transition-fast);
+  }
+
+  .index__nav a:hover .index__nummer {
+    color: var(--color-primary-strong);
+  }
+
+  .index__titel {
+    font-size: var(--text-label);
+    font-weight: 500;
+    line-height: 1.35;
+    text-wrap: pretty;
+  }
+
+  /* ── Indikationen ──────────────────────────────────── */
+
+  /* Die Haarlinie trennt die Einträge innerhalb der Gruppe, nicht die Sektionen
+     der Seite. Sie beginnt an der zweiten Indikation und läuft damit nicht als
+     Dekolinie über die ganze Seite. */
+  .indikation + .indikation {
+    border-top: 1px solid var(--color-border);
+  }
+
+  .indikation {
+    padding-block: clamp(var(--space-12), 5.5vw, var(--space-24));
+  }
+
+  /* Mehr Raum für die Hernien-Sektion: sie trägt das Leistungsspektrum und den
+     einzigen Inline-CTA. Der Rhythmus ersetzt die Liste, die den übrigen vier
+     Indikationen fehlt — ein breiteres Zeilenmaß wäre der falsche Ausgleich. */
+  .indikation:first-child {
+    padding-block: 0 clamp(var(--space-16), 7vw, var(--space-32));
+  }
+
+  /* Rechtsbündig gegen die Inhaltsspalte, wie die Jahreszahlen im Werdegang der
+     Profilseite. Linksbündig stünde die Ziffer 217 Pixel von ihrer Überschrift
+     entfernt und läse sich als verwaist statt als Registereintrag. */
+  .indikation__nummer {
+    grid-column: 1 / span 2;
+    padding-top: 0.55rem;
+    padding-right: var(--space-4);
+    color: var(--color-text-subtle);
+    font-size: var(--text-label);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  /* Kein `justify-items: start` auf diesem Grid: das macht jedes Kind
+     shrink-to-fit, wodurch die Absätze auf `max-content` bis zu ihrer
+     `max-width` wachsen und die Spalte sprengen. Buttons bekommen ihr
+     `justify-self` stattdessen einzeln. */
+  /* `minmax(0, 1fr)` ist hier nicht kosmetisch: eine implizite `auto`-Spur wird
+     von ihrem breitesten unumbrechbaren Kind aufgespannt — hier vom Button mit
+     `white-space: nowrap`. Alle Geschwister erben dann dessen Spurbreite als
+     Bezug für ihr `max-width: …100%` und laufen über die Spalte hinaus. */
+  .indikation__inhalt {
+    grid-column: 3 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .indikation__aktion,
+  .contact-cta__aktion {
+    justify-self: start;
+  }
+
+  /* Fünf Registereinträge sind der H1 untergeordnet; auf --text-h2 wären sie zu
+     viel Stimme. Die reduzierte Skala hält außerdem die längste Überschrift der
+     Seite, „Hämorrhoiden und Enddarmerkrankungen", auf einer Zeile. */
+  .indikation__inhalt h2 {
+    max-width: min(30ch, 100%);
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    hyphens: auto;
+    overflow-wrap: break-word;
+  }
+
+  .indikation__text {
+    max-width: min(65ch, 100%);
+    color: var(--color-text-muted);
+  }
+
+  .spektrum {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .spektrum ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr));
+    gap: var(--space-2) var(--site-gutter);
+    max-width: min(65ch, 100%);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .spektrum li {
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .notiz {
+    max-width: min(55ch, 100%);
+    padding: var(--space-4) var(--space-6);
+    color: var(--color-text);
+    background: var(--color-surface-tint);
+    border-radius: var(--radius-banner);
+  }
+
+  /* ── Verfahrenswahl ────────────────────────────────── */
+
+  .verfahren__kopf {
+    grid-column: 1 / span 6;
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+  }
+
+  .verfahren__kopf h2 {
+    max-width: min(18ch, 100%);
+  }
+
+  .verfahren__inhalt {
+    grid-column: 8 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  /* Heller Text auf dunklem Grund wirkt leichter und braucht mehr Durchschuss.
+     --color-text-subtle liegt hier bei 3,2:1 und ist für Fließtext gesperrt. */
+  .verfahren__inhalt p {
+    max-width: min(62ch, 100%);
+    color: var(--color-text-muted);
+    line-height: 1.72;
+  }
+
+  .kriterien {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .kriterien li {
+    padding-block: var(--space-3);
+    color: var(--color-text);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .kriterien li:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* ── Ablauf ────────────────────────────────────────── */
+
+  .ablauf .eyebrow {
+    grid-column: 1 / span 3;
+    padding-top: 0.2rem;
+  }
+
+  .ablauf__inhalt,
+  .vorbereitung__inhalt {
+    grid-column: 4 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .ablauf__inhalt h2,
+  .vorbereitung__inhalt h2 {
+    max-width: min(24ch, 100%);
+  }
+
+  .schritte {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: none;
+  }
+
+  .schritte li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-6);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .schritte li:last-child {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .schritte li > div {
+    display: grid;
+    gap: var(--space-2);
+    max-width: min(62ch, 100%);
+  }
+
+  /* Nur der Größenwert von --text-h3, nicht dessen Versalien und Laufweite —
+     es sind Ziffern, keine Überschriften. --color-primary-strong statt
+     --color-primary: letzteres erreicht im Hellen nur 2,22:1. */
+  .schritte__nummer {
+    color: var(--color-primary-strong);
+    font-size: var(--text-h3);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .schritte p {
+    color: var(--color-text-muted);
+  }
+
+  /* ── Vorbereitung ──────────────────────────────────── */
+
+  .vorbereitung .eyebrow {
+    grid-column: 1 / span 3;
+    padding-top: 0.2rem;
+  }
+
+  .vorbereitung__inhalt {
+    gap: var(--space-6);
+  }
+
+  .mitbringen {
+    display: grid;
+    gap: 0;
+    max-width: min(55ch, 100%);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mitbringen li {
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .mitbringen li:last-child {
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  /* ── Medizinischer Hinweis ─────────────────────────── */
+
+  .hinweis-sektion {
+    padding-block: 0 clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  /* Kein Beiwerk: der Absatz schickt bei akuten Symptomen in die
+     Notfallambulanz. Das Gewicht kommt aus der Tönung und aus der Position
+     unmittelbar vor dem Kontakt-CTA — über die volle Rasterbreite würde die
+     Fläche mit den beiden dunklen Sektionen konkurrieren. */
+  .hinweis {
+    grid-column: 4 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+    max-width: min(62ch, 100%);
+    padding: clamp(var(--space-6), 3vw, var(--space-8));
+    color: var(--color-text);
+    background: var(--color-surface-tint);
+    border-radius: var(--radius-banner);
+  }
+
+  /* ── Abschluss-CTA ─────────────────────────────────── */
+
+  .contact-cta {
+    padding-block: clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  .contact-cta__inner {
+    grid-column: 1 / span 8;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+
+  .contact-cta__inner h2 {
+    max-width: min(20ch, 100%);
+  }
+
+  .contact-cta__inner p {
+    max-width: min(58ch, 100%);
+    color: var(--color-text-muted);
+    line-height: 1.72;
+  }
+
+  .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  /* ── Umbruch ───────────────────────────────────────── */
+
+  /* Derselbe Wert wie bei den Rasterlabels in index.astro und profil.astro:
+     drei Spalten fassen lange deutsche Komposita nicht mehr. */
+  @media (max-width: 64rem) {
+    .index__label,
+    .index__nav,
+    .indikation__nummer,
+    .indikation__inhalt,
+    .verfahren__kopf,
+    .verfahren__inhalt,
+    .ablauf .eyebrow,
+    .vorbereitung .eyebrow,
+    .ablauf__inhalt,
+    .vorbereitung__inhalt,
+    .hinweis,
+    .contact-cta__inner {
+      grid-column: 1 / -1;
+    }
+
+    .index__label,
+    .ablauf .eyebrow,
+    .vorbereitung .eyebrow,
+    .indikation__nummer {
+      padding-top: 0;
+    }
+
+    /* Über die volle Breite gestapelt gibt es keine Inhaltsspalte mehr,
+       gegen die die Ziffer ausgerichtet werden könnte. */
+    .indikation__nummer {
+      padding-right: 0;
+      text-align: left;
+    }
+
+    .verfahren__kopf {
+      gap: var(--space-3);
+    }
+  }
+
+  /* `.rf-button` trägt global `white-space: nowrap`. Auf schmalen Viewports
+     passen die langen deutschen Labels nicht in eine Zeile und spannen sonst
+     die Grid-Spur auf. Gleiche Behandlung wie in index.astro. */
+  @media (max-width: 42rem) {
+    .leistungen-intro :global(.rf-button),
+    .indikation__aktion :global(.rf-button),
+    .contact-cta__aktion :global(.rf-button) {
+      width: 100%;
+      max-width: 100%;
+      padding-inline: var(--space-4);
+      white-space: normal;
+      text-align: center;
+    }
+
+    .contact-cta__aktion {
+      width: 100%;
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .schritte li {
+      grid-template-columns: 2.25rem 1fr;
+      gap: var(--space-3);
+    }
+  }
+</style>
