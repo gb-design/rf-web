@@ -37,9 +37,12 @@ const { eyebrow, title, description } = Astro.props;
     align-items: start;
   }
 
+  /* Ein Zeilenumbruch im Eyebrow-Text (\n) bricht nur in der schmalen
+     Labelspalte; in voller Breite darunter fällt er wieder weg. */
   .page-intro__eyebrow {
     grid-column: 1 / span 3;
     padding-top: 0.55rem;
+    white-space: pre-line;
     color: var(--color-primary-strong);
     font-family: var(--font-display);
     font-size: var(--text-label);
@@ -75,6 +78,10 @@ const { eyebrow, title, description } = Astro.props;
   /* Drei Spalten fassen lange Eyebrow-Komposita nicht mehr. Derselbe Wert wie
      bei den Rasterlabels in index.astro und profil.astro. */
   @media (max-width: 64rem) {
+    .page-intro__eyebrow {
+      white-space: normal;
+    }
+
     .page-intro__eyebrow,
     .page-intro__copy {
       grid-column: 1 / -1;

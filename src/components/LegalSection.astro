@@ -1,0 +1,84 @@
+---
+import Container from "./Container.astro";
+import Grid from "./Grid.astro";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<section class="legal-section">
+  <Container>
+    <Grid class="legal-section__grid">
+      <h2 class="legal-section__titel grid-label">{title}</h2>
+      <div class="legal-section__inhalt">
+        <slot />
+      </div>
+    </Grid>
+  </Container>
+</section>
+
+<style>
+  /* Label und Inhalt stehen auf denselben Spalten wie das Seiten-Intro, damit
+     die Rechtstexte an der Kante der Überschrift beginnen. */
+  :global(.legal-section__grid) {
+    padding-block: var(--space-8) var(--space-12);
+    border-top: 1px solid var(--color-border);
+    align-items: start;
+  }
+
+  .legal-section:last-of-type :global(.legal-section__grid) {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-section__titel {
+    grid-column: 1 / span 3;
+    margin: 0;
+    padding-top: 0.2rem;
+    color: var(--color-text);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .legal-section__inhalt {
+    grid-column: 4 / -1;
+    display: grid;
+    gap: var(--space-6);
+    max-width: 65ch;
+  }
+
+  /* Der Inhalt kommt über den Slot aus der Seite und trägt deren Scope. */
+  .legal-section__inhalt :global(p),
+  .legal-section__inhalt :global(dl),
+  .legal-section__inhalt :global(address) {
+    margin: 0;
+    font-style: normal;
+  }
+
+  .legal-section__inhalt :global(a) {
+    color: var(--color-primary-strong);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  .legal-section__inhalt :global(a:hover) {
+    color: var(--color-primary-strong-hover);
+  }
+
+  @media (max-width: 64rem) {
+    .legal-section__titel,
+    .legal-section__inhalt {
+      grid-column: 1 / -1;
+    }
+
+    :global(.legal-section__grid) {
+      row-gap: var(--space-4);
+    }
+  }
+</style>

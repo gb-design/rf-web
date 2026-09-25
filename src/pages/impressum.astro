@@ -1,6 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import LegalSection from "../components/LegalSection.astro";
 import PageIntro from "../components/PageIntro.astro";
+
+// Vorläufig laut Kunde; die Adressen können sich noch ändern. Beide Stellen
+// der Seite (Kontakt und Offenlegung) lesen von hier, ebenso die Offenlegung
+// aus dem ersten Standort.
+const email = "dr.fortelny@gmail.com";
+const emailKav = "rene.fortelny@wienkav.at";
+
+const standorte = [
+  {
+    name: "Rudolfinerhaus",
+    adresse: "Billrothstraße 78, 1190 Wien",
+    telefon: "+43 (0)1 360 36 5900",
+    tel: "+431360365900",
+  },
+  {
+    name: "Sigmund Freud PrivatUniversität",
+    adresse: "Freudplatz 1, 1020 Wien",
+    telefon: "+43 (0)1 798 40 98",
+    tel: "+4317984098",
+  },
+];
 ---
 
 <BaseLayout
@@ -9,8 +31,134 @@ import PageIntro from "../components/PageIntro.astro";
   robots="noindex, follow"
 >
   <PageIntro
-    eyebrow="Rechtliche Informationen"
+    eyebrow={"Rechtliche\nInformationen"}
     title="Impressum"
-    description="Die rechtlichen Angaben befinden sich in redaktioneller und juristischer Abstimmung."
+    description="Angaben zum Anbieter dieser Website und Offenlegung gemäß Mediengesetz."
   />
+
+  <div class="impressum">
+    <LegalSection title="Anbieter">
+      <p class="impressum__name">Univ.-Prof. Dr. René Hartmann Fortelny</p>
+      <p>Facharzt für Allgemein-, Viszeral- &amp; Tumorchirurgie</p>
+    </LegalSection>
+
+    <LegalSection title="Standorte">
+      <div class="impressum__standorte">
+        {standorte.map((s) => (
+          <address>
+            <strong>{s.name}</strong><br />
+            {s.adresse}<br />
+            Telefon: <a href={`tel:${s.tel}`}>{s.telefon}</a>
+          </address>
+        ))}
+      </div>
+    </LegalSection>
+
+    <LegalSection title="E-Mail">
+      <p>
+        <a href={`mailto:${email}`}>{email}</a><br />
+        <a href={`mailto:${emailKav}`}>{emailKav}</a>
+      </p>
+    </LegalSection>
+
+    <LegalSection title="Bankverbindung">
+      <dl class="impressum__liste">
+        <dt>Bank</dt>
+        <dd>Bank Austria</dd>
+        <dt>IBAN</dt>
+        <dd class="impressum__nummer">AT18 1200 0007 1131 9764</dd>
+        <dt>SWIFT-BIC</dt>
+        <dd class="impressum__nummer">BKAUATWW</dd>
+        <dt>Konto</dt>
+        <dd class="impressum__nummer">711 319 764</dd>
+        <dt>BLZ</dt>
+        <dd class="impressum__nummer">12000</dd>
+      </dl>
+    </LegalSection>
+
+    <LegalSection title="Kammerzugehörigkeit">
+      <p>
+        <a href="https://www.aekwien.at/" target="_blank" rel="noopener noreferrer">
+          Ärztekammer für Wien<span class="visually-hidden"> (öffnet in neuem Tab)</span>
+        </a>
+      </p>
+    </LegalSection>
+
+    <LegalSection title="Offenlegung gemäß Mediengesetz">
+      <dl class="impressum__liste">
+        <dt>Medieninhaber und Herausgeber</dt>
+        <dd>Univ.-Prof. Dr. René Hartmann Fortelny</dd>
+        <dt>Adresse</dt>
+        <dd>{standorte[0].name}, {standorte[0].adresse}</dd>
+        <dt>Telefon</dt>
+        <dd><a href={`tel:${standorte[0].tel}`}>{standorte[0].telefon}</a></dd>
+        <dt>E-Mail</dt>
+        <dd><a href={`mailto:${email}`}>{email}</a></dd>
+      </dl>
+      <p>
+        Grundlegende Richtung des Onlineauftritts: Die Website dient der Information über die
+        Leistungen von Univ.-Prof. Dr. René Hartmann Fortelny.
+      </p>
+    </LegalSection>
+
+    <LegalSection title="Umsetzung">
+      <p>
+        WebDev made with ❤️ by{" "}
+        <a href="https://www.georgeandburn.at/" target="_blank" rel="noopener noreferrer">
+          georgeandburn.at<span class="visually-hidden"> (öffnet in neuem Tab)</span>
+        </a>
+      </p>
+    </LegalSection>
+  </div>
 </BaseLayout>
+
+<style>
+  .impressum {
+    padding-block-end: var(--section-space);
+  }
+
+  .impressum__name {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .impressum__standorte {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-6) var(--space-8);
+  }
+
+  .impressum__standorte address {
+    line-height: 1.7;
+  }
+
+  .impressum__liste {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: var(--space-3) var(--space-6);
+  }
+
+  .impressum__liste dt {
+    color: var(--color-text-muted);
+  }
+
+  .impressum__liste dd {
+    margin: 0;
+  }
+
+  .impressum__nummer {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 34rem) {
+    .impressum__liste {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0;
+    }
+
+    .impressum__liste dd + dt {
+      margin-top: var(--space-4);
+    }
+  }
+</style>
