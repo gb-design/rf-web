@@ -37,12 +37,12 @@ Alle Zahlenwerte dieser Spec — Schriftgrößen, Spaltenbreiten, Farbtoken, Kon
 | # | Sektion | Anker | Theme | Raster und Behandlung |
 | --- | --- | --- | --- | --- |
 | 1 | Hero | — | hell | `PageIntro` mit Eyebrow, H1, Intro und primärem CTA im Slot. Spalten wie in der Komponente: Eyebrow `1 / span 3`, Copy `4 / -1`. H1-Breite lokal überschrieben, siehe unten. |
-| 2 | Auf dieser Seite | `#uebersicht` | hell | Label `1 / span 3`, Linkraster `4 / -1` in zwei bis drei Spalten. Fünf Ankerlinks, nummeriert. Statisch, kein JavaScript. |
-| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Nummer in `1 / span 2`, **rechtsbündig** gegen die Inhaltsspalte wie die Jahreszahlen des Werdegangs. H2 mit Fließtext und optionalem Leistungsspektrum in `3 / -1`. Eigene Überschriftengröße, siehe unten. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
+| 2 | Auf dieser Seite | `#uebersicht` | hell | Label `1 / span 3`, Linkraster `4 / -1` in zwei bis drei Spalten. Fünf Ankerlinks mit Miniatur, Ziffer und Titel. Statisch, kein JavaScript. |
+| 3 | Indikationen 01 – 05 | fünf, siehe Ankerschema | hell | Je Sektion: Marginalspalte `1 / span 2` mit Ziffer und Illustration, beide **rechtsbündig** gegen die Inhaltsspalte wie die Jahreszahlen des Werdegangs. H2 mit Fließtext und optionalem Leistungsspektrum in `3 / -1`. Eigene Überschriftengröße, siehe unten. Trennung zwischen den Indikationen durch Haarlinie und Spacing. |
 | 4 | Verfahrenswahl | `#verfahren` | **dunkel** | H2 in `--text-h2` über `1 / span 6`, Fließtext und Kriterienliste `8 / -1`. Editorial-Break in der Seitenmitte. |
-| 5 | Ablauf | `#ablauf` | hell | Eyebrow „Beratung und Ablauf" in `1 / span 3`. H2 auf `--text-h2` und fünfteiliges Register in `4 / -1`. |
-| 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Eyebrow „Ihr Termin" in `1 / span 3`. H2 auf `--text-h2` und Liste in `4 / -1`. |
-| 7 | Medizinischer Hinweis | — | hell | Getönte Fläche über `4 / -1`. |
+| 5 | Ablauf | `#ablauf` | hell | Eyebrow „Beratung und Ablauf" in `1 / span 3`. H2 auf `--text-h2` und fünfteiliges Register in `4 / -1`, je Schritt Symbol und Ziffer. |
+| 6 | Vorbereitung auf den Termin | `#vorbereitung` | hell | Eyebrow „Ihr Termin" in `1 / span 3`. H2 auf `--text-h2` und Liste in `4 / -1`, je Eintrag ein Symbol. |
+| 7 | Medizinischer Hinweis | — | hell | Getönte Fläche über `4 / -1`, mit Warnsymbol in `--color-accent-deep`. |
 | 8 | Abschluss-CTA | — | **dunkel** | Eyebrow „Persönliche Beratung", H2 „Sie möchten einen Termin vereinbaren?", wie `index.astro:266–267`. Nicht dem Muster der Profilseite folgen: `profil.astro:369–370` setzt „Persönliche Beratung" über „Persönliche Beratung in Wien" und doppelt damit, was die Regel unten ausschließt. |
 
 ### Ankerschema
@@ -122,11 +122,27 @@ Die Rechtfertigung ruht deshalb auf dem Inhalt, nicht auf Unsichtbarkeit: die vi
 
 ## Gestalterische Entscheidungen
 
-**Indikationen rein typografisch, nicht mit Lottie.** Für alle fünf Indikationen liegen Animationen in `public/lottie/` bereit, und die Startseite spielt sie in `TreatmentTabs.astro` aus. Sie werden hier trotzdem nicht wiederverwendet.
+**Illustrationen als statische SVG, nicht als Lottie.** *(Revision vom 25. September 2026 auf Kundenwunsch — die ursprüngliche Fassung verzichtete ganz auf Illustrationen.)*
 
-Erstens sind die fünf Dateien zusammen 567 Kilobyte und bräuchten eine eigene Lazy-Loading-Mechanik pro Sektion, während `TreatmentTabs` `lottie_light` dynamisch importiert und nur die jeweils aktive Animation lädt. Zweitens, und wichtiger: die Animationen sind das Erkennungszeichen des Startseiten-Einstiegs. Wiederholt auf der Tiefenseite verlieren sie genau diese Funktion. Die Leistungsseite arbeitet stattdessen mit Ruhe und Lesbarkeit — sie ist die Seite, auf der jemand mit einer frischen Diagnose tatsächlich liest.
+Der erste Entwurf dieser Spec schloss die Lottie-Bildsprache auf dieser Seite aus, mit zwei Gründen: 567 Kilobyte für fünf Animationen, und der Verlust des Erkennungszeichens der Startseite. Beide Einwände bleiben richtig, treffen die jetzt gewählte Lösung aber nicht.
+
+Die fünf Animationen in `public/lottie/` decken exakt die fünf Indikationen dieser Seite ab. Statt sie als Animation einzubinden oder die Bildsprache nachzubauen, wird je ein aussagekräftiger Frame als statisches SVG extrahiert und unter `public/illustrationen/` abgelegt. Das ist dieselbe Zeichnung, Strich für Strich — keine Annäherung.
+
+- **Gewicht:** 25 Kilobyte für alle fünf statt 567. Kein Player, kein JavaScript; die Seite bleibt skriptfrei.
+- **Abgrenzung zur Startseite:** dort bewegen sich die Zeichnungen und tragen den Einstieg, hier stehen sie still als Randfiguren. Das Erkennungszeichen bleibt der Startseite vorbehalten, die Wiedererkennung über die Form entsteht trotzdem.
+- **Eingebunden als `<img>`,** nicht inline: fünf cachebare Dateien statt 25 Kilobyte zusätzliches HTML, und die Seite bleibt unter der CSP-Regel `img-src 'self'`.
+
+Gewählte Frames, jeweils der Zustand mit der vollständigsten Darstellung: Leistenbruch 90 %, Galle 80 %, Reflux, Schilddrüse und Hämorrhoiden je 65 %. Die Extraktion muss die Animation erst **abspielen** lassen, bevor sie einen Frame einfriert — `goToAndStop` allein liefert bei mehreren Dateien leere `d`-Attribute, weil die Pfadgeometrie erst während der Wiedergabe berechnet wird. Beim Optimieren dürfen `clip-path` und `mask` nicht entfernt werden, sonst werden die roten Maskenformen sichtbar.
 
 Identische Karten je Indikation bleiben verworfen, weil wiederholte Kartenraster ein dokumentiertes Anti-Pattern des Projekts sind.
+
+**Die Illustration steht in der Marginalspalte.** Ziffer und Zeichnung teilen sich die Spalten 1 bis 2, beide rechtsbündig gegen die Inhaltsspalte — das Muster der Randfigur einer Publikation. Die Spalte braucht `align-content: start`, sonst verteilen sich Ziffer und Bild über die volle Sektionshöhe und die Zeichnung rutscht auf Höhe der Liste. Unter 64rem wird die Marginalie zur Zeile über der Überschrift, mit 4,5rem breiter Zeichnung.
+
+**Die Sprungnavigation trägt Miniaturen.** Jeder Eintrag zeigt seine Zeichnung bei 2,75rem, im Ruhezustand auf 55 Prozent Deckkraft und 94 Prozent Größe zurückgenommen, bei Hover und Fokus auf volle Deckkraft und Größe. Das macht den Index zur Wiedererkennungshilfe: wer seine Diagnose kennt, findet sie über die Form schneller als über den Namen. Es ist zugleich die einzige Stelle der Seite mit einer eigenen Hover-Reaktion, weil die Navigationseinträge die einzigen seiteneigenen interaktiven Elemente sind — Listeneinträge bekommen bewusst keine, das würde Interaktivität vortäuschen.
+
+**Symbole in Ablauf, Vorbereitung und Notfallhinweis.** Neue Komponente `StepIcon.astro` mit elf Symbolen, nach dem Muster von `MetaIcon.astro`: `viewBox` 24, `currentColor`, Strichstärke 1,5, runde Enden. Getrennt von `MetaIcon`, weil dessen 16er-Icons auf der Grundlinie einer Mono-Metazeile sitzen, während diese als eigene Spalte neben mehrzeiligem Text stehen.
+
+Zwei Fallstricke dabei: Symbole in derselben Liste müssen unterscheidbar bleiben — „Befunde" und „Notiz" waren zunächst beide ein Dokument und wurden zu Dokument und Stift getrennt. Und die Farbe muss über `:global()` gesetzt werden, weil die Klasse auf einem Element der Komponente sitzt und eine seitengescopte Regel dort nie greift.
 
 **Leistungsspektrum nur bei den Hernien.** Der Entwurf führt eine Spektrumsliste ausschließlich in der Hernien-Sektion. Das bleibt so: die Liste ist dort inhaltlich gedeckt und belegt das Kernfachgebiet, und für die übrigen vier Indikationen gibt es weder im Entwurf noch im Bestand Material. Vier Listen medizinischer Leistungszusagen zu erfinden, nur damit die Sektionen gleich aussehen, wäre genau der Fehler, den die Bestandsanalyse mit ihren Content-Regeln verhindern will.
 
@@ -252,6 +268,8 @@ Der Live-Ablauf hat vier Schritte, der Entwurf fünf. Die Seite folgt dem Entwur
   - „Hämorrhoiden und Enddarmerkrankungen" in Sektion 3 — die längste Überschrift der Seite, auf der reduzierten Skala in `3 / -1`
   - „Das passende Verfahren statt einer Standardlösung" in Sektion 4 — auf vollem `--text-h2` in `1 / span 6`, also rund 627 Pixel; längstes Einzelwort „Standardlösung" bei etwa 364 Pixel, sollte passen
 - Zeilenmaß aller Indikationstexte auf 65ch begrenzt, auch dort, wo keine Spektrumsliste folgt
+- Nichttext-Kontrast der Symbole nach WCAG 1.4.11 gegen 3:1 gemessen
+- Hover- und Fokuszustand der Sprungnavigation geprüft; `prefers-reduced-motion` ist über `global.css:215` global abgedeckt
 - H1-Umbruch bei 1440 und 1920 Pixel gegen den `26ch`-Startwert bestätigen
 - Ankersprünge geprüft: `global.css:73` setzt bereits `scroll-padding-top: calc(var(--header-height) + var(--space-4))` auf `html`, und der Header ist `position: sticky`. Zu bestätigen ist, dass dieser globale Offset trägt — **kein zusätzliches `scroll-margin-top` pro Sektion**, das würde den Abstand verdoppeln. `prefers-reduced-motion` ist über `global.css:215` bereits abgedeckt.
 - Die drei umgestellten Startseiten-CTAs springen auf die richtigen Sektionen, auch bei geöffnetem mobilen Menü

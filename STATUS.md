@@ -24,7 +24,7 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 | Design-Tokens | ✅ | Farben, Fluid-Typografie, Abstände und Lumos-orientiertes 12-Spalten-Raster in `src/styles/tokens.css` angelegt |
 | Lokale Fonts | ✅ | IBM Plex Sans und IBM Plex Mono lokal eingebunden |
 | Content-Konzept | ✅ | Bestandsanalyse und Entwürfe für Haupt- und Pflichtseiten dokumentiert; offene Fakten gegen den Live-Bestand abgeglichen |
-| Statische Assets | 🟡 | Logo, Icons, Lottie-Dateien und temporäre Fotos vorhanden; Rechte und finale Auswahl offen |
+| Statische Assets | 🟡 | Logo, Icons, Lottie-Dateien, daraus extrahierte SVG-Illustrationen und temporäre Fotos vorhanden; Rechte und finale Auswahl der Fotos offen |
 | Globale UI | ✅ | Header, Navigation, Footer, Container, globales Grid und Button-Komponenten stehen |
 | Hauptseiten | 🟡 | Startseite, Profil-, Event- und Leistungsseite inhaltlich und visuell umgesetzt; Galerie und Kontakt bestehen bisher nur aus dem gemeinsamen Seitenintro |
 | Pflichtseiten | 🟡 | Routen und Arbeitsentwürfe vorhanden; vollständige Umsetzung und rechtliche Freigabe fehlen |
@@ -186,6 +186,10 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 - Leistungsseite umgesetzt: Sprungnavigation über fünf Indikationen, typografische Tiefensektionen ohne Lottie-Wiederholung, dunkle Verfahrenswahl mit Entscheidungskriterien, fünfstufiges Ablaufregister, Vorbereitungsliste und Notfallhinweis als getönte Fläche. Keine neuen Komponenten, kein seiteneigenes JavaScript.
 - Drei Startseiten-CTAs von `/leistungen` auf Anker umgestellt und per Klick auf Desktop und Mobil verifiziert; ein CTA-Text angepasst, damit Versprechen und Sprungziel übereinstimmen.
 - 20 Textfarben der Leistungsseite im Browser gegen WCAG AA gemessen; die Messwerte decken sich auf zwei Stellen mit der Vorabrechnung der Spec.
+
+- Leistungsseite visuell nachgeschärft: die fünf Lottie-Animationen als statische SVG extrahiert und als Randfiguren der Indikationen sowie als Miniaturen in der Sprungnavigation eingesetzt. 25 statt 567 Kilobyte, kein Player, kein zusätzliches JavaScript. Die Startseite behält die bewegte Fassung als Erkennungszeichen.
+- Komponente `StepIcon.astro` mit elf Symbolen für Ablaufschritte, Vorbereitungsliste und Notfallhinweis angelegt, nach dem Muster von `MetaIcon.astro`.
+- Hover- und Fokuszustand der Sprungnavigation ergänzt; Listeneinträge bleiben bewusst ohne Hover, weil sie nicht anklickbar sind.
 
 ## Nächstes Arbeitspaket
 

@@ -1,0 +1,117 @@
+---
+// Marker fuer Ablaufschritte, Vorbereitungsliste und den Notfallhinweis.
+// Getrennt von MetaIcon.astro: dort sitzen 16er-Icons auf der Grundlinie einer
+// Mono-Metazeile, hier stehen 24er-Icons als eigenstaendige Spalte neben
+// mehrzeiligem Text und richten sich an der Oberlaenge aus.
+interface Props {
+  name:
+    | "gespraech"
+    | "untersuchung"
+    | "diagnostik"
+    | "entscheidung"
+    | "nachsorge"
+    | "befund"
+    | "bildgebung"
+    | "medikament"
+    | "historie"
+    | "notiz"
+    | "warnung";
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+<svg class:list={["step-icon", className]} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  {name === "gespraech" && (
+    <>
+      <path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h8a2.5 2.5 0 0 1 2.5 2.5v4A2.5 2.5 0 0 1 14 14H8.5L5 17v-3a2.5 2.5 0 0 1-1.5-2.3Z" />
+      <path d="M19 9.5h.5A1.5 1.5 0 0 1 21 11v4.5a1.5 1.5 0 0 1-1.5 1.5V20l-2.5-3h-3" />
+    </>
+  )}
+  {name === "untersuchung" && (
+    <>
+      <path d="M6 3v5a5 5 0 0 0 10 0V3" />
+      <path d="M4 3h3M15 3h3" />
+      <path d="M11 13v2.5a4.5 4.5 0 0 0 9 0V14" />
+      <circle cx="19.5" cy="12" r="2" />
+    </>
+  )}
+  {name === "diagnostik" && (
+    <>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5 21 21" />
+      <path d="M7.5 10.5h1.5l1-2.5 1.5 5 1-2.5h1.5" />
+    </>
+  )}
+  {name === "entscheidung" && (
+    <>
+      <path d="M12 3v18" />
+      <path d="M5 8h14" />
+      <path d="M5 8 2.5 14a2.6 2.6 0 0 0 5 0Z" />
+      <path d="M19 8l-2.5 6a2.6 2.6 0 0 0 5 0Z" />
+      <path d="M8.5 21h7" />
+    </>
+  )}
+  {name === "nachsorge" && (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2" />
+      <path d="M8 2.5v4M16 2.5v4M3.5 10h17" />
+      <path d="m9 15.2 2.2 2.2 4.3-4.4" />
+    </>
+  )}
+  {name === "befund" && (
+    <>
+      <path d="M6 3.5h7.5L18 8v12.5H6Z" />
+      <path d="M13.5 3.5V8H18" />
+      <path d="M9 12.5h6M9 16h4" />
+    </>
+  )}
+  {name === "bildgebung" && (
+    <>
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+      <circle cx="9" cy="9.5" r="1.75" />
+      <path d="m3.5 16.5 4.5-4 3.5 3 3.5-3.5 5.5 5" />
+    </>
+  )}
+  {name === "medikament" && (
+    <>
+      <rect x="2.5" y="8.5" width="19" height="7" rx="3.5" transform="rotate(-45 12 12)" />
+      <path d="M9.5 9.5 14.5 14.5" />
+    </>
+  )}
+  {name === "historie" && (
+    <>
+      <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" />
+      <path d="M3.5 4v4h4" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  )}
+  {name === "notiz" && (
+    <>
+      <path d="M4 20.5h16" />
+      <path d="M14.9 4.2a2.05 2.05 0 0 1 2.9 2.9L9.4 15.5l-3.8.9.9-3.8Z" />
+      <path d="M13.4 5.7l2.9 2.9" />
+    </>
+  )}
+  {name === "warnung" && (
+    <>
+      <path d="M12 3.5 21.5 20H2.5Z" />
+      <path d="M12 9.5v4.5" />
+      <path d="M12 17.2h.01" />
+    </>
+  )}
+</svg>
+
+<style>
+  .step-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>
