@@ -1,0 +1,321 @@
+---
+import { datumBereich, datumMarke, isoDatum, zeitBereich } from "../lib/eventDatum";
+import { TYP_LABEL, type EventItem } from "../lib/events";
+
+interface Props {
+  events: EventItem[];
+}
+
+const { events } = Astro.props;
+
+// Ein abgesagter Termin ist nicht der nächste, den man besuchen kann.
+const naechsterSlug = events.find((e) => e.status !== "cancelled")?.slug;
+
+const zeilen = events.map((event) => {
+  const mehrtaegig = isoDatum(event.startDate) !== isoDatum(event.endDate);
+  const marke = datumMarke(event.startDate, event.endDate);
+  const zeit = zeitBereich(event.startTime, event.endTime, mehrtaegig);
+
+  const merkmale = [TYP_LABEL[event.eventType]];
+  if (event.isOnline) merkmale.push("Online");
+  if (event.language === "en") merkmale.push("EN");
+
+  return {
+    event,
+    marke,
+    zusatz: marke.bis ?? zeit,
+    vorgelesen: [datumBereich(event.startDate, event.endDate), zeit].filter(Boolean).join(", "),
+    merkmale: merkmale.join(" · "),
+    ort: event.isOnline
+      ? "Online"
+      : [event.locationName, event.city].filter(Boolean).join(", "),
+    abgesagt: event.status === "cancelled",
+    naechster: event.slug === naechsterSlug,
+  };
+});
+---
+
+<ol class="teaser">
+  {zeilen.map(({ event, marke, zusatz, vorgelesen, merkmale, ort, abgesagt, naechster }) => (
+    <li class:list={["teaser__zeile", { "teaser__zeile--abgesagt": abgesagt }]}>
+      <time class="teaser__datum" datetime={isoDatum(event.startDate)}>
+        <span class="visually-hidden">{vorgelesen}</span>
+        <span class="teaser__tage" aria-hidden="true">{marke.tage}</span>
+        <span class="teaser__monatsblock" aria-hidden="true">
+          <span class="teaser__monat">{marke.monat}</span>
+          {zusatz && <span class="teaser__zusatz">{zusatz}</span>}
+        </span>
+      </time>
+
+      <div class="teaser__inhalt">
+        <p class="teaser__merkmale">
+          <span>{merkmale}</span>
+          {naechster && (
+            <span class="teaser__naechster">
+              <span class="teaser__marke" aria-hidden="true"></span>
+              Nächster Termin
+            </span>
+          )}
+          {abgesagt && <span class="teaser__abgesagt">Abgesagt</span>}
+        </p>
+        <h3 class="teaser__titel">
+          <a class="teaser__link" href={`/events#termin-${event.slug}`}>{event.title}</a>
+        </h3>
+        <p class="teaser__ort">{ort}</p>
+      </div>
+
+      <span class="teaser__pfeil" aria-hidden="true">
+        <svg viewBox="0 0 16 16">
+          <path d="M3 8h10M9 4l4 4-4 4" />
+        </svg>
+      </span>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .teaser {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .teaser__zeile {
+    position: relative;
+    display: grid;
+    /* Gleiche Datumsspalte wie EventCard, damit Startseite und /events
+       dieselbe Satzkante haben. */
+    grid-template-columns: 10.5rem minmax(0, 1fr) auto;
+    column-gap: var(--space-8);
+    align-items: start;
+    padding-block: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .teaser__zeile:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .teaser__datum {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+  }
+
+  .teaser__tage {
+    color: var(--color-text);
+    font-size: clamp(2.5rem, 1.9rem + 1.6vw, 3.25rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums proportional-nums;
+    transition: color var(--transition-medium);
+  }
+
+  .teaser__monatsblock {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .teaser__monat {
+    color: var(--color-text);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .teaser__zusatz {
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .teaser__inhalt {
+    min-width: 0;
+  }
+
+  .teaser__merkmale {
+    margin: 0 0 var(--space-3);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .teaser__naechster {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
+  .teaser__marke {
+    width: 0.6rem;
+    aspect-ratio: 0.8660254;
+    flex: none;
+    background: var(--color-accent);
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  .teaser__abgesagt {
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
+  .teaser__titel {
+    margin: 0;
+    max-width: 34ch;
+    color: var(--color-text);
+    font-size: var(--text-h3);
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+    hyphens: auto;
+    transition: color var(--transition-medium);
+  }
+
+  .teaser__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Die Fläche liegt über der ganzen Zeile, der Linkname bleibt aber der
+     Titel — Screenreader lesen sonst Datum, Ort und Merkmale mit vor. */
+  .teaser__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .teaser__ort {
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-meta);
+    line-height: 1.5;
+  }
+
+  .teaser__pfeil {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    display: grid;
+    place-items: center;
+    align-self: center;
+    overflow: hidden;
+    color: var(--color-text);
+    border-radius: var(--radius-pill);
+    box-shadow: inset 0 0 0 1px var(--color-border-strong);
+    transition:
+      color var(--transition-medium),
+      box-shadow var(--transition-medium);
+  }
+
+  .teaser__pfeil::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--color-primary-strong);
+    border-radius: inherit;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .teaser__pfeil svg {
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .teaser__zeile--abgesagt .teaser__tage,
+  .teaser__zeile--abgesagt .teaser__monat {
+    color: var(--color-text-subtle);
+  }
+
+  @media (hover: hover) {
+    .teaser__zeile:hover .teaser__titel,
+    .teaser__zeile:hover .teaser__tage {
+      color: var(--color-primary-strong);
+    }
+
+    .teaser__zeile:hover .teaser__pfeil {
+      color: var(--color-button-text);
+      box-shadow: inset 0 0 0 1px var(--color-primary-strong);
+    }
+
+    .teaser__zeile:hover .teaser__pfeil::before {
+      transform: scaleX(1);
+    }
+
+    .teaser__zeile:hover .teaser__pfeil svg {
+      transform: translateX(0.15rem);
+    }
+  }
+
+  /* Der Fokusring umschließt die ganze Zeile statt nur den Titel. Ohne
+     :has()-Unterstützung bleibt der Standardring am Link stehen. */
+  @supports selector(:has(*)) {
+    .teaser__link:focus-visible {
+      outline: none;
+    }
+
+    .teaser__zeile:has(.teaser__link:focus-visible) {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 4px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .teaser__tage,
+    .teaser__titel,
+    .teaser__pfeil,
+    .teaser__pfeil::before,
+    .teaser__pfeil svg {
+      transition: none;
+    }
+
+    .teaser__zeile:hover .teaser__pfeil svg {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .teaser__zeile {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--space-4);
+      padding-block: var(--space-6);
+    }
+
+    /* Schmal steht das Datum als Zeile über dem Titel, sonst bliebe für
+       lange Titel wie „interdisziplinären" zu wenig Breite. */
+    .teaser__datum {
+      grid-auto-flow: column;
+      justify-content: start;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .teaser__tage {
+      font-size: 2.5rem;
+    }
+
+    .teaser__pfeil {
+      display: none;
+    }
+  }
+</style>

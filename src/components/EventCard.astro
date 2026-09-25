@@ -27,7 +27,11 @@ if (event.isOnline) merkmale.push("Online");
 if (event.language === "en") merkmale.push("EN");
 ---
 
-<li class:list={["event", { "event--compact": compact }]} data-type={event.eventType}>
+<li
+  class:list={["event", { "event--compact": compact }]}
+  id={`termin-${event.slug}`}
+  data-type={event.eventType}
+>
   <div class="event__zeitblock">
     <p class="event__datum">
       <MetaIcon name="calendar" />
@@ -102,6 +106,33 @@ if (event.language === "en") merkmale.push("EN");
 
   .event:last-child {
     border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Ansprung vom Startseiten-Teaser: die Zeile hebt sich kurz ab und blendet
+     aus. Der Schatten erweitert die Fläche über die Textkante hinaus, ohne
+     das Layout zu verschieben. */
+  .event:target {
+    animation: termin-markiert 2.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+  }
+
+  @keyframes termin-markiert {
+    from {
+      background-color: var(--color-primary-bg);
+      box-shadow: 0 0 0 var(--space-4) var(--color-primary-bg);
+    }
+
+    to {
+      background-color: transparent;
+      box-shadow: 0 0 0 var(--space-4) transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .event:target {
+      animation: none;
+      background-color: var(--color-primary-bg);
+      box-shadow: 0 0 0 var(--space-4) var(--color-primary-bg);
+    }
   }
 
   .event:not(:has(.event__bild)) {

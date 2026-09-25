@@ -1,14 +1,50 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BorderGlow from "../components/BorderGlow.astro";
 import ButtonLink from "../components/ButtonLink.astro";
 import Container from "../components/Container.astro";
 import DotField from "../components/DotField.astro";
-import EventList from "../components/EventList.astro";
+import EventTeaser from "../components/EventTeaser.astro";
 import Grid from "../components/Grid.astro";
 import TreatmentTabs from "../components/TreatmentTabs.astro";
 import { kommendeEvents } from "../lib/events";
 
-const eventTeaser = kommendeEvents().slice(0, 3);
+const kommend = kommendeEvents();
+
+// Die Höhen gleichen das optische Gewicht an, nicht die Pixelmaße: dünne
+// Wortmarken brauchen mehr Höhe als kompakte Bildmarken. Das SFU-Logo hat
+// oben und unten transparenten Rand. Rudolfinerhaus liegt nur mit 321 px
+// Breite vor; über 3.125rem Anzeigehöhe wird es auf Retina leicht weicher.
+const partner = [
+  {
+    name: "Österreichische Hernien Gesellschaft",
+    href: "https://oehg.org",
+    src: "/images/partner/oehg_logo_1C_white@2x.png",
+    width: 1655,
+    height: 717,
+    hoehe: 3.25,
+    ton: "weiss",
+  },
+  {
+    name: "Rudolfinerhaus",
+    href: "https://www.rudolfinerhaus.at/",
+    src: "/images/partner/rudolfinerhaus_logo_small.png",
+    width: 321,
+    height: 100,
+    hoehe: 3.125,
+    ton: "farbig",
+  },
+  {
+    name: "Sigmund Freud PrivatUniversität, Fakultät für Medizin Wien",
+    href: "https://med.sfu.ac.at/",
+    src: "/images/partner/sfu-logo-neu.png",
+    width: 1551,
+    height: 524,
+    hoehe: 2.875,
+    ton: "weiss",
+  },
+];
+const eventTeaser = kommend.slice(0, 3);
 
 const schwerpunkte = [
   {
@@ -141,6 +177,33 @@ const prinzipien = [
     </Container>
   </section>
 
+  <section class="partner" aria-labelledby="partner-titel">
+    <Container>
+      <div class="partner__inhalt">
+        <h2 class="partner__titel" id="partner-titel">Institutionen &amp; Partner</h2>
+        <ul class="partner__logos">
+          {partner.map((p) => (
+            <li>
+              <a class="partner__link" href={p.href} target="_blank" rel="noopener noreferrer">
+                <img
+                  class:list={["partner__logo", `partner__logo--${p.ton}`]}
+                  src={p.src}
+                  alt={p.name}
+                  width={p.width}
+                  height={p.height}
+                  style={`--logo-hoehe: ${p.hoehe}rem`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="visually-hidden"> (öffnet in neuem Tab)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Container>
+  </section>
+
   <section class="section services" id="schwerpunkte">
     <Container>
       <Grid class="section-heading">
@@ -167,17 +230,19 @@ const prinzipien = [
         <p class="consultation__copy">Für eine medizinische Entscheidung braucht es Zeit, Klarheit und gegenseitiges Vertrauen. Ich bespreche mit Ihnen Ihre Beschwerden, vorhandene Befunde und die möglichen nächsten Schritte. Wenn ein Eingriff sinnvoll ist, werden Nutzen, Risiken und Alternativen nachvollziehbar erklärt.</p>
       </Grid>
 
-      <ol class="principles">
-        {prinzipien.map((prinzip) => (
-          <li>
-            <span>{prinzip.nummer}</span>
-            <div>
-              <h3>{prinzip.titel}</h3>
-              <p>{prinzip.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
+      <BorderGlow class="principles-glow" edges="block" surface="bare">
+        <ol class="principles">
+          {prinzipien.map((prinzip) => (
+            <li>
+              <span>{prinzip.nummer}</span>
+              <div>
+                <h3>{prinzip.titel}</h3>
+                <p>{prinzip.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </BorderGlow>
 
       <ButtonLink href="/leistungen#ablauf" variant="ghost" arrow>Mehr über das Erstgespräch</ButtonLink>
     </Container>
@@ -186,7 +251,7 @@ const prinzipien = [
   <section class="section procedure">
     <Container>
       <Grid class="procedure__grid">
-      <div class="procedure__image">
+      <div class="procedure__image" data-parallax-image>
         <img
           src="/images/temp/ordination-03.jpg"
           alt="Besprechungsraum in der Ordination"
@@ -208,7 +273,7 @@ const prinzipien = [
   <section class="section profile">
     <Container>
       <Grid class="profile__grid">
-      <div class="profile__marker" aria-hidden="true">
+      <div class="profile__marker" aria-hidden="true" data-sechsecke>
         {[0, 1, 2].map(() => (
           <svg viewBox="0 0 100 100" fill="none">
             <path
@@ -232,24 +297,26 @@ const prinzipien = [
 
   <section class="section events">
     <Container>
-      <Grid class="events__heading">
+      <Grid class="events__layout">
         <div class="events__title">
           <p class="eyebrow">Für medizinisches Fachpublikum</p>
           <h2>Kongresse, Kurse und Fortbildungen</h2>
         </div>
         <p class="events__intro">Aktuelle Termine zu Hernienchirurgie, Bauchwandrekonstruktion und minimalinvasiven Verfahren – national und international.</p>
+
+        {eventTeaser.length > 0 && (
+          <>
+            <div class="events__liste">
+              <EventTeaser events={eventTeaser} />
+            </div>
+            <ButtonLink href="/events" variant="text" arrow class="events__action">
+              {kommend.length > eventTeaser.length ? `Alle ${kommend.length} Termine` : "Zum Eventbereich"}
+            </ButtonLink>
+          </>
+        )}
       </Grid>
 
-      {eventTeaser.length > 0 ? (
-        <Grid class="events__teaser">
-          <div class="events__teaser-liste">
-            {/* Kompakt: ohne Bild und Beschreibung, damit die Startseite nicht
-                zur zweiten Eventseite wird. */}
-            <EventList events={eventTeaser} compact />
-          </div>
-          <ButtonLink href="/events" variant="text" arrow class="events__action">Mehr Events</ButtonLink>
-        </Grid>
-      ) : (
+      {eventTeaser.length === 0 && (
         <Grid class="events__empty">
           <p class="events__status grid-label"><span></span> Termine werden laufend ergänzt</p>
           <p class="events__empty-copy">Der Veranstaltungskalender wird derzeit vorbereitet. Künftige Termine finden Sie gesammelt im Eventbereich.</p>
@@ -279,6 +346,96 @@ const prinzipien = [
 <style>
   .section {
     padding-block: clamp(var(--space-24), 10vw, var(--space-32));
+  }
+
+  /* Rückt eng an den Hero, der Abstand zu den Schwerpunkten kommt aus deren
+     Sektionsabstand. So liest sich der Streifen als Nachsatz zum Hero. */
+  .partner {
+    padding-block-start: clamp(var(--space-12), 6vw, var(--space-16));
+  }
+
+  .partner__inhalt {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-8);
+    text-align: center;
+  }
+
+  .partner__titel {
+    max-width: none;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .partner__logos {
+    --partner-skala: 1.15;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8) clamp(var(--space-8), 5vw, var(--space-16));
+    list-style: none;
+  }
+
+  /* Weiße Logos werden über brightness(0) erst schwarz; das farbige verliert
+     Farbe und wird so verdichtet, dass Schrift und Kreuz denselben Ton wie
+     die weißen Logos erreichen. Die gemeinsame Deckkraft ergibt das Grau. */
+  .partner__logo {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: calc(var(--logo-hoehe) * var(--partner-skala, 1));
+    /* Die globale Bildrundung schnitte bei dieser Höhe Ecken der Logos ab,
+       beim SFU-Logo etwa das „r" von „für". */
+    border-radius: 0;
+    filter: var(--logo-filter) opacity(var(--logo-deckkraft, 0.55));
+    transition:
+      filter var(--transition-medium),
+      transform var(--transition-medium);
+  }
+
+  .partner__link {
+    display: block;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Beim Hover verdichtet sich das Grau Richtung Textfarbe. Farbe kommt
+     bewusst nicht zurück: Zwei der drei Logos sind im Original weiß und
+     wären auf dem hellen Grund unsichtbar. */
+  @media (hover: hover) {
+    .partner__link:hover .partner__logo {
+      --logo-deckkraft: 0.9;
+      transform: translateY(-2px);
+    }
+  }
+
+  .partner__link:focus-visible .partner__logo {
+    --logo-deckkraft: 0.9;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .partner__logo {
+      transition: none;
+    }
+
+    .partner__link:hover .partner__logo {
+      transform: none;
+    }
+  }
+
+  .partner__logo--weiss {
+    --logo-filter: brightness(0);
+  }
+
+  .partner__logo--farbig {
+    --logo-filter: grayscale(1) brightness(0.6) contrast(4);
   }
 
   .eyebrow {
@@ -743,26 +900,65 @@ const prinzipien = [
     color: var(--color-text-muted);
   }
 
-  .principles {
+  :global(.principles-glow) {
     margin-block: clamp(var(--space-16), 7vw, var(--space-24)) var(--space-8);
+  }
+
+  .principles {
+    position: relative;
+    margin-block: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 1px;
     list-style: none;
     border-block: 1px solid var(--color-border);
+    background: var(--color-border);
   }
 
   .principles li {
+    position: relative;
+    z-index: 1;
     min-height: 13rem;
     padding: var(--space-8);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: var(--space-8);
+    background: var(--color-bg);
   }
 
-  .principles li + li {
-    border-inline-start: 1px solid var(--color-border);
+  /* Die senkrechten Trenner sind 1px-Luecken, durch die diese Flaeche
+     durchscheint. Die opaken Hintergruende der Punkte maskieren den Rest. */
+  .principles::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--gradient-line, linear-gradient(100deg, var(--color-primary), var(--color-accent)));
+    -webkit-mask-image: radial-gradient(
+      var(--glow-reach, 18rem) circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      #000 0%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      var(--glow-reach, 18rem) circle at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      #000 0%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.75s ease-in-out;
+  }
+
+  .principles:hover::before {
+    opacity: 1;
+    transition: opacity 0.25s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce), (hover: none) {
+    .principles::before {
+      display: none;
+    }
   }
 
   .principles li > span {
@@ -793,18 +989,44 @@ const prinzipien = [
   }
 
   .procedure__image {
+    /* Parallax-Experiment: von Hand einstellbare Werte */
+    /* Richtung: 1 = Standard, -1 = kehrt um */
+    --procedure-parallax-direction: -1;
+    /* Stärke: maximaler Versatz nach oben/unten */
+    --procedure-parallax-travel: 2.5rem;
+    /* wird pro Frame von JS geschrieben; 0 = Ruhezustand ohne JS */
+    --procedure-parallax-progress: 0;
+
+    position: relative;
     width: 100%;
     min-width: 0;
     min-height: 34rem;
     overflow: hidden;
+    border-radius: var(--radius-image);
     grid-column: 1 / span 7;
   }
 
   .procedure__image img {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(var(--procedure-parallax-travel) * -1);
     width: 100%;
-    height: 100%;
+    height: calc(100% + (var(--procedure-parallax-travel) * 2));
     object-fit: cover;
     object-position: 50% 55%;
+    transform: translateY(
+      calc(
+        var(--procedure-parallax-direction) * var(--procedure-parallax-progress) *
+          var(--procedure-parallax-travel)
+      )
+    );
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .procedure__image img {
+      transform: none;
+    }
   }
 
   .procedure__copy {
@@ -831,29 +1053,51 @@ const prinzipien = [
     border-radius: var(--radius-banner);
   }
 
+  /* --zusammen läuft beim Scrollen von 0 (gespreizt) über 1 (deckungsgleich)
+     bis 2: Jenseits von 1 kehrt sich der Versatz um, die Sechsecke ziehen in
+     ihrer Laufrichtung weiter und kreuzen sich. Geschrieben vom GSAP-Skript
+     am Dateiende; ohne Skript bleibt 0 stehen. */
   .profile__marker {
+    --zusammen: 0;
     height: 18rem;
     position: relative;
-    grid-column: 1 / span 4;
+    grid-column: 1 / span 5;
     color: var(--color-primary-strong);
   }
 
+  /* Gespreizt ist die Gruppe 1,64-mal so breit wie ein Sechseck (±32 %).
+     60 % der Spalte halten sie damit auf jeder Breite innerhalb des Banners.
+     Die Mitte rückt um --versatz nach links, aber nie weiter, als die halbe
+     Gruppenbreite (0,82 Sechsecke) bis zur Spaltenkante erlaubt. */
   .profile__marker svg {
-    width: 10rem;
+    --sechseck: min(13rem, 60%);
+    --versatz: 2.5rem;
+    width: var(--sechseck);
     aspect-ratio: 1;
     position: absolute;
     inset-block-start: 50%;
-    inset-inline-start: 50%;
+    inset-inline-start: max(calc(var(--sechseck) * 0.82), calc(50% - var(--versatz)));
     overflow: visible;
-    transform: translate(-50%, -50%);
+    transform: translate(
+      calc(-50% + var(--richtung, 0) * 32% * (1 - var(--zusammen))),
+      -50%
+    );
+    will-change: transform;
   }
 
   .profile__marker svg:nth-child(2) {
-    transform: translate(-82%, -50%);
+    --richtung: -1;
   }
 
   .profile__marker svg:nth-child(3) {
-    transform: translate(-18%, -50%);
+    --richtung: 1;
+  }
+
+  /* Nur solange die Animation läuft: Die äußeren Sechsecke sind gespreizt
+     blass und werden zur Deckung hin voll. min() bildet den Abstand zu 1 ab,
+     ohne auf das noch junge abs() angewiesen zu sein. */
+  .profile__marker[data-sechsecke-aktiv] svg:not(:first-child) {
+    opacity: calc(0.25 + 0.75 * min(var(--zusammen), 2 - var(--zusammen)));
   }
 
   .profile__copy {
@@ -870,8 +1114,8 @@ const prinzipien = [
     padding-block-start: 0;
   }
 
-  :global(.events__heading) {
-    align-items: end;
+  :global(.events__layout) {
+    --grid-row-gap: var(--space-16);
   }
 
   .events__title {
@@ -881,7 +1125,11 @@ const prinzipien = [
   }
 
   .events__intro {
-    grid-column: 8 / -1;
+    grid-column: 1 / span 4;
+    grid-row: 2;
+    align-self: start;
+    max-width: 36ch;
+    margin: 0;
   }
 
   :global(.events__empty) {
@@ -924,20 +1172,20 @@ const prinzipien = [
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
   }
 
-  :global(.events__teaser) {
-    margin-top: var(--space-16);
-    --grid-row-gap: var(--space-8);
-  }
-
   /* Spiegelt das Verhältnis von Filterspalte zu Liste auf /events, damit die
      Zeilen auf beiden Seiten an derselben Kante beginnen. */
-  .events__teaser-liste {
+  .events__liste {
     grid-column: 5 / -1;
+    grid-row: 2 / span 2;
   }
 
-  :global(.events__teaser .events__action) {
-    grid-column: 5 / -1;
-    justify-self: end;
+  /* Die Liste spannt über zwei Zeilen; der Link sitzt in der zweiten und
+     schließt damit bündig mit der letzten Eventzeile ab. */
+  :global(.events__layout .events__action) {
+    grid-column: 1 / span 4;
+    grid-row: 3;
+    align-self: end;
+    justify-self: start;
   }
 
   .contact-cta {
@@ -1020,13 +1268,27 @@ const prinzipien = [
       justify-self: start;
     }
 
-    .events__teaser-liste,
-    :global(.events__teaser .events__action) {
-      grid-column: 1 / -1;
+    :global(.events__layout) {
+      --grid-row-gap: var(--space-8);
     }
 
-    :global(.events__teaser .events__action) {
-      justify-self: start;
+    .events__intro {
+      grid-column: 1 / span 8;
+      grid-row: auto;
+    }
+
+    .events__liste,
+    :global(.events__layout .events__action) {
+      grid-column: 1 / -1;
+      grid-row: auto;
+    }
+
+    .events__liste {
+      margin-top: var(--space-4);
+    }
+
+    :global(.events__layout .events__action) {
+      align-self: start;
     }
   }
 
@@ -1051,6 +1313,11 @@ const prinzipien = [
   }
 
   @media (max-width: 48rem) {
+    .partner__logos {
+      --partner-skala: 0.9;
+      gap: var(--space-6);
+    }
+
     .hero__copy,
     .hero__portrait {
       grid-column: 1 / -1;
@@ -1131,6 +1398,12 @@ const prinzipien = [
 
     .principles {
       grid-template-columns: 1fr;
+      column-gap: 0;
+      background: none;
+    }
+
+    .principles::before {
+      display: none;
     }
 
     .principles li {
@@ -1138,6 +1411,7 @@ const prinzipien = [
       padding-inline: 0;
       flex-direction: row;
       justify-content: flex-start;
+      background: none;
     }
 
     .principles li + li {
@@ -1147,6 +1421,7 @@ const prinzipien = [
 
     .procedure__image {
       min-height: 22rem;
+      --procedure-parallax-travel: 1.25rem;
     }
 
     :global(.profile__grid) {
@@ -1158,7 +1433,8 @@ const prinzipien = [
     }
 
     .profile__marker svg {
-      width: 7rem;
+      --sechseck: min(9rem, 60%);
+      --versatz: 0rem;
     }
 
   }
@@ -1207,3 +1483,130 @@ const prinzipien = [
     }
   }
 </style>
+
+<script>
+  const image = document.querySelector<HTMLElement>("[data-parallax-image]");
+
+  if (image) {
+    const stillMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    // Delay-Stellschraube: kleiner Wert = starker Nachlauf, größerer Wert = folgt fast direkt
+    const DAMPING = 0.08;
+    const EPSILON = 0.001;
+
+    let current = 0;
+    let target = 0;
+    let isVisible = false;
+    let animationFrame = 0;
+
+    const measureTarget = () => {
+      const rect = image.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const centerOffset = rect.top + rect.height / 2 - viewportHeight / 2;
+      const range = viewportHeight / 2 + rect.height / 2;
+      target = Math.min(1, Math.max(-1, -centerOffset / range));
+    };
+
+    const tick = () => {
+      measureTarget();
+      current += (target - current) * DAMPING;
+      image.style.setProperty("--procedure-parallax-progress", current.toFixed(4));
+      animationFrame = Math.abs(target - current) > EPSILON ? requestAnimationFrame(tick) : 0;
+    };
+
+    const wake = () => {
+      if (animationFrame || stillMotion.matches || !isVisible) return;
+      animationFrame = requestAnimationFrame(tick);
+    };
+
+    const visibility = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) wake();
+      },
+      { threshold: 0 }
+    );
+
+    const start = () => {
+      if (stillMotion.matches) {
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+          animationFrame = 0;
+        }
+        current = 0;
+        target = 0;
+        image.style.setProperty("--procedure-parallax-progress", "0");
+        return;
+      }
+
+      wake();
+    };
+
+    visibility.observe(image);
+    window.addEventListener("scroll", wake, { passive: true });
+    window.addEventListener("resize", wake);
+    stillMotion.addEventListener("change", start);
+    start();
+  }
+</script>
+
+<script>
+  const marker = document.querySelector<HTMLElement>("[data-sechsecke]");
+
+  if (marker) {
+    const stillMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let inReichweite = false;
+    let geladen = false;
+
+    // GSAP kommt erst, wenn die Sektion in Reichweite ist und Bewegung
+    // erwünscht ist; alle anderen laden die rund 45 KB nie.
+    const laden = async () => {
+      if (geladen || !inReichweite || stillMotion.matches) return;
+      geladen = true;
+
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollTrigger"),
+      ]);
+      gsap.registerPlugin(ScrollTrigger);
+      // Ein- und ausfahrende Adressleisten auf Mobilgeräten ändern die
+      // Fensterhöhe; ohne diese Einstellung springt die Animation dabei.
+      ScrollTrigger.config({ ignoreMobileResize: true });
+
+      // matchMedia nimmt die Animation zurück, sobald reduzierte Bewegung
+      // nachträglich aktiviert wird, und baut sie beim Deaktivieren neu auf.
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        marker.setAttribute("data-sechsecke-aktiv", "");
+        // Beide Hälften sind gleich lang, und der Weg vom Start zur Mitte
+        // entspricht dem von der Mitte zum Ende. Deckungsgleich sind die
+        // Sechsecke damit genau, wenn das Motiv in der Bildschirmmitte steht.
+        gsap
+          .timeline({
+            // Start erst, wenn das Motiv halb im Bild ist; sonst ist die
+            // Bewegung größtenteils vorbei, bevor man sie sieht.
+            scrollTrigger: {
+              trigger: marker,
+              start: "center bottom",
+              end: "center top",
+              scrub: 0.5,
+            },
+          })
+          .fromTo(marker, { "--zusammen": 0 }, { "--zusammen": 1, ease: "sine.inOut" })
+          .to(marker, { "--zusammen": 2, ease: "sine.inOut" });
+
+        return () => marker.removeAttribute("data-sechsecke-aktiv");
+      });
+    };
+
+    new IntersectionObserver(
+      ([entry], beobachter) => {
+        if (!entry.isIntersecting) return;
+        inReichweite = true;
+        beobachter.disconnect();
+        laden();
+      },
+      { rootMargin: "100% 0px" },
+    ).observe(marker);
+
+    stillMotion.addEventListener("change", laden);
+  }
+</script>
