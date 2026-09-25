@@ -22,3 +22,8 @@ output/
 # jetbrains setting folder
 .idea/
 .superpowers/
+
+# agent skills (lokal installiert, nicht Teil des Projekts)
+.agents/
+.claude/skills/
+skills-lock.json

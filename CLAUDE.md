@@ -10,7 +10,7 @@ Arztpraxis-Website für Dr. René H. Fortelny (Hernien- und Viszeral-Chirurg, Wi
 
 | Tool             | Rolle                                     |
 | ---------------- | ----------------------------------------- |
-| Astro 5          | Static Site Generator                     |
+| Astro 7          | Static Site Generator                     |
 | Sanity CMS       | Headless CMS (Events, dynamische Inhalte) |
 | Cloudflare Pages | Hosting + Auto-Deployment                 |
 | GitHub           | Versionierung                             |
