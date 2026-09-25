@@ -50,6 +50,28 @@ export function datumBereich(startISO: string, endISO: string): string {
   return `${a.tag}. ${monatA} ${a.jahr}`;
 }
 
+export type DatumMarke = { tage: string; monat: string; bis: string | null };
+
+// Zerlegt den Zeitraum für die große Datumsmarke im Startseiten-Teaser. Die
+// Tageszahl bleibt im Startmonat; wer den Monat verlässt, bekommt eine eigene
+// „bis"-Zeile, weil „30–2" sich wie eine rückwärts laufende Spanne liest.
+export function datumMarke(startISO: string, endISO: string): DatumMarke {
+  const a = teile(startISO);
+  const b = teile(endISO);
+  const monat = `${MONATE[a.monat - 1]} ${a.jahr}`;
+
+  if (a.jahr !== b.jahr) {
+    return { tage: String(a.tag), monat, bis: `bis ${b.tag}. ${MONATE[b.monat - 1]} ${b.jahr}` };
+  }
+  if (a.monat !== b.monat) {
+    return { tage: String(a.tag), monat, bis: `bis ${b.tag}. ${MONATE[b.monat - 1]}` };
+  }
+  if (a.tag !== b.tag) {
+    return { tage: `${a.tag}–${b.tag}`, monat, bis: null };
+  }
+  return { tage: String(a.tag), monat, bis: null };
+}
+
 // Die Uhrzeiten kommen bereits als lokale Wiener Zeit aus dem CMS. Ein Umweg
 // ueber Date wuerde nur wieder Zeitzonenrisiko einbringen, deshalb reine
 // Stringlogik. Ohne Startzeit gibt es keine Angabe — der Aufrufer rendert dann
