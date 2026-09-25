@@ -1,6 +1,6 @@
 # Projektstatus — Dr. René H. Fortelny Website
 
-Stand: 31. Juli 2026
+Stand: 25. September 2026
 Branch: `dev`
 Repository: `gb-design/rf-web`
 Gesamtstatus: **Foundation abgeschlossen · Static MVP in Arbeit**
@@ -19,14 +19,14 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 | Bereich | Status | Stand |
 | --- | --- | --- |
 | Git und GitHub | ✅ | Repository verbunden, `dev` gepusht und als Standardbranch eingerichtet |
-| Astro-Grundlage | ✅ | Astro 5, TypeScript, gehärtetes BaseLayout und acht geplante Routen vorhanden |
+| Astro-Grundlage | ✅ | Astro 7.3.4, TypeScript 6, gehärtetes BaseLayout und acht geplante Routen vorhanden |
 | Build | ✅ | `npm run build` erfolgreich, 0 Fehler und 0 Warnungen |
 | Design-Tokens | ✅ | Farben, Fluid-Typografie, Abstände und Lumos-orientiertes 12-Spalten-Raster in `src/styles/tokens.css` angelegt |
 | Lokale Fonts | ✅ | IBM Plex Sans und IBM Plex Mono lokal eingebunden |
 | Content-Konzept | ✅ | Bestandsanalyse und Entwürfe für Haupt- und Pflichtseiten dokumentiert; offene Fakten gegen den Live-Bestand abgeglichen |
 | Statische Assets | 🟡 | Logo, Icons, Lottie-Dateien und temporäre Fotos vorhanden; Rechte und finale Auswahl offen |
 | Globale UI | ✅ | Header, Navigation, Footer, Container, globales Grid und Button-Komponenten stehen |
-| Hauptseiten | 🟡 | Startseite, Profilseite und Eventseite inhaltlich und visuell umgesetzt; Leistungen, Galerie und Kontakt bestehen bisher nur aus dem gemeinsamen Seitenintro |
+| Hauptseiten | 🟡 | Startseite, Profil-, Event- und Leistungsseite inhaltlich und visuell umgesetzt; Galerie und Kontakt bestehen bisher nur aus dem gemeinsamen Seitenintro |
 | Pflichtseiten | 🟡 | Routen und Arbeitsentwürfe vorhanden; vollständige Umsetzung und rechtliche Freigabe fehlen |
 | Sanity CMS | ⬜ | Noch nicht installiert oder konfiguriert. Die Eventseite ist über `src/lib/events.ts` als Tauschpunkt vorbereitet |
 | Automatisierte Tests | 🟡 | `npm test` über Nodes eingebauten Runner, ohne neue Abhängigkeit. 16 Tests decken Datumsformat und Eventselektoren ab; Astro-Komponenten weiterhin nur im Browser geprüft |
@@ -180,6 +180,13 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 - Hero-Rail auf den nächsten Termin reduziert; Anzahl der Termine und Typen entfielen auf Kundenwunsch. Bildspalte von 8 auf 7 vorgezogen, wodurch der Abstand zwischen Text und Bild schmaler wird. Ab 64 Rem abwärts bleibt das Bild in der Containerbreite und trägt `--radius-image`, statt randlos auszulaufen.
 - Zählwerte der Eventfilter als feste runde Badges ausgearbeitet. Im Ruhezustand tragen sie eine hellblaue Fläche mit kräftig blauer Zahl; im aktiven und aktiven Hover-Zustand kehrt sich der Kontrast passend zur Filterpille um. Die Pillen haben nun mindestens 44 Pixel Höhe und wurden bei 1440 und 390 Pixel in Default-, Active- und Hover-Zustand geprüft.
 
+- Astro von 5.18.2 auf 7.3.4 aktualisiert; Ausgabe gegen einen v5-Referenzbuild verifiziert: Textinhalt aller acht Seiten exakt gleich, Tagstruktur nach Normalisierung der Scope-Hashes deckungsgleich, `astro check` mit 0 Fehlern, 20 Unit-Tests grün, `npm audit` bei 0 Vulnerabilities.
+- Verhaltensänderungen aus Astro 7 geprüft und als unkritisch bestätigt: Der neue Rust-Compiler akzeptiert das bestehende Markup unverändert; `compressHTML` steht nun auf `'jsx'` und trimmt Randleerzeichen in Elementen, was ohne `white-space: pre*` im Projekt nicht sichtbar wird; die CSS-Bündelung ist feiner aufgeteilt, ohne Inline-Styles oder Inline-Skripte zu erzeugen — die CSP-Härtung bleibt damit intakt.
+
+- Leistungsseite umgesetzt: Sprungnavigation über fünf Indikationen, typografische Tiefensektionen ohne Lottie-Wiederholung, dunkle Verfahrenswahl mit Entscheidungskriterien, fünfstufiges Ablaufregister, Vorbereitungsliste und Notfallhinweis als getönte Fläche. Keine neuen Komponenten, kein seiteneigenes JavaScript.
+- Drei Startseiten-CTAs von `/leistungen` auf Anker umgestellt und per Klick auf Desktop und Mobil verifiziert; ein CTA-Text angepasst, damit Versprechen und Sprungziel übereinstimmen.
+- 20 Textfarben der Leistungsseite im Browser gegen WCAG AA gemessen; die Messwerte decken sich auf zwei Stellen mit der Vorabrechnung der Spec.
+
 ## Nächstes Arbeitspaket
 
 **Static MVP — Startseite abschließen**
@@ -222,11 +229,14 @@ Diese Datei ist die verbindliche Statusquelle des Projekts. Sie wird nach jedem 
 4. ✅ Der Effekt greift nur, wenn der Footer in 90 Prozent der Viewporthöhe passt. Ab 768 Pixel Breite ist das erfüllt; bei 390 und 320 Pixel ist dieser Footer höher als der Bildschirm und fällt auf statisch zurück, statt einen leeren Scrollbereich zu erzeugen.
 5. ✅ Geprüft bei 1440×900, 1280×720, 768×1024, 390×780 und 320×640 auf Modus, Scrollweg und horizontalen Overflow; Skip-Link nach dem Umbau weiterhin über allem sichtbar.
 
-**Nächstes Arbeitspaket — Leistungsseite**
+**Leistungsseite — abgeschlossen**
 
-1. ⬜ Inhaltsentwurf `docs/content/leistungen.md` zuerst gegen den Live-Bestand abgleichen, wie bei der Profilseite. Der Entwurf stammt vom 2. Juli und wurde noch nicht abgeglichen.
-2. ⬜ Behandlungsschwerpunkte, Verfahren und Ablauf als eigenständige Seite umsetzen, ohne die Startseite zu duplizieren.
-3. ⬜ Responsive- und Accessibility-Pass von 320 bis 2560 Pixel.
+1. ✅ Inhaltsentwurf gegen den Live-Bestand abgeglichen. Die sechs Indikationen decken sich; neu gefunden wurden der Begriff „Tailored Surgery", die vierstufige Live-Ablaufgliederung und der Verweis auf `operation-hernien.de`. Vier Entwurfsinhalte sind im Bestand nicht belegt und unter „Offene Entscheidungen und Blocker" geführt.
+2. ✅ Acht Sektionen umgesetzt: Hero, Sprungnavigation, fünf typografische Indikationen, dunkle Verfahrenswahl, Ablaufregister, Vorbereitung, Notfallhinweis, Kontakt-CTA. Keine neuen Komponenten, kein seiteneigenes JavaScript. Design und Begründungen in `docs/superpowers/specs/2026-09-25-leistungsseite-design.md`, freigegeben nach vier Reviewrunden.
+3. ✅ Keine Dopplung der Startseite: Indikationen erklären Beschwerdebild statt sie nur zu nennen, der Ablauf ersetzt die drei Stichpunkte durch fünf Schritte mit Diagnostik, und die Verfahrenswahl trägt die Entscheidungskriterien, die die Startseite nur als Nebensatz kennt.
+4. ✅ Die drei Startseiten-CTAs zeigen auf Anker statt auf den Seitenanfang. „Behandlung und Ablauf ansehen" heißt jetzt „Verfahrenswahl ansehen", weil der Nachbar-CTA bereits den Ablauf verspricht. Das Ankerschema ist als URL-Kontrakt in der Spec festgehalten.
+5. ✅ Responsive- und Accessibility-Pass bei 320, 390, 768, 1024, 1440, 1920 und 2560 Pixel: kein Overflow, kein Element breiter als sein Container, keine Konsolenmeldungen. 20 Textfarben im Browser gegen WCAG AA gemessen, alle bestanden. Alle drei CTAs per Klick auf Desktop und Mobil geprüft. `astro check` 0 Fehler, Build 0 Warnungen, 20 Unit-Tests grün.
+6. ✅ Zwei Layoutfehler im Bau gefunden und behoben, beide von `overflow: clip` unsichtbar abgeschnitten statt als Overflow sichtbar: eine implizite `auto`-Grid-Spur wurde vom Button mit `white-space: nowrap` aufgespannt, wodurch Geschwister ihr `max-width: …100%` gegen 390 statt 280 Pixel auflösten; und der H1-Override ohne `min(…, 100%)` hat das `max-width: 100%` der Komponente unter 42rem überschrieben.
 
 **Danach — Eventseite Etappe B**
 
@@ -239,8 +249,10 @@ Danach folgen Kontakt, Galerie sowie die vollständigen Pflichtseiten.
 
 **Technische Restarbeiten, unabhängig vom Seitenfortschritt**
 
-- ⬜ `site` in `astro.config.mjs` setzen sowie Canonical-Tags, Open-Graph-Daten, `robots.txt` und Sitemap ergänzen.
-- ⬜ Astro von 5.18.2 auf 7.1.4 heben, bevor das Kontaktformular gebaut wird. Acht offene XSS-Advisories betreffen `define:vars`, Spread-Props, View Transitions, dynamische Slots, Server Islands und SSR-Fehlerseiten; keines dieser Muster kommt derzeit vor, weil die Seite vollständig statisch ist und keine Nutzereingaben verarbeitet. Mit dem Resend-Endpoint entstehen SSR und Nutzereingaben, dann werden sie real. Astro 5.18.2 ist die letzte 5.x, auf dieser Linie gibt es keinen Patch.
+- ⬜ `site` in `astro.config.mjs` setzen sowie Canonical-Tags, Open-Graph-Daten, `robots.txt` und Sitemap ergänzen. Damit zusammenhängend: `BaseLayout.astro` setzt `robots = "index, follow"` als Default und nur Impressum und Datenschutz überschreiben ihn, `public/_headers` enthält kein `X-Robots-Tag`. Preview-Deployments sind dadurch grundsätzlich indexierbar — betrifft sechs der acht Seiten.
+- ⬜ 301-Redirect von `/ordination` als Cloudflare-Pages-Regel setzen. Der Ablaufteil ist mit der Leistungsseite übernommen, der Standortteil folgt mit `/kontakt`; erst danach darf der Redirect greifen.
+- ⬜ `.impeccable.md` gegen `src/styles/tokens.css` abgleichen. Die beiden sind auseinandergelaufen: zwei Farbhelligkeiten, die gesamte Typoskala und drei nur in `tokens.css` vorhandene Token. `CLAUDE.md` weist `.impeccable.md` als verbindlichen Designkontext aus, wodurch die falschen Zahlen weiterverwendet werden — in der Leistungs-Review hat das nachweislich zu einem Fehlbefund geführt.
+- ✅ Astro von 5.18.2 auf 7.3.4 gehoben (23. September 2026), zusammen mit `@astrojs/check` 0.9.10 und TypeScript 6.0.3. `npm audit` meldet 0 Vulnerabilities, zuvor 8 (davon 1 kritisch). TypeScript bleibt bewusst auf 6.x: `@astrojs/check` verlangt `^5 || ^6`, TypeScript 7 bricht die Auflösung.
 
 ## Phasen
 
@@ -258,16 +270,18 @@ Danach folgen Kontakt, Galerie sowie die vollständigen Pflichtseiten.
 
 Grundlage ist der Live-Abgleich in `docs/content/00-bestandsanalyse.md` vom 24. Juli 2026.
 
-- ⛔ Gültige Telefonnummer des Ordinationszentrums Rudolfinerhaus bestätigen (Bestand nennt +43 1 360 36 5900).
-- ⛔ Patienten-E-Mail festlegen: Im Bestand kursieren eine private Adresse und eine offenbar veraltete Spitals-Adresse. Für Patientenanfragen ist eine eindeutige, professionelle Adresse nötig.
+- ✅ Telefonnummer bestätigt (Kundenentscheidung 23. September 2026): **+43 1 360 36 5900**, Ordinationszentrum Rudolfinerhaus.
+- ⛔ Patienten-E-Mail festlegen. Drei Kandidaten im Umlauf, Fundorte: `dr.fortelny@gmail.com` (Live-Impressum, siehe `docs/content/00-bestandsanalyse.md` Zeile 56), `rene.fortelny@wienkav.at` (ebenda, offenbar veraltete Spitals-Adresse) und `office@ordinationszentrum-rudolfinerhaus.at` (Entwurf `docs/content/kontakt.md` Zeile 38). Für Patientenanfragen ist genau eine Adresse zu wählen; sie wird zugleich Empfängeradresse des Resend-Kontaktformulars.
 - ⛔ Aktualität der Kennzahlen zu Vorträgen, Publikationen und Ranking bestätigen und ein Stand-Datum festlegen; der Bestand nennt keines. Die Profilseite rendert derzeit die Konstante `standKennzahlen` mit dem Wert 2026 — eine Setzung, keine bestätigte Angabe.
 - ⛔ Aktualität aller Funktionen und Mitgliedschaften auf der Profilseite bestätigen; die Liste stammt unverändert aus dem Bestand.
 - ⛔ Promotionsjahr klären: Der frühere Inhaltsentwurf nannte eine Promotion 1984, im Live-Bestand ist sie nirgends belegt. Die Profilseite führt sie deshalb nicht.
 - ⛔ Entscheiden, ob es zur Bestandsüberschrift „Reviewertätigkeiten“ Inhalt gibt; sie steht dort ohne Text und wurde nicht übernommen.
 - ⛔ Bestätigen, ob ein PubMed-Autorenprofil existiert; die Profilseite verlinkt ersatzweise eine Suche nach `Fortelny RH`.
-- ⛔ Gültigen CV als PDF bereitstellen; im gesamten Live-Bestand ist kein Download auffindbar.
-- ⛔ UID beziehungsweise ATU-Nummer sowie zuständige Aufsichtsbehörde und Berufsrecht klären; im Bestand fehlen sie.
-- ⛔ Bildauswahl, Nutzungsrechte, Einwilligungen und Alt-Texte freigeben; für die geplante Galerie existiert bisher kein rechtlich dokumentiertes Material.
+- 🟡 Gültiger CV als PDF: Anlieferung durch den Kunden zugesagt (Stand 23. September 2026), liegt noch nicht vor. Bis dahin bleibt der Download auf der Profilseite bewusst unverlinkt.
+- ✅ UID beziehungsweise ATU-Nummer entfällt (Kundenauskunft 23. September 2026): keine vorhanden, daher im Impressum keine UID-Zeile. Kammerzugehörigkeit bestätigt: **Ärztekammer für Wien**. Offen bleibt nur die genaue Formulierung von Berufsrecht und Aufsichtsbehörde im Impressum — Teil der rechtlichen Prüfung.
+- 🟡 Bildauswahl, Nutzungsrechte, Einwilligungen und Alt-Texte freigeben. Geklärt (23. September 2026): Die Rechte liegen je nach Aufnahme bei unterschiedlichen Fotografinnen und Fotografen, mehrere Nennungen sind möglich. Daraus folgt technisch ein **Pflichtfeld `credit` pro Bild** statt einer globalen Fußzeile — im Sanity-Schema `galleryItem` und in der statischen Zwischenlösung gleichermaßen. Offen bleibt die konkrete Bildauswahl samt Zuordnung Bild → Fotograf und den Einwilligungen abgebildeter Personen.
+- ⛔ Vier Inhalte der Leistungsseite sind im Live-Bestand nicht belegt und vom Kunden zu bestätigen: der fünfte Ablaufschritt „Planung und Nachsorge", die Sektion „Vorbereitung auf den Termin", das sechsteilige Leistungsspektrum der Hernien-Sektion und die vier Kriterien der Verfahrenswahl. Für die Kriterienliste ist der Rückfallpfad in der Spec ausbuchstabiert; sie erscheint bis zur Freigabe auf der Preview, nicht auf `main`.
+- ⛔ Notfallhinweis und die Proktologie-Notiz zu Blut im Stuhl sind ärztliche Handlungsanweisungen ohne Vorlage im Bestand. Vor Go-live fachlich bestätigen lassen.
 - ⛔ Impressum und Datenschutzerklärung fachlich beziehungsweise rechtlich prüfen; der Bestandstext ist generischer Boilerplate ohne Angaben zu Formularverarbeitung und Speicherfristen.
 - ⛔ Verantwortlichkeiten, Speicherfristen und Verträge für Cloudflare, Sanity und Resend klären.
 - ⛔ Entscheiden, ob das YouTube-Video der Bestandsseite übernommen wird; eine Einbettung erfordert eine Zwei-Klick-Lösung, eine Anpassung der Content-Security-Policy und einen Datenschutzabsatz.
